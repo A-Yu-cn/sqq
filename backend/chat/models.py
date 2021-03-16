@@ -6,7 +6,7 @@ class User(models.Model):
     nickname = models.CharField(null=True, max_length=255, blank=True)
     email = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
-    friends = models.ManyToManyField("User", null=True, blank=True)
+    friends = models.ManyToManyField("User", blank=True)
 
     def __str__(self):
         return self.nickname
@@ -33,10 +33,23 @@ class Chatroom(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
     createTime = models.DateTimeField()
-    users = models.ManyToManyField(User, related_name="chatroom", blank=True, null=True)
+    users = models.ManyToManyField(User, related_name="chatroom", blank=True)
 
     def __str__(self):
         return self.name
 
     class Meta:
         db_table = 'chatroom'
+
+
+class Token(models.Model):
+    id = models.IntegerField(primary_key=True)
+    user = models.ForeignKey(User, models.CASCADE, related_name="token")
+    content = models.CharField(max_length=255)
+    createTime = models.DateTimeField()
+
+    def __str__(self):
+        return self.user.nickname
+
+    class Meta:
+        db_table = 'token'

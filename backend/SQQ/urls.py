@@ -20,5 +20,6 @@ from chat.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", test)
+    path("users/", register),
+    path("users/auth", login)
 ]
