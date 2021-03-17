@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("users/", register),
     path("users/auth", login),
+    path("users/friends", add_friend),
     path("users/<userid>", get_userinfo),
 ]

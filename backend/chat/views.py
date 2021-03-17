@@ -82,3 +82,18 @@ def get_userinfo(request, userid):
         "nickname": user.nickname,
         "email": user.email
     })
+
+
+@csrf_exempt
+@token_verify
+def add_friend(request, user):
+    if request.method == "POST":
+        friend_id = json.loads(request.body).get("friend_id")
+        try:
+            friend = User.objects.get(id=friend_id)
+            user.friends.add(friend)
+            return wrap_response("")
+        except User.DoesNotExist:
+            return wrap_response("wrong friend_id")
+    else:
+        return wrap_response("wrong method")

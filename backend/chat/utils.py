@@ -49,3 +49,17 @@ def generate_token(user: User) -> Token:
                       createTime=timezone.now())
         token.save()
     return token
+
+
+def token_verify(func):
+    """验证用户是否登录"""
+    def wrap(request, *args, **kwargs):
+        try:
+            token = Token.objects.get(content=request.headers.get("Authorization"))
+            if (timezone.now() - token.createTime).days >= 30:
+                return wrap_response("token已过期")
+        except Token.DoesNotExist:
+            return wrap_response("权限验证失败")
+        return func(request, *args, **kwargs, user=token.user)
+
+    return wrap
