@@ -22,6 +22,10 @@ def get_login_data(user):
     ]
     unread_message_db.delete()
     return {
+        'self': {
+            'id': user.id,
+            'nickname': user.nickname
+        },
         "token": token.content,
         "friends": friends,
         "chatroom_list": chatroom_list,
