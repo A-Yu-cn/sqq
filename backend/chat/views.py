@@ -116,3 +116,16 @@ def create_chatroom(request, user):
         })
     else:
         return wrap_response("wrong method")
+
+
+def get_chatroom_info(request, room_id):
+    try:
+        chatroom = Chatroom.objects.get(id=room_id)
+        return wrap_response("", {
+            "name": chatroom.name,
+            "id": chatroom.id,
+            "time": timezone.localtime(chatroom.createTime).isoformat(),
+            "users": [(i.id, i.nickname) for i in chatroom.users.all()]
+        })
+    except Chatroom.DoesNotExist:
+        return wrap_response("wrong id")
