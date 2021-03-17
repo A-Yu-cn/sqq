@@ -1,11 +1,7 @@
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
-from .models import *
+from chat.models import *
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .utils import *
-
-# Create your views here.
 
 
 def get_login_data(user):
