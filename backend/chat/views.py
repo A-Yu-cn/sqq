@@ -1,4 +1,3 @@
-from chat.models import *
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .utils import *
@@ -91,5 +90,29 @@ def add_friend(request, user):
             return wrap_response("")
         except User.DoesNotExist:
             return wrap_response("wrong friend_id")
+    else:
+        return wrap_response("wrong method")
+
+
+@csrf_exempt
+@token_verify
+def create_chatroom(request, user):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        friend_ids = data.get("friend_ids")
+        chatroom_name = data.get("name")
+        wrong_ids = []
+        chatroom = Chatroom(id=get_chatroom_id(), name=chatroom_name, createTime=timezone.now())
+        chatroom.save()
+        chatroom.users.add(user)
+        for friend_id in friend_ids:
+            try:
+                chatroom.users.add(User.objects.get(id=friend_id))
+            except User.DoesNotExist:
+                wrong_ids.append(friend_ids)
+        return wrap_response("", {
+            "wrong ids": wrong_ids,
+            "room_id": chatroom.id
+        })
     else:
         return wrap_response("wrong method")

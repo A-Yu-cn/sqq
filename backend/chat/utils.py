@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from hashlib import sha256
-from .models import User, Token
+from .models import *
 import random
 from django.utils import timezone
 
@@ -26,7 +26,7 @@ def parse_password(password):
 
 
 def get_user_id():
-    """生成不重复的学生id"""
+    """生成不重复的用户id"""
     while 1:
         res = random.randint(10000, 99999)
         try:
@@ -39,7 +39,7 @@ def generate_token(user: User) -> Token:
     """生成token, 有效期30天"""
     try:
         token = Token.objects.get(user=user)
-        if (timezone.now()-token.createTime).days >= 30:
+        if (timezone.now() - token.createTime).days >= 30:
             token.content = sha256((str(user.id) + str(random.randint(10000, 99999))).encode()).hexdigest()
             token.createTime = timezone.now()
             token.save()
@@ -53,6 +53,7 @@ def generate_token(user: User) -> Token:
 
 def token_verify(func):
     """验证用户是否登录"""
+
     def wrap(request, *args, **kwargs):
         try:
             token = Token.objects.get(content=request.headers.get("Authorization"))
@@ -63,3 +64,13 @@ def token_verify(func):
         return func(request, *args, **kwargs, user=token.user)
 
     return wrap
+
+
+def get_chatroom_id():
+    """生成不重复的聊天室id"""
+    while 1:
+        res = random.randint(100000, 999999)
+        try:
+            Chatroom.objects.get(id=res)
+        except Chatroom.DoesNotExist:
+            return res
