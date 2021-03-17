@@ -66,6 +66,8 @@ def login(request):
                 return wrap_response("密码错误")
         except User.DoesNotExist:
             return wrap_response("用户不存在")
+    else:
+        return wrap_response('wrong method')
 
 
 def get_userinfo(request, userid):
