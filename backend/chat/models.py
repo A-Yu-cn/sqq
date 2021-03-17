@@ -6,7 +6,7 @@ class User(models.Model):
     nickname = models.CharField(null=True, max_length=255, blank=True)
     email = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
-    friends = models.ManyToManyField("User", blank=True)
+    friends = models.ManyToManyField("User", blank=True, related_name="friends_set")
 
     def __str__(self):
         return self.nickname
@@ -53,3 +53,14 @@ class Token(models.Model):
 
     class Meta:
         db_table = 'token'
+
+
+class UnreadMessage(models.Model):
+    user = models.ForeignKey(User, models.CASCADE, related_name="unread")
+    message = models.ForeignKey(Message, models.CASCADE, related_name="unread")
+
+    def __str__(self):
+        return self.user.nickname
+
+    class Meta:
+        db_table = 'unread_message'

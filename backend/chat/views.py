@@ -8,6 +8,31 @@ from .utils import *
 # Create your views here.
 
 
+def get_login_data(user):
+    token = generate_token(user)
+    friends = [(i.id, i.nickname) for i in user.friends.all()]
+    friends += [(i.id, i.nickname) for i in user.friends_set.all()]
+    friends = list(set(friends))
+    chatroom_list = [(i.id, i.name) for i in user.chatroom.all()]
+    unread_message_db = user.unread.all()
+    unread_message = [
+        {
+            "from": (u_message.message.from_user.id, u_message.message.from_user.nickname),
+            "to": u_message.message.to,
+            "content": u_message.message.content,
+            "time": timezone.localtime(u_message.message.createTime).isoformat()
+        }
+        for u_message in unread_message_db
+    ]
+    unread_message_db.delete()
+    return {
+        "token": token.content,
+        "friends": friends,
+        "chatroom_list": chatroom_list,
+        "unread_message": unread_message
+    }
+
+
 @csrf_exempt
 def register(request):
     if request.method == "POST":
@@ -39,7 +64,8 @@ def login(request):
             else:
                 user = User.objects.get(id=identity)
             if user.password == parse_password(password):
-                return wrap_response("", "login success")
+                login_data = get_login_data(user)
+                return wrap_response("", login_data)
             else:
                 return wrap_response("密码错误")
         except User.DoesNotExist:

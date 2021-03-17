@@ -1,7 +1,8 @@
 from django.http import JsonResponse
 from hashlib import sha256
-from .models import User
+from .models import User, Token
 import random
+from django.utils import timezone
 
 
 def wrap_response(mes, data=None):
@@ -25,9 +26,26 @@ def parse_password(password):
 
 
 def get_user_id():
+    """生成不重复的学生id"""
     while 1:
         res = random.randint(10000, 99999)
         try:
             User.objects.get(id=res)
         except User.DoesNotExist:
             return res
+
+
+def generate_token(user: User) -> Token:
+    """生成token, 有效期30天"""
+    try:
+        token = Token.objects.get(user=user)
+        if (timezone.now()-token.createTime).days >= 30:
+            token.content = sha256((str(user.id) + str(random.randint(10000, 99999))).encode()).hexdigest()
+            token.createTime = timezone.now()
+            token.save()
+    except Token.DoesNotExist:
+        token = Token(user=user,
+                      content=sha256((str(user.id) + str(random.randint(10000, 99999))).encode()).hexdigest(),
+                      createTime=timezone.now())
+        token.save()
+    return token
