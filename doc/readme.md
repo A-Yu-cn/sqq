@@ -9,5 +9,19 @@
 
 - 根url：`http://sqq.12138.site:1234`
 - 后台管理：`http://sqq.12138.site:1234/admin`
-    - 账号: ml   
-    - 密码：0412
+  - 账号: ml   
+  - 密码：0412
+
+### 时间字符串说明
+
+后端返回的与时间相关的信息均为iso时间字符串，例：`2021-03-17T11:48:14.944868+08:00`
+
+将该字符串转化为datetime(python):
+
+```python
+from datetime import datetime
+
+time_string = "2021-03-17T11:48:14.944868+08:00"
+t = datetime.now().fromisoformat(time_string)
+```
+
