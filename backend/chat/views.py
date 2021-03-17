@@ -70,3 +70,15 @@ def login(request):
                 return wrap_response("密码错误")
         except User.DoesNotExist:
             return wrap_response("用户不存在")
+
+
+def get_userinfo(request, userid):
+    try:
+        user = User.objects.get(id=userid)
+    except User.DoesNotExist:
+        return wrap_response("wrong id")
+    return wrap_response("", {
+        "id": user.id,
+        "nickname": user.nickname,
+        "email": user.email
+    })
