@@ -56,9 +56,18 @@ class Receiver(Thread):
                 else:
                     chatroom = Chatroom.objects.get(id=to)
                     for user in chatroom.users.all():
+                        # 群消息不发给自己
+                        if user.id == token.user.id:
+                            break
                         send_message(user, message)
             except json.decoder.JSONDecodeError:
-                self.client.sendall(wrap_error_data('json decode error'))
+                try:
+                    self.client.sendall(wrap_error_data('json decode error'))
+                except ConnectionAbortedError:
+                    # 客户端断开连接
+                    client_pool.pop(self.user_id)
+                    logger.warning(f'User<{self.user_id}> disconnect')
+                    break
             except Token.DoesNotExist:
                 self.client.sendall(wrap_error_data('token error'))
             except User.DoesNotExist:
