@@ -12,8 +12,6 @@ def wrap_response(mes, data=None):
         "mes": mes,
         "data": data
     })
-    if mes:
-        response.status_code = 500
     return response
 
 
