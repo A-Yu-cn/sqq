@@ -16,7 +16,6 @@ class User(models.Model):
 
 
 class Message(models.Model):
-    id = models.IntegerField(primary_key=True)
     from_user = models.ForeignKey(User, models.CASCADE)
     to = models.IntegerField()
     content = models.TextField()

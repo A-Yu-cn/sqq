@@ -1,6 +1,7 @@
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .utils import *
+import chat.server
 
 
 def get_login_data(user):
