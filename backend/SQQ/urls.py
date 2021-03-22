@@ -27,4 +27,5 @@ urlpatterns = [
     path("chatroom/", create_chatroom),
     path("chatroom/<room_id>", get_chatroom_info),
     path('message', get_message),
+    path('code', send_code),
 ]

@@ -49,6 +49,11 @@ def generate_token(user: User) -> Token:
     return token
 
 
+def generate_code():
+    """生成验证码"""
+    return str(random.randint(100000, 999999))
+
+
 def token_verify(func):
     """验证用户是否登录"""
 

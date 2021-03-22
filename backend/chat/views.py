@@ -4,6 +4,9 @@ from .utils import *
 import chat.server
 from itertools import chain
 from datetime import datetime
+from .codeSender import codeSender
+
+code_sender = codeSender()
 
 
 def get_login_data(user):
@@ -153,7 +156,8 @@ def get_message(request, user):
     if other_id < 100000:
         other_user = User.objects.get(id=other_id)
         m1 = Message.objects.filter(to=other_id, from_user=user, createTime__gte=start_time, createTime__lte=end_time)
-        m2 = Message.objects.filter(from_user=other_user, to=user.id, createTime__gte=start_time, createTime__lte=end_time)
+        m2 = Message.objects.filter(from_user=other_user, to=user.id, createTime__gte=start_time,
+                                    createTime__lte=end_time)
         message_list = [{
             'from': message.from_user.id,
             'to': message.to,
@@ -165,3 +169,21 @@ def get_message(request, user):
     return wrap_response('', {
         'message_list': message_list
     })
+
+
+def send_code(request):
+    email = request.GET.get('email')
+    content = generate_code()
+    now = timezone.now()
+    try:
+        ver_code = VerCode.objects.get(email=email)
+        if (timezone.now() - ver_code.time).total_seconds() <= 60:
+            return wrap_response('发送间隔太短')
+        else:
+            ver_code.content = content
+            ver_code.time = now
+    except VerCode.DoesNotExist:
+        ver_code = VerCode(email=email, content=content, time=now)
+    ver_code.save()
+    code_sender.send(email, content)
+    return wrap_response('')
