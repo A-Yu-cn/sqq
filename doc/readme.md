@@ -13,6 +13,13 @@
   - 密码：0412
 - socket地址：`(sqq.12138.site, 12345)`
 
+### post请求说明
+
+- 如果没有特别说明，所有的post请求均使用request body传输数据，格式为json
+- 不支持post默认传输json格式数据的语言需要设置http headers：`content-type: application/json`
+- python requests默认请求格式：`requests.post(url, json=data)`
+- 除get外的其他方法默认格式同上
+
 ### 时间字符串说明
 
 后端返回的与时间相关的信息均为iso时间字符串，例：`2021-03-17T11:48:14.944868+08:00`
