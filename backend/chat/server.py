@@ -5,9 +5,11 @@ from chat.models import *
 from django.utils import timezone
 import logging
 
+# 设置日志等级和格式
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='[%(asctime)s]  %(message)s', datefmt='%m/%d/%Y %H:%M:%S %p')
 
+# 客户端连接池
 client_pool = {}
 
 
