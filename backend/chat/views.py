@@ -176,6 +176,11 @@ def send_code(request):
     content = generate_code()
     now = timezone.now()
     try:
+        User.objects.get(email=email)
+        return wrap_response('该邮箱已注册')
+    except User.DoesNotExist:
+        pass
+    try:
         ver_code = VerCode.objects.get(email=email)
         if (timezone.now() - ver_code.time).total_seconds() <= 60:
             return wrap_response('发送间隔太短')
