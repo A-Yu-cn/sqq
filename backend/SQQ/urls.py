@@ -26,4 +26,5 @@ urlpatterns = [
     path("users/<userid>", get_userinfo),
     path("chatroom/", create_chatroom),
     path("chatroom/<room_id>", get_chatroom_info),
+    path('message', get_message),
 ]

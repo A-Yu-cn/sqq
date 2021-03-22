@@ -2,6 +2,8 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from .utils import *
 import chat.server
+from itertools import chain
+from datetime import datetime
 
 
 def get_login_data(user):
@@ -136,3 +138,30 @@ def get_chatroom_info(request, room_id):
         })
     except Chatroom.DoesNotExist:
         return wrap_response("wrong id")
+
+
+@token_verify
+def get_message(request, user):
+    try:
+        body = json.loads(request.body)
+        other_id = int(body.get('other_id'))
+        start_time = datetime.now().fromisoformat(body.get('start_time'))
+        end_time = datetime.now().fromisoformat(body.get('end_time'))
+    except ValueError as e:
+        return wrap_response('Value error')
+    # 获取用户之间的消息
+    if other_id < 100000:
+        other_user = User.objects.get(id=other_id)
+        m1 = Message.objects.filter(to=other_id, from_user=user, createTime__gte=start_time, createTime__lte=end_time)
+        m2 = Message.objects.filter(from_user=other_user, to=user.id, createTime__gte=start_time, createTime__lte=end_time)
+        message_list = [{
+            'from': message.from_user.id,
+            'to': message.to,
+            'content': message.content,
+            'time': timezone.localtime(message.createTime).isoformat()
+        } for message in chain(m1, m2)]
+    else:
+        message_list = Message.objects.filter(to=other_id, createTime__gte=start_time, createTime__lte=end_time)
+    return wrap_response('', {
+        'message_list': message_list
+    })
