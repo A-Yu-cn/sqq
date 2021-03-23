@@ -1,10 +1,9 @@
 import sys
 
-from PyQt5 import QtGui
-from PyQt5.QtCore import pyqtSignal, QDate
+from PyQt5.QtCore import QDate
 from qtpy import QtCore
 
-from .chatWindow import Ui_Form
+from client.chatWindow.chatWindow import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 
 
@@ -23,6 +22,8 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.dateTimeEdit_1.setDate(QtCore.QDate(2020, 1, 1))
         self.dateTimeEdit_2.setCalendarPopup(True)
         self.dateTimeEdit_2.setDate(QDate.currentDate())
+        self.dateTimeEdit_1.setDisplayFormat("yyyy-MM-dd HH:mm:ss")
+        self.dateTimeEdit_2.setDisplayFormat("yyyy/MM/dd HH-mm-ss")
         '''
         逻辑绑定   
         '''
@@ -35,6 +36,8 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.clearButton.clicked.connect(self.clearMessage)
         # 发送按钮
         self.submitButton.clicked.connect(self.submitMessage)
+        # 查询按钮
+        self.queryHistoryButton.clicked.connect(self.queryHistoryMessageByDate)
 
     # 发送消息
     def submitMessage(self):
@@ -54,8 +57,18 @@ class ChatWindow(QMainWindow, Ui_Form):
 
     # 加载历史消息
     def loadHistoryMessage(self):
-        self.historyTextBrowser.setText()
-        pass
+        mes_username = ""
+        mes_time = ""
+        mes_content = ""
+        for i in range(0, 100):
+            mes_username = "hx"
+            mes_time = "2021-03-17 10:02:20"
+            mes_content = "666"
+            self.historyTextBrowser.append('<h3 style="color:blue;">{0}\t{1}</h3>'.format(mes_username, mes_time))
+            self.historyTextBrowser.append(
+                '<p style="background-color:lightyellow;color:black;">{0}</p>\n'.format(
+                    mes_content))
+            # self.historyTextBrowser.append('<img src="logo.png"/>')
 
     # 清空输入框
     def clearMessage(self):
@@ -67,11 +80,23 @@ class ChatWindow(QMainWindow, Ui_Form):
     def receiveMessage(self):
         pass
 
+    # 根据时间查询历史记录
+    def queryHistoryMessageByDate(self):
+        dt1 = self.dateTimeEdit_1.dateTime().toPyDateTime()
+        dt2 = self.dateTimeEdit_2.dateTime().toPyDateTime()
+        print(dt1)
+        print(dt2)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     myWin = ChatWindow()
+
+    with open('../css/chatWindow.css') as file:
+        qss = file.readlines()
+        qss = ''.join(qss).strip('\n')
+    myWin.setStyleSheet(qss)
 
     myWin.show()
 

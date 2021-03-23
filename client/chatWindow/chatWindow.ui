@@ -98,6 +98,19 @@
      </rect>
     </property>
    </widget>
+   <widget class="QPushButton" name="queryHistoryButton">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>650</y>
+      <width>101</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>查询</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QPushButton" name="submitButton">
    <property name="geometry">
