@@ -84,6 +84,9 @@ def verify_code(email, code):
         ver_code = VerCode.objects.get(email=email)
         if (timezone.now() - ver_code.time).total_seconds() >= 600:
             return '验证码已失效，请重新获取'
-        return ''
+        if ver_code.content == code:
+            ver_code.delete()
+            return ""
+        return "验证码错误"
     except VerCode.DoesNotExist:
         return '请先获取验证码'

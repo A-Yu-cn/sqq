@@ -133,6 +133,30 @@ class UserView:
         code_sender.send(email, content)
         return wrap_response('')
 
+    @staticmethod
+    @csrf_exempt
+    def reset_password(request):
+        if request.method == 'PUT':
+            body = json.loads(request.body)
+            email = body.get('email')
+            password = body.get('password')
+
+            # 进行验证码验证
+            code = body.get('code')
+            verify_code_res = verify_code(email, code)
+            if verify_code_res != '':
+                return wrap_response(verify_code_res)
+
+            try:
+                user = User.objects.get(email=email)
+                user.password = parse_password(password)
+                user.save()
+                return wrap_response('')
+            except User.DoesNotExist:
+                return wrap_response('该邮箱未注册')
+        else:
+            return wrap_response('wrong method')
+
 
 @csrf_exempt
 @token_verify

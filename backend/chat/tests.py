@@ -9,10 +9,10 @@ class UserTest(TestCase):
         self.user_id = ''
         self.login_data = ''
 
-    def login(self, use_id=False):
+    def login(self, use_id=False, password='12138'):
         login_data = {
             "identity": "1791670972@qq.com",
-            "password": "12138"
+            "password": password
         }
         if use_id:
             login_data['identity'] = str(self.user_id)
@@ -50,6 +50,22 @@ class UserTest(TestCase):
         response = self.client.get(f'/users/{self.user_id}')
         self.assertEqual(response.json()['data']['email'], '1791670972@qq.com')
 
+    def reset_password(self):
+        data = {
+            'email': '1791670972@qq.com',
+            'password': '12139',
+            'code': ''
+        }
+
+        # 获取验证码
+        response = self.client.get('/code', {'email': '1791670972@qq.com', 'type': 2})
+        self.assertEqual(response.json().get('mes'), '')
+
+        data['code'] = VerCode.objects.get(email='1791670972@qq.com').content
+        response = self.client.put('/users/password', data, content_type='application/json')
+        self.assertEqual(response.json().get('mes'), '')
+
     def test_user(self):
         self.register_and_login()
         self.get_userinfo()
+        self.reset_password()
