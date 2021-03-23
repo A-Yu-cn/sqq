@@ -19,11 +19,11 @@ class codeSender(object):
         try:
             msg = MIMEMultipart()
             # 邮件主题
-            msg['Subject'] = "注册验证码"
+            msg['Subject'] = "验证码"
             # 发送方信息
             msg['From'] = self.sender
             # QQsmtp服务器的端口号为465或587
-            msg_content = f"您好，您正在注册【sqq】，{code}是您的验证码，10分钟之内有效，请妥善保管"
+            msg_content = f"[sqq] 您好，{code}是您的验证码，10分钟之内有效，请妥善保管"
             msg.attach(MIMEText(msg_content, 'plain', 'utf-8'))
             msg['To'] = to = email
             self.s.sendmail(self.sender, to, msg.as_string())

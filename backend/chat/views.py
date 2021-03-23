@@ -173,13 +173,22 @@ def get_message(request, user):
 
 def send_code(request):
     email = request.GET.get('email')
+    ty = int(request.GET.get('type'))   # 发送验证码类型，1-注册，2-重置密码
     content = generate_code()
     now = timezone.now()
-    try:
-        User.objects.get(email=email)
-        return wrap_response('该邮箱已注册')
-    except User.DoesNotExist:
-        pass
+    if ty == 1:
+        try:
+            User.objects.get(email=email)
+            return wrap_response('该邮箱已注册')
+        except User.DoesNotExist:
+            pass
+    elif ty == 2:
+        try:
+            User.objects.get(email=email)
+        except User.DoesNotExist:
+            return wrap_response('该邮箱未注册')
+    else:
+        return wrap_response('发送类型错误')
     try:
         ver_code = VerCode.objects.get(email=email)
         if (timezone.now() - ver_code.time).total_seconds() <= 60:
