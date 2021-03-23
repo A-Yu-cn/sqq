@@ -77,3 +77,13 @@ def get_chatroom_id():
             Chatroom.objects.get(id=res)
         except Chatroom.DoesNotExist:
             return res
+
+
+def verify_code(email, code):
+    try:
+        ver_code = VerCode.objects.get(email=email)
+        if (timezone.now() - ver_code.time).total_seconds() >= 600:
+            return '验证码已失效，请重新获取'
+        return ''
+    except VerCode.DoesNotExist:
+        return '请先获取验证码'

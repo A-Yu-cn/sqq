@@ -25,9 +25,15 @@ class UserTest(TestCase):
         register_data = {
             "email": "1791670972@qq.com",
             "nickname": "楷禅",
-            "password": "12138"
+            "password": "12138",
+            "code": ''
         }
 
+        # 获取验证码
+        response = self.client.get('/code', {'email': '1791670972@qq.com', 'type': 1})
+        self.assertEqual(response.json().get('mes'), '')
+
+        register_data['code'] = VerCode.objects.get(email='1791670972@qq.com').content
         response = self.client.post('/users/', register_data, content_type='application/json')
         self.user_id = response.json().get('data')
         # 注册成功之后用户id应该在10000~99999之间

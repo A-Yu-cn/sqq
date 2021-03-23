@@ -48,6 +48,13 @@ class UserView:
             email = data.get("email")
             nickname = data.get("nickname")
             password = data.get("password")
+
+            # 进行验证码验证
+            code = data.get('code')
+            verify_code_res = verify_code(email, code)
+            if verify_code_res != '':
+                return wrap_response(verify_code_res)
+
             try:
                 User.objects.get(email=email)
             except User.DoesNotExist:
