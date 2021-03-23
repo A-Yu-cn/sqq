@@ -20,12 +20,12 @@ from chat.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("users/", register),
-    path("users/auth", login),
+    path("users/", UserView.register),
+    path("users/auth", UserView.login),
     path("users/friends", add_friend),
-    path("users/<userid>", get_userinfo),
+    path("users/<userid>", UserView.get_userinfo),
     path("chatroom/", create_chatroom),
     path("chatroom/<room_id>", get_chatroom_info),
     path('message', get_message),
-    path('code', send_code),
+    path('code', UserView.send_code),
 ]
