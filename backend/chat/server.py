@@ -14,14 +14,17 @@ client_pool = {}
 
 
 def send_message(user, message):
+    """向指定用户发送消息"""
     if user.id in client_pool:
         client_pool[user.id].sendall(wrap_message(message))
     else:
+        # 记录未读消息
         unread_message = UnreadMessage(user=user, message=message)
         unread_message.save()
 
 
 def wrap_message(message):
+    """包装向客户发送的消息"""
     return json.dumps({
         'from': message.from_user.id,
         'to': message.to,
@@ -31,6 +34,7 @@ def wrap_message(message):
 
 
 def wrap_error_data(mes):
+    """包装错误消息"""
     return json.dumps({
         'mes': mes
     }).encode()
@@ -42,11 +46,23 @@ class Receiver(Thread):
         super(Receiver, self).__init__(*args, **kwargs)
         self.client = client
         self.user_id = user_id
+        self.recv_buff = 1024  # 接受缓冲区
+
+    def recv_message(self):
+        """接受一个完整的消息"""
+        res = b""
+        while True:
+            try:
+                res += self.client.recv(self.recv_buff)
+                res = json.loads(res)
+                return res
+            except json.decoder.JSONDecodeError:
+                pass
 
     def run(self):
         while True:
             try:
-                data = json.loads(self.client.recv(4096))
+                data = self.recv_message()
                 token = Token.objects.get(content=data.get('Authorization'))
                 to = int(data.get('to'))
                 message = Message(from_user=token.user, to=to, content=data.get('content'),
@@ -105,8 +121,10 @@ class Server(Thread):
                 receiver.start()
                 logger.warning(f'User<{token.user.id}> connect from {addr}')
             except json.decoder.JSONDecodeError:
+                client.sendall(wrap_error_data('wrong data type'))
                 client.close()
             except Token.DoesNotExist:
+                client.sendall(wrap_error_data('wrong token'))
                 client.close()
 
 
