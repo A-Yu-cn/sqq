@@ -4,6 +4,7 @@ from threading import Thread
 from chat.models import *
 from django.utils import timezone
 import logging
+import os
 
 # 设置日志等级和格式
 logger = logging.getLogger(__name__)
@@ -46,7 +47,7 @@ class Receiver(Thread):
         super(Receiver, self).__init__(*args, **kwargs)
         self.client = client
         self.user_id = user_id
-        self.recv_buff = 1024  # 接受缓冲区
+        self.recv_buff = int(os.environ.get('TCP_RECV_BUFF'))  # 接受缓冲区
 
     def recv_message(self):
         """接受一个完整的消息"""
@@ -103,7 +104,7 @@ class Server(Thread):
 
     def __init__(self):
         super(Server, self).__init__()
-        self.port = 12345
+        self.port = int(os.environ.get('TCP_SERVER_PORT'))
 
     def run(self) -> None:
         global client_pool

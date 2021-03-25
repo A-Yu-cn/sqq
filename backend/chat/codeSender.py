@@ -3,17 +3,20 @@ from email import encoders
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
+import os
 
 
 class codeSender(object):
     def __init__(self):
-        self.sender = "khosa@khosa.cn"
-        self.passWord = '8kzx3cKRG2hckR6'
+        self.sender = os.environ.get('EMAIL_SENDER')
+        self.passWord = os.environ.get('EMAIL_PASSWORD')
+        self.smtp_server = os.environ.get('SMTP_SERVER')
+        self.smtp_server_port = os.environ.get('SMTP_SERVER_PORT')
         self.s = ''
         # 邮件正文是MIMEText:
 
     def send(self, email, code):
-        self.s = smtplib.SMTP_SSL("smtp.khosa.cn", 465)
+        self.s = smtplib.SMTP_SSL(self.smtp_server, self.smtp_server_port)
         self.s.set_debuglevel(1)
         self.s.login(self.sender, self.passWord)
         try:
