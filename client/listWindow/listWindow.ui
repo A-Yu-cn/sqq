@@ -31,24 +31,10 @@
     <property name="text">
      <string>好友列表</string>
     </property>
-    <property name="checkState">
-     <enum>Unchecked</enum>
-    </property>
-    <item>
-     <property name="text">
-      <string>New Subitem</string>
-     </property>
-     <property name="checkState">
-      <enum>Unchecked</enum>
-     </property>
-    </item>
    </item>
    <item>
     <property name="text">
      <string>群列表</string>
-    </property>
-    <property name="checkState">
-     <enum>Unchecked</enum>
     </property>
    </item>
   </widget>
@@ -60,6 +46,9 @@
      <width>201</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="placeholderText">
+    <string>请输入好友ID</string>
    </property>
   </widget>
   <widget class="QPushButton" name="addFriendPushButton">
@@ -75,7 +64,7 @@
     <string>添加好友</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="addFriendPushButton_2">
+  <widget class="QPushButton" name="startGroupPushButton">
    <property name="geometry">
     <rect>
      <x>330</x>

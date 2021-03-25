@@ -1,7 +1,10 @@
+import datetime
 import sys
-
+import requests
 from PyQt5.QtCore import QDate
 from qtpy import QtCore
+from client.golbalFile import base_url
+from client.localClient import localClient
 
 from client.chatWindow.chatWindow import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
@@ -9,14 +12,21 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 
 class ChatWindow(QMainWindow, Ui_Form):
 
-    def __init__(self):
+    def __init__(self, chatList=[], token=""):
         super(ChatWindow, self).__init__()
         self.setupUi(self)
+        # 聊天码
+        self.chatNumber = chatList[0]
+        self.chatUsername = chatList[1]
+        # token
+        self.token = token
         '''
         样式控制
         '''
         # 禁止拉伸窗口
         self.setFixedSize(self.width(), self.height())
+        # 设置标题
+        self.setWindowTitle("聊天 " + self.chatUsername)
         # 设置日历控件允许弹出
         self.dateTimeEdit_1.setCalendarPopup(True)
         self.dateTimeEdit_1.setDate(QtCore.QDate(2020, 1, 1))
@@ -82,10 +92,26 @@ class ChatWindow(QMainWindow, Ui_Form):
 
     # 根据时间查询历史记录
     def queryHistoryMessageByDate(self):
-        dt1 = self.dateTimeEdit_1.dateTime().toPyDateTime()
-        dt2 = self.dateTimeEdit_2.dateTime().toPyDateTime()
+        dt1 = self.dateTimeEdit_1.dateTime().toPyDateTime().replace(tzinfo=datetime.timezone.utc).isoformat()
+        dt2 = self.dateTimeEdit_2.dateTime().toPyDateTime().replace(tzinfo=datetime.timezone.utc).isoformat()
+        # 获取历史消息
+        self.getHisMessage(dt1, dt2)
         print(dt1)
         print(dt2)
+
+    # 查询历史消息请求
+    def getHisMessage(self, dt1, dt2):
+        url = base_url + "/message"
+        headers = {"Authorization": self.token}
+        data = {"other_id": self.chatNumber, "start_time": dt1, "end_time": dt2}
+        r = requests.get(url=url, json=data, headers=headers)
+        print(r)
+        print(r.text)
+
+    # 发送消息
+    def sendMessage(self, mes):
+        cl = localClient.Client()
+        cl.client.sendall(cl.wrap_message(mes))
 
 
 if __name__ == '__main__':
