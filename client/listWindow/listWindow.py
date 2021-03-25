@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(444, 918)
+        Form.resize(436, 866)
         self.treeWidget = QtWidgets.QTreeWidget(Form)
         self.treeWidget.setGeometry(QtCore.QRect(0, 60, 431, 801))
         self.treeWidget.setObjectName("treeWidget")

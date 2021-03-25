@@ -1,11 +1,15 @@
+from datetime import datetime
 import json
 import sys
+import time
+
 import requests
-from client.QTreeWidget.ParsingJson import ItemWidget
+from PyQt5.QtGui import QCursor
+
 from client.listWindow.listWindow import Ui_Form
 from client.chatWindow.callChatWindow import ChatWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem, QWidget, QHBoxLayout, QLabel, QSpacerItem, \
-    QSizePolicy, QTreeWidget, QMessageBox
+    QSizePolicy, QTreeWidget, QMessageBox, QMenu, QAction, QFileDialog
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import Qt
 from client.golbalFile import base_url
@@ -30,6 +34,8 @@ class ListWindow(QMainWindow, Ui_Form):
     def __init__(self, loginInfo):
         super(ListWindow, self).__init__()
         self.setupUi(self)
+        self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)  # 打开右键菜单的策略
+        self.treeWidget.customContextMenuRequested.connect(self.treeWidgetItem_fun)  # 绑定事件
         # 记录登录信息
         self.treeWidget.header().setVisible(False)
         self.loginInfo = loginInfo
@@ -119,7 +125,7 @@ class ListWindow(QMainWindow, Ui_Form):
                 QMessageBox.information(self, "提示", "添加成功！", QMessageBox.Yes)
 
     # 打开聊天界面
-    def startChat(self, item, column):
+    def startChat(self, item):
         parent = item.parent()
         index_top = 0
         index_row = -1
@@ -175,6 +181,67 @@ class ListWindow(QMainWindow, Ui_Form):
             qss = ''.join(qss).strip('\n')
         self.groupWindow.setStyleSheet(qss)
         self.groupWindow.show()
+
+        # 定义treewidget中item右键界面
+
+    # 右键菜单绑定事件
+    def treeWidgetItem_fun(self, pos):
+        item = self.treeWidget.currentItem()
+        item1 = self.treeWidget.itemAt(pos)
+        if item != None and item1 != None:
+            popMenu = QMenu()
+            popMenu.addAction(QAction('查看信息', self))
+            popMenu.addAction(QAction('发送消息', self))
+            popMenu.addAction(QAction('删除好友', self))
+            popMenu.triggered[QAction].connect(self.processtrigger)
+            popMenu.exec_(QCursor.pos())
+
+    # 右键菜单事件处理
+    def processtrigger(self, q):
+        try:
+            # 判断是项目节点还是任务节点
+            command = q.text()
+            item = self.treeWidget.currentItem()
+            parent = item.parent()
+            index_top = self.treeWidget.indexOfTopLevelItem(parent)
+            index_row = parent.indexOfChild(item)
+            print(index_top)
+            print(index_row)
+            if command == "发送消息":
+                self.startChat(item)
+                return
+            elif command == "查看信息":
+                self.getUserInfo(index_top, index_top)
+        except KeyError:
+            return
+
+    # 获取用户信息
+    def getUserInfo(self, index_top, index_row):
+        # 获取好友信息
+        if index_top == 0:
+            friend_url = base_url + "/users/" + str(self.loginInfo['data']['friends'][index_row][0])
+            r = requests.get(url=friend_url)
+            QMessageBox.information(self, "好友信息",
+                                    "好友姓名 : {0}\n好友ID : {1}\n好友邮箱 : {2}".format(
+                                        r.json().get('data').get('nickname'),
+                                        r.json().get('data').get('id'),
+                                        r.json().get('data').get('email')),
+                                    QMessageBox.Yes)
+            print(r.json())
+        elif index_top == 1:
+            group_url = base_url + "/chatroom/" + str(self.loginInfo['data']['chatroom_list'][index_row][0])
+            r = requests.get(url=group_url)
+            member = ""
+            for i in r.json().get('data').get('users'):
+                member += "账号 : {0}  姓名 : {1} \n".format(i[0], i[1])
+            QMessageBox.information(self, "群聊信息",
+                                    "群聊名称 : {0}\n群聊ID : {1}\n创建时间 : {2}\n\n群成员 :\n{3}".format(
+                                        r.json().get('data').get('name'),
+                                        r.json().get('data').get('id'),
+                                        datetime.now().fromisoformat(r.json().get('data').get('time')),
+                                        member),
+                                    QMessageBox.Yes)
+            print(r.json())
 
 
 if __name__ == '__main__':

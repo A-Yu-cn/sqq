@@ -8,11 +8,12 @@ import json
 
 from client.forgetPasswordWindow.forgetPasswordWindow import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QLineEdit
+from client.golbalFile import base_url
 
 
-class UserRegisterWindow(QMainWindow, Ui_Form):
+class ResetPasswordWindow(QMainWindow, Ui_Form):
     def __init__(self):
-        super(UserRegisterWindow, self).__init__()
+        super(ResetPasswordWindow, self).__init__()
         self.setupUi(self)
         # 禁止拉伸窗口
         self.setFixedSize(self.width(), self.height())
@@ -40,7 +41,7 @@ class UserRegisterWindow(QMainWindow, Ui_Form):
         # 重置密码
         else:
             resetData = {"email": email, "password": pwd1, "code": code}
-            url = "http://sqq.12138.site:1234/users/password"
+            url = base_url + "/users/password"
             r = requests.put(url, data=resetData)
             mes = json.loads(r.text)['mes']
             # 重置成功
@@ -53,10 +54,13 @@ class UserRegisterWindow(QMainWindow, Ui_Form):
 
     # 发送验证码
     def sendCode(self):
-        url = ""
-        mes = 1
-        if mes == 1:
+        url = base_url + "/code"
+        data = {"email": self.emailLineEdit.text(), "type": "2"}
+        r = requests.get(url=url, params=data)
+        print(r.json())
+        if r.json().get("mes"):
             QMessageBox.warning(self, "警告", "两次发送验证码时间\n间隔不能小于一分钟！", QMessageBox.Yes)
+            return
         else:
             QMessageBox.information(self, "提示", "发送成功！请注意查收！", QMessageBox.Yes)
 
@@ -64,7 +68,7 @@ class UserRegisterWindow(QMainWindow, Ui_Form):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
-    myWin = UserRegisterWindow()
+    myWin = ResetPasswordWindow()
 
     with open('../css/forgetWindow.css') as file:
         qss = file.readlines()

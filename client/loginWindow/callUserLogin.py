@@ -12,6 +12,8 @@ from client.loginWindow.userLogin import Ui_widget
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QLineEdit
 from client.listWindow.callListWindow import ListWindow
 from client.registerWindow.callUserRegister import UserRegisterWindow
+from client.forgetPasswordWindow.callForgetPasswordWindow import ResetPasswordWindow
+from client.golbalFile import base_url
 
 
 class UserLoginWindow(QMainWindow, Ui_widget):
@@ -33,6 +35,8 @@ class UserLoginWindow(QMainWindow, Ui_widget):
         self.label.setPixmap(jpg)
         # 绑定注册事件
         self.registerButton.clicked.connect(self.userRegister)
+        # 忘记密码
+        self.forgetPasswordButton.clicked.connect(self.forgetPassword)
 
     # 用户登录
     def userLogin(self):
@@ -61,7 +65,7 @@ class UserLoginWindow(QMainWindow, Ui_widget):
 
     # 验证登录
     def checkLogin(self, username, password):
-        url = "http://sqq.12138.site:1234/users/auth"
+        url = base_url + "/users/auth"
         loginData = {"identity": username, "password": password}
         r = requests.post(url=url, json=loginData)
         # 登录错误
@@ -79,6 +83,16 @@ class UserLoginWindow(QMainWindow, Ui_widget):
         self.regWindow = UserRegisterWindow()
         # 加载样式
         with open('../css/userRegister.css') as file:
+            qss = file.readlines()
+            qss = ''.join(qss).strip('\n')
+        self.regWindow.setStyleSheet(qss)
+        self.regWindow.show()
+
+    # 忘记密码
+    def forgetPassword(self):
+        self.regWindow = ResetPasswordWindow()
+        # 加载样式
+        with open('../css/forgetWindow.css') as file:
             qss = file.readlines()
             qss = ''.join(qss).strip('\n')
         self.regWindow.setStyleSheet(qss)
