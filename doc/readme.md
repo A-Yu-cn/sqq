@@ -7,11 +7,11 @@
 
 ### 部署环境
 
-- 根url：`http://pan.12138.site:1234`
-- 后台管理：`http://pan.12138.site:1234/admin`
+- 根url：`http://sqq.12138.site:1234`
+- 后台管理：`http://sqq.12138.site:1234/admin`
   - 账号: ml   
   - 密码：0412
-- socket地址：`(pan.12138.site, 12345)`
+- socket地址：`(sqq.12138.site, 12345)`
 
 ### post请求说明
 
