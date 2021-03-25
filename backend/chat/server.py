@@ -111,6 +111,7 @@ class Server(Thread):
         server = socket.socket()
         server.bind(('', self.port))
         server.listen(20)
+        logger.warning(f'bind {self.port}, start listening...')
         while True:
             client, addr = server.accept()
             try:
