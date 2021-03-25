@@ -23,6 +23,7 @@ urlpatterns = [
     path("users/", UserView.register),
     path("users/auth", UserView.login),
     path("users/friends", add_friend),
+    path('users/friends_and_chatroom', UserView.get_friends_data),
     path('users/password', UserView.reset_password),
     path("users/<userid>", UserView.get_userinfo),
     path("chatroom/", create_chatroom),

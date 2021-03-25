@@ -12,12 +12,17 @@ code_sender = codeSender()
 class UserView:
 
     @staticmethod
-    def get_login_data(user):
-        token = generate_token(user)
+    def get_friends_and_chatroom(user):
         friends = [(i.id, i.nickname) for i in user.friends.all()]
         friends += [(i.id, i.nickname) for i in user.friends_set.all()]
         friends = list(set(friends))
         chatroom_list = [(i.id, i.name) for i in user.chatroom.all()]
+        return friends, chatroom_list
+
+    @staticmethod
+    def get_login_data(user):
+        token = generate_token(user)
+        friends, chatroom_list = UserView.get_friends_and_chatroom(user)
         unread_message_db = user.unread.all()
         unread_message = [
             {
@@ -156,6 +161,15 @@ class UserView:
                 return wrap_response('该邮箱未注册')
         else:
             return wrap_response('wrong method')
+
+    @staticmethod
+    @token_verify
+    def get_friends_data(request, user):
+        friends, chatroom_list = UserView.get_friends_and_chatroom(user)
+        return wrap_response('', {
+            'friends': friends,
+            'chatroom_list': chatroom_list
+        })
 
 
 @csrf_exempt
