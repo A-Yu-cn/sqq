@@ -11,14 +11,16 @@ from client.chatWindow.callChatWindow import ChatWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem, QWidget, QHBoxLayout, QLabel, QSpacerItem, \
     QSizePolicy, QTreeWidget, QMessageBox, QMenu, QAction, QFileDialog
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from client.golbalFile import base_url
 from client.startGroup.callStartGroup import GroupWindow
 
 
+# from client.richTextEditorWindow.richText import
+
+
 # 内嵌自定义item对象
 class ItemWidget(QWidget):
-
     def __init__(self, text):
         super(ItemWidget, self).__init__()
         layout = QHBoxLayout(self)

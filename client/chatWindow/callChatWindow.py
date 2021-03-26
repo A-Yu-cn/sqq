@@ -9,6 +9,7 @@ from client.localClient import localClient
 from client.chatWindow.chatWindow import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from client.golbalFile import base_url
+from client.richTextEditorWindow.richText import RichTextWindow
 
 
 class ChatWindow(QMainWindow, Ui_Form):
@@ -49,12 +50,23 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.submitButton.clicked.connect(self.submitMessage)
         # 查询按钮
         self.queryHistoryButton.clicked.connect(self.queryHistoryMessageByDate)
+        # 富文本编辑
+        self.richTextButton.clicked.connect(self.openRichTextEditor)
+        # 发送消息
 
     # 发送消息
     def submitMessage(self):
-        currentMessage = self.textEdit.toPlainText()
+        currentMessage = self.textEdit.toHtml()
         if currentMessage == "":
             QMessageBox.warning(self, "提示", "请输入内容！", QMessageBox.Yes)
+        else:
+            self.sendMessage(currentMessage)
+
+    # 发送消息
+    def sendMessage(self, mes):
+        cl = localClient.Client(self.token, self.chatNumber)
+        cl.sendMessage(mes)
+        self.clearMessage(1)
 
     # 查询历史消息
     def queryHistoryMessage(self):
@@ -68,6 +80,7 @@ class ChatWindow(QMainWindow, Ui_Form):
 
     # 加载历史消息
     def loadHistoryMessage(self, data={}):
+        self.historyTextBrowser.clear()
         mes_username = ""
         mes_time = ""
         mes_content = ""
@@ -79,17 +92,18 @@ class ChatWindow(QMainWindow, Ui_Form):
                 mes_content = i.get("content")
                 self.historyTextBrowser.append('<h3 style="color:blue;">{0}\t{1}</h3>'.format(mes_username, mes_time))
                 self.historyTextBrowser.append(
-                    '<p style="background-color:lightyellow;color:black;">{0}</p>\n'.format(
-                        mes_content))
+                    '{0}\n'.format(mes_content))
                 # self.historyTextBrowser.append('<img src="logo.png"/>')
         except KeyError:
             return
 
-            # 清空输入框
-
-    def clearMessage(self):
-        choice = QMessageBox.information(self, "提示", "清空输入框内容？", QMessageBox.Yes | QMessageBox.No)
-        if choice == QMessageBox.Yes:
+    # 清空输入框
+    def clearMessage(self, flag=0):
+        if flag == 0:
+            choice = QMessageBox.information(self, "提示", "清空输入框内容？", QMessageBox.Yes | QMessageBox.No)
+            if choice == QMessageBox.Yes:
+                self.textEdit.setText("")
+        else:
             self.textEdit.setText("")
 
     # 接收消息事件
@@ -112,17 +126,22 @@ class ChatWindow(QMainWindow, Ui_Form):
         headers = {"Authorization": self.token}
         data = {"other_id": self.chatNumber, "start_time": dt1, "end_time": dt2}
         r = requests.get(url=url, json=data, headers=headers)
-        print(r)
-        print(r.text)
+        # print(r)
+        # print(r.text)
         try:
             return r.json()
         except ValueError:
             QMessageBox.warning(self, "警告", "查询失败，请重试！", QMessageBox.Yes)
 
-    # 发送消息
-    def sendMessage(self, mes):
-        cl = localClient.Client()
-        cl.client.sendall(cl.wrap_message(mes))
+    # 打开富文本编辑器
+    def openRichTextEditor(self):
+        self.richText = RichTextWindow()
+        self.richText.Signal.connect(self.updateRichTextMessage)
+        self.richText.show()
+
+    # 更新富文本消息
+    def updateRichTextMessage(self, mes_html):
+        self.textEdit.setText(mes_html)
 
 
 if __name__ == '__main__':

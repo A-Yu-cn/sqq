@@ -1,2 +1,2 @@
-QPushButton#historyButton,#clearButton,#submitButton,#queryHistoryButton{ color: black; background-color: lightblue;border-radius:3px; }
+QPushButton#historyButton,#clearButton,#submitButton,#queryHistoryButton,#richTextButton{ color: black; background-color: lightblue;border-radius:3px; }
 historyTextBrowser{position:absolute;right:100%;bottom:1px;width:0;height:0;border-width:12px;border-style:solid;border-color:transparent;margin-bottom:6px;border-right-width:22px;border-right-color:currentColor;color:#dddddd;}
