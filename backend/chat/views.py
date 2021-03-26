@@ -239,14 +239,18 @@ def get_message(request, user):
         m1 = Message.objects.filter(to=other_id, from_user=user, createTime__gte=start_time, createTime__lte=end_time)
         m2 = Message.objects.filter(from_user=other_user, to=user.id, createTime__gte=start_time,
                                     createTime__lte=end_time)
-        message_list = [{
-            'from': message.from_user.id,
+        message_list = chain(m1, m2)
+    else:
+        message_list = Message.objects.filter(to=other_id, createTime__gte=start_time, createTime__lte=end_time)
+    message_list = [{
+            'from': {
+                'id': message.from_user.id,
+                'nickname': message.from_user.nickname
+            },
             'to': message.to,
             'content': message.content,
             'time': timezone.localtime(message.createTime).isoformat()
-        } for message in chain(m1, m2)]
-    else:
-        message_list = Message.objects.filter(to=other_id, createTime__gte=start_time, createTime__lte=end_time)
+        } for message in sorted(message_list, key=lambda x: x.createTime)]
     return wrap_response('', {
         'message_list': message_list
     })
