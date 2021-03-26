@@ -27,7 +27,10 @@ def send_message(user, message):
 def wrap_message(message):
     """包装向客户发送的消息"""
     return json.dumps({
-        'from': message.from_user.id,
+        'from': {
+            'id': message.from_user.id,
+            'nickname': message.from_user.nickname
+        },
         'to': message.to,
         'content': message.content,
         'time': timezone.localtime(message.createTime).isoformat()
