@@ -57,9 +57,10 @@ class ResetPasswordWindow(QMainWindow, Ui_Form):
         url = base_url + "/code"
         data = {"email": self.emailLineEdit.text(), "type": "2"}
         r = requests.get(url=url, params=data)
+        print(r.text)
         print(r.json())
         if r.json().get("mes"):
-            QMessageBox.warning(self, "警告", "两次发送验证码时间\n间隔不能小于一分钟！", QMessageBox.Yes)
+            QMessageBox.warning(self, "警告", "{0}".format(r.json().get("mes")), QMessageBox.Yes)
             return
         else:
             QMessageBox.information(self, "提示", "发送成功！请注意查收！", QMessageBox.Yes)

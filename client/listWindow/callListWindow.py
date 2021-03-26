@@ -39,27 +39,9 @@ class ListWindow(QMainWindow, Ui_Form):
         # 记录登录信息
         self.treeWidget.header().setVisible(False)
         self.loginInfo = loginInfo
-        self.loginInfo = {'mes': '', 'data': {'self': {'id': 42560, 'nickname': 'username'},
-                                              'token': '92e5352dfae25bed36efa18db987d38e7fb989530a02656a2e319616690138af',
-                                              'friends': [[36568, '楷禅'], [82912, 'ttt']], 'chatroom_list': [[754167,
-                                                                                                             '1'],
-                                                                                                            [909262,
-                                                                                                             '1'],
-                                                                                                            [133093,
-                                                                                                             '啦啦啦'],
-                                                                                                            [149601,
-                                                                                                             '12345'],
-                                                                                                            [981140,
-                                                                                                             '123'],
-                                                                                                            [110049,
-                                                                                                             '123'],
-                                                                                                            [781909,
-                                                                                                             '12345678']],
-                                              'unread_message': []}}
-
+        self.token = 'e8921h9h9898189921e9deh91hed912eh9128h9'
+        # 加载列表
         self.loadList()
-        # 点击父节点
-        self.treeWidget.itemChanged.connect(self.handleChanged)
         # 隐藏头部
         self.treeWidget.header().setVisible(False)
         # 添加好友按钮
@@ -70,15 +52,23 @@ class ListWindow(QMainWindow, Ui_Form):
 
     # 加载列表
     def loadList(self):
+        count1 = self.treeWidget.topLevelItem(0).childCount()
+        count2 = self.treeWidget.topLevelItem(1).childCount()
+        for i in range(count1):
+            self.treeWidget.topLevelItem(0).removeChild(self.treeWidget.topLevelItem(0).child(0))
+        for i in range(count2):
+            self.treeWidget.topLevelItem(1).removeChild(self.treeWidget.topLevelItem(1).child(0))
         # 刷新好友列表
-        # url = base_url + ""
-        # try:
-        #     headers = {"Authorization": self.loginInfo['data']['token']}
-        #     r = requests.post(url, headers=headers)
-        # except KeyError:
-        #     QMessageBox.warning(self, "警告", "您的用户Token无效！", QMessageBox.Yes)
-        #     return
-        # friendList = r.json()
+        url = base_url + "/users/friends_and_chatroom"
+        try:
+            headers = {"Authorization": self.token}
+            r = requests.get(url, headers=headers)
+            self.loginInfo = r.json()
+            # print(self.loginInfo)
+        except KeyError:
+            QMessageBox.warning(self, "警告", "您的用户Token无效！", QMessageBox.Yes)
+            return
+
         for i in self.loginInfo['data']['friends']:
             # 生成item
             _item = QtWidgets.QTreeWidgetItem(self.treeWidget.topLevelItem(0))
@@ -93,16 +83,6 @@ class ListWindow(QMainWindow, Ui_Form):
             _widget = ItemWidget(i[1])
             self.treeWidget.setItemWidget(_item, 0, _widget)
 
-    # 父节点全选/取消全选
-    def handleChanged(self, item, column):
-        count = item.childCount()
-        if item.checkState(column) == Qt.Checked:
-            for index in range(count):
-                item.child(index).setCheckState(0, Qt.Checked)
-        if item.checkState(column) == Qt.Unchecked:
-            for index in range(count):
-                item.child(index).setCheckState(0, Qt.Unchecked)
-
     # 添加好友
     def addFriend(self):
         f_id = self.friendLineEdit.text()
@@ -112,7 +92,7 @@ class ListWindow(QMainWindow, Ui_Form):
             url = base_url + "/users/friends"
             addData = {"friend_id": int(f_id)}
             try:
-                headers = {"Authorization": self.loginInfo['data']['token']}
+                headers = {"Authorization": self.token}
                 r = requests.post(url, json=addData, headers=headers)
             except KeyError:
                 QMessageBox.warning(self, "警告", "您的用户Token无效！", QMessageBox.Yes)
@@ -123,6 +103,7 @@ class ListWindow(QMainWindow, Ui_Form):
             # 添加成功
             else:
                 QMessageBox.information(self, "提示", "添加成功！", QMessageBox.Yes)
+                self.loadList()
 
     # 打开聊天界面
     def startChat(self, item):
@@ -144,7 +125,7 @@ class ListWindow(QMainWindow, Ui_Form):
         elif index_top == 0:
             try:
                 chatNumber = self.loginInfo.get('data').get('friends')[index_row]
-                self.chatWindow = ChatWindow(chatList=chatNumber, token=self.loginInfo.get('data').get('token'))
+                self.chatWindow = ChatWindow(chatList=chatNumber, token=self.token)
                 # 加载样式
                 with open('../css/chatWindow.css') as file:
                     qss = file.readlines()
@@ -160,7 +141,7 @@ class ListWindow(QMainWindow, Ui_Form):
         elif index_top == 1:
             try:
                 chatNumber = self.loginInfo.get('data').get('chatroom_list')[index_row]
-                self.chatWindow = ChatWindow(chatList=chatNumber, token=self.loginInfo.get('data').get('token'))
+                self.chatWindow = ChatWindow(chatList=chatNumber, token=self.token)
                 # 加载样式
                 with open('../css/chatWindow.css') as file:
                     qss = file.readlines()
@@ -175,14 +156,13 @@ class ListWindow(QMainWindow, Ui_Form):
 
     # 发起群聊
     def startGroup(self):
-        self.groupWindow = GroupWindow(self.loginInfo['data']['friends'], self.loginInfo['data']['token'])
+        self.groupWindow = GroupWindow(self.loginInfo['data']['friends'], self.token)
         with open('../css/startGroup.css') as file:
             qss = file.readlines()
             qss = ''.join(qss).strip('\n')
         self.groupWindow.setStyleSheet(qss)
+        self.groupWindow.my_Signal.connect(self.loadList)
         self.groupWindow.show()
-
-        # 定义treewidget中item右键界面
 
     # 右键菜单绑定事件
     def treeWidgetItem_fun(self, pos):
@@ -192,7 +172,7 @@ class ListWindow(QMainWindow, Ui_Form):
             popMenu = QMenu()
             popMenu.addAction(QAction('查看信息', self))
             popMenu.addAction(QAction('发送消息', self))
-            popMenu.addAction(QAction('删除好友', self))
+            popMenu.addAction(QAction('删除', self))
             popMenu.triggered[QAction].connect(self.processtrigger)
             popMenu.exec_(QCursor.pos())
 
@@ -205,8 +185,8 @@ class ListWindow(QMainWindow, Ui_Form):
             parent = item.parent()
             index_top = self.treeWidget.indexOfTopLevelItem(parent)
             index_row = parent.indexOfChild(item)
-            print(index_top)
-            print(index_row)
+            # print(index_top)
+            # print(index_row)
             if command == "发送消息":
                 self.startChat(item)
                 return
@@ -227,7 +207,7 @@ class ListWindow(QMainWindow, Ui_Form):
                                         r.json().get('data').get('id'),
                                         r.json().get('data').get('email')),
                                     QMessageBox.Yes)
-            print(r.json())
+            # print(r.json())
         elif index_top == 1:
             group_url = base_url + "/chatroom/" + str(self.loginInfo['data']['chatroom_list'][index_row][0])
             r = requests.get(url=group_url)
@@ -241,7 +221,7 @@ class ListWindow(QMainWindow, Ui_Form):
                                         datetime.now().fromisoformat(r.json().get('data').get('time')),
                                         member),
                                     QMessageBox.Yes)
-            print(r.json())
+            # print(r.json())
 
 
 if __name__ == '__main__':

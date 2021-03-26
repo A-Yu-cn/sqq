@@ -90,6 +90,7 @@ class UserLoginWindow(QMainWindow, Ui_widget):
 
     # 忘记密码
     def forgetPassword(self):
+        """忘记密码"""
         self.regWindow = ResetPasswordWindow()
         # 加载样式
         with open('../css/forgetWindow.css') as file:
@@ -97,6 +98,21 @@ class UserLoginWindow(QMainWindow, Ui_widget):
             qss = ''.join(qss).strip('\n')
         self.regWindow.setStyleSheet(qss)
         self.regWindow.show()
+
+
+def start():
+    app = QApplication(sys.argv)
+
+    myWin = UserLoginWindow()
+
+    with open('../css/userLogin.css') as file:
+        qss = file.readlines()
+        qss = ''.join(qss).strip('\n')
+    myWin.setStyleSheet(qss)
+
+    myWin.show()
+
+    sys.exit(app.exec_())
 
 
 if __name__ == '__main__':

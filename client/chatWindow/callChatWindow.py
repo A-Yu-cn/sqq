@@ -8,6 +8,7 @@ from client.localClient import localClient
 
 from client.chatWindow.chatWindow import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
+from client.golbalFile import base_url
 
 
 class ChatWindow(QMainWindow, Ui_Form):
@@ -66,21 +67,26 @@ class ChatWindow(QMainWindow, Ui_Form):
             self.widget.hide()
 
     # 加载历史消息
-    def loadHistoryMessage(self):
+    def loadHistoryMessage(self, data={}):
         mes_username = ""
         mes_time = ""
         mes_content = ""
-        for i in range(0, 100):
-            mes_username = "hx"
-            mes_time = "2021-03-17 10:02:20"
-            mes_content = "666"
-            self.historyTextBrowser.append('<h3 style="color:blue;">{0}\t{1}</h3>'.format(mes_username, mes_time))
-            self.historyTextBrowser.append(
-                '<p style="background-color:lightyellow;color:black;">{0}</p>\n'.format(
-                    mes_content))
-            # self.historyTextBrowser.append('<img src="logo.png"/>')
+        print(data)
+        try:
+            for i in data['data']['message_list']:
+                mes_username = i.get("from")
+                mes_time = i.get("time")
+                mes_content = i.get("content")
+                self.historyTextBrowser.append('<h3 style="color:blue;">{0}\t{1}</h3>'.format(mes_username, mes_time))
+                self.historyTextBrowser.append(
+                    '<p style="background-color:lightyellow;color:black;">{0}</p>\n'.format(
+                        mes_content))
+                # self.historyTextBrowser.append('<img src="logo.png"/>')
+        except KeyError:
+            return
 
-    # 清空输入框
+            # 清空输入框
+
     def clearMessage(self):
         choice = QMessageBox.information(self, "提示", "清空输入框内容？", QMessageBox.Yes | QMessageBox.No)
         if choice == QMessageBox.Yes:
@@ -95,9 +101,10 @@ class ChatWindow(QMainWindow, Ui_Form):
         dt1 = self.dateTimeEdit_1.dateTime().toPyDateTime().replace(tzinfo=datetime.timezone.utc).isoformat()
         dt2 = self.dateTimeEdit_2.dateTime().toPyDateTime().replace(tzinfo=datetime.timezone.utc).isoformat()
         # 获取历史消息
-        self.getHisMessage(dt1, dt2)
-        print(dt1)
-        print(dt2)
+        data = self.getHisMessage(dt1, dt2)
+        self.loadHistoryMessage(data)
+        # print(dt1)
+        # print(dt2)
 
     # 查询历史消息请求
     def getHisMessage(self, dt1, dt2):
@@ -107,6 +114,10 @@ class ChatWindow(QMainWindow, Ui_Form):
         r = requests.get(url=url, json=data, headers=headers)
         print(r)
         print(r.text)
+        try:
+            return r.json()
+        except ValueError:
+            QMessageBox.warning(self, "警告", "查询失败，请重试！", QMessageBox.Yes)
 
     # 发送消息
     def sendMessage(self, mes):

@@ -8,13 +8,13 @@ def recv(c):
         print(c.recv(4096).decode())
 
 
-token = "92e5352dfae25bed36efa18db987d38e7fb989530a02656a2e319616690138af"
+token = "3b17f323e22a750f443c65c656047444f69328bb8e80c1144ef922d2bcf31de5"
 
 
 def wrap_message(mes):
     return json.dumps({
         'Authorization': token,
-        'to': 36568,
+        'to': '42560',
         'content': mes
     }).encode()
 
