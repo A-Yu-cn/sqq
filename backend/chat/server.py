@@ -87,6 +87,7 @@ class Receiver(Thread):
                     self.client.sendall(wrap_error_data('json decode error'))
                 except ConnectionAbortedError:
                     # 客户端断开连接
+                    self.client.close()
                     client_pool.pop(self.user_id)
                     logger.warning(f'User<{self.user_id}> disconnect')
                     break
@@ -98,8 +99,13 @@ class Receiver(Thread):
                 self.client.sendall(wrap_error_data("wrong destination"))
             except (ConnectionError, ConnectionAbortedError):
                 # 客户端断开连接
+                self.client.close()
                 client_pool.pop(self.user_id)
                 logger.warning(f'User<{self.user_id}> disconnect')
+                break
+            except Exception as e:
+                self.client.close()
+                logger.error(e)
                 break
 
 
