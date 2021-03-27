@@ -118,6 +118,7 @@ class Server(Thread):
         while True:
             client, addr = server.accept()
             try:
+                logging.warning(f'connecting from {addr}')
                 data = json.loads(client.recv(4096))
                 token = Token.objects.get(content=data.get('Authorization'))
                 client_pool[token.user.id] = client
