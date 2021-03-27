@@ -74,7 +74,7 @@ class RichTextWindow(QMainWindow):
         self.right_action = self.tool_bar.addAction(QIcon('media/rich_text/right.png'), '')
         self.right_action.triggered.connect(lambda: self.change_row_alignment('right'))
         # 发送
-        self.submit_action = self.tool_bar.addAction("发送")
+        self.submit_action = self.tool_bar.addAction("保存")
         self.submit_action.triggered.connect(self.submitMessage)
         # # 两边对齐
         # self.left_right_action = self.tool_bar.addAction(QIcon('icons/left_right.png'), '')

@@ -3,9 +3,8 @@ import sys
 import requests
 from PyQt5.QtCore import QDate
 from qtpy import QtCore
-from client.golbalFile import base_url
 from client.localClient import localClient
-
+from threading import Thread
 from client.chatWindow.chatWindow import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from client.golbalFile import base_url
@@ -22,6 +21,8 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.chatUsername = chatList[1]
         # token
         self.token = token
+        # 建立客户端连接
+        self.cl = localClient.Client(self.token, self.chatNumber)
         '''
         样式控制
         '''
@@ -52,21 +53,9 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.queryHistoryButton.clicked.connect(self.queryHistoryMessageByDate)
         # 富文本编辑
         self.richTextButton.clicked.connect(self.openRichTextEditor)
-        # 发送消息
-
-    # 发送消息
-    def submitMessage(self):
-        currentMessage = self.textEdit.toHtml()
-        if currentMessage == "":
-            QMessageBox.warning(self, "提示", "请输入内容！", QMessageBox.Yes)
-        else:
-            self.sendMessage(currentMessage)
-
-    # 发送消息
-    def sendMessage(self, mes):
-        cl = localClient.Client(self.token, self.chatNumber)
-        cl.sendMessage(mes)
-        self.clearMessage(1)
+        # 接收消息
+        self.cl.t = Thread(target=self.cl.recv, args=(self.cl.client,))
+        self.cl.t.start()
 
     # 查询历史消息
     def queryHistoryMessage(self):
@@ -84,31 +73,20 @@ class ChatWindow(QMainWindow, Ui_Form):
         mes_username = ""
         mes_time = ""
         mes_content = ""
-        print(data)
+        # print(data)
         try:
             for i in data['data']['message_list']:
-                mes_username = i.get("from")
+                mes_username = i.get("from").get("nickname")
+                mes_userid = i.get("from").get("id")
                 mes_time = i.get("time")
                 mes_content = i.get("content")
-                self.historyTextBrowser.append('<h3 style="color:blue;">{0}\t{1}</h3>'.format(mes_username, mes_time))
                 self.historyTextBrowser.append(
-                    '{0}\n'.format(mes_content))
+                    '<h3 style="color:blue;">{0}({1})\n<h4 style="color:lightblue;">{2}</h4></h3>'
+                        .format(mes_username, mes_userid, str(datetime.datetime.now().fromisoformat(mes_time))))
+                self.historyTextBrowser.append('{0}\n'.format(mes_content))
                 # self.historyTextBrowser.append('<img src="logo.png"/>')
         except KeyError:
             return
-
-    # 清空输入框
-    def clearMessage(self, flag=0):
-        if flag == 0:
-            choice = QMessageBox.information(self, "提示", "清空输入框内容？", QMessageBox.Yes | QMessageBox.No)
-            if choice == QMessageBox.Yes:
-                self.textEdit.setText("")
-        else:
-            self.textEdit.setText("")
-
-    # 接收消息事件
-    def receiveMessage(self):
-        pass
 
     # 根据时间查询历史记录
     def queryHistoryMessageByDate(self):
@@ -132,6 +110,45 @@ class ChatWindow(QMainWindow, Ui_Form):
             return r.json()
         except ValueError:
             QMessageBox.warning(self, "警告", "查询失败，请重试！", QMessageBox.Yes)
+            return
+
+    # 清空输入框
+    def clearMessage(self, flag=0):
+        if flag == 0:
+            choice = QMessageBox.information(self, "提示", "清空输入框内容？", QMessageBox.Yes | QMessageBox.No)
+            if choice == QMessageBox.Yes:
+                self.textEdit.setText("")
+        else:
+            self.textEdit.setText("")
+
+    # 发送消息
+    def submitMessage(self):
+        currentMessage = self.textEdit.toHtml()
+        if currentMessage == "":
+            QMessageBox.warning(self, "提示", "请输入内容！", QMessageBox.Yes)
+        else:
+            self.sendMessage(currentMessage)
+
+    # 客户端发送消息
+    def sendMessage(self, mes):
+        # socket发送消息
+        self.cl = localClient.Client(self.token, self.chatNumber)
+        self.cl.sendMessage(mes)
+        # 界面加载消息
+        mes_username = "我"
+        mes_time = str(datetime.datetime.now().isoformat())
+        mes_content = mes
+        self.messageTextBrowser.append(
+            '<p style="color:blue;">{0}\t\t<text style="color:lightblue;">{1}</text></p>'
+                .format(mes_username, str(datetime.datetime.now().fromisoformat(mes_time))))
+        self.messageTextBrowser.append('{0}\n'.format(mes_content))
+        self.clearMessage(1)
+
+    # 发送消息并创建用户消息目录
+
+    # 接收消息事件
+    def receiveMessage(self):
+        self.cl.recv()
 
     # 打开富文本编辑器
     def openRichTextEditor(self):
