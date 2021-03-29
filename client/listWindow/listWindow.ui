@@ -60,6 +60,9 @@
      <height>41</height>
     </rect>
    </property>
+   <property name="cursor">
+    <cursorShape>PointingHandCursor</cursorShape>
+   </property>
    <property name="text">
     <string>添加好友</string>
    </property>
@@ -72,6 +75,9 @@
      <width>101</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="cursor">
+    <cursorShape>PointingHandCursor</cursorShape>
    </property>
    <property name="text">
     <string>发起群聊</string>

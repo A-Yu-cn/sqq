@@ -25,9 +25,11 @@ class Ui_Form(object):
         self.friendLineEdit.setObjectName("friendLineEdit")
         self.addFriendPushButton = QtWidgets.QPushButton(Form)
         self.addFriendPushButton.setGeometry(QtCore.QRect(220, 10, 101, 41))
+        self.addFriendPushButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.addFriendPushButton.setObjectName("addFriendPushButton")
         self.startGroupPushButton = QtWidgets.QPushButton(Form)
         self.startGroupPushButton.setGeometry(QtCore.QRect(330, 10, 101, 41))
+        self.startGroupPushButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.startGroupPushButton.setObjectName("startGroupPushButton")
 
         self.retranslateUi(Form)

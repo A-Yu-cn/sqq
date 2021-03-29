@@ -47,3 +47,21 @@ QTreeView:branch:hover {
 QTreeView:branch:selected {
     background: rgb(41, 56, 71);
 }
+
+QLineEdit{
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+QLineEdit:focus{
+    outline: 0;
+    border: 2px solid #80bdff;
+}
+
+QPushButton#addFriendPushButton, #startGroupPushButton{
+    color: #fff;
+    border:1px solid transparent;
+    background-color: #007bff;
+    border-radius: 3px;
+}
+
