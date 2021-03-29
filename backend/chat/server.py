@@ -144,6 +144,10 @@ class Server(Thread):
                 logger.warning(f'{addr} time out')
                 client.sendall(wrap_error_data('time out'))
                 client.close()
+            except (ConnectionResetError, ConnectionAbortedError, ConnectionError):
+                client.close()
+            except Exception as e:
+                logger.warning(e)
 
 
 s = Server()
