@@ -9,11 +9,13 @@ import json
 from registerWindow.userRegister import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QLineEdit
 from golbalFile import base_url
+from PyQt5.QtGui import QIcon
 
 
 class UserRegisterWindow(QMainWindow, Ui_Form):
     def __init__(self):
         super(UserRegisterWindow, self).__init__()
+        self.setWindowIcon(QIcon('../imgs/register.png'))
         self.setupUi(self)
         # 禁止拉伸窗口
         self.setFixedSize(self.width(), self.height())
