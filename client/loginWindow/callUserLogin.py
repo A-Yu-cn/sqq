@@ -21,6 +21,7 @@ class UserLoginWindow(QMainWindow, Ui_widget):
         super(UserLoginWindow, self).__init__()
         self.setupUi(self)
         self.setWindowIcon(QtGui.QIcon('../imgs/chat.png'))
+        self.setWindowTitle('SQQ')
         # 待传递消息
         self.loginInfo = dict()
         # 禁止拉伸窗口

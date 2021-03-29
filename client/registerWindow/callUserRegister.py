@@ -16,6 +16,7 @@ class UserRegisterWindow(QMainWindow, Ui_Form):
     def __init__(self):
         super(UserRegisterWindow, self).__init__()
         self.setWindowIcon(QIcon('../imgs/register.png'))
+        self.setWindowTitle('注册')
         self.setupUi(self)
         # 禁止拉伸窗口
         self.setFixedSize(self.width(), self.height())
