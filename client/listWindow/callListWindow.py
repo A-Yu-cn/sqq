@@ -10,7 +10,7 @@ from listWindow.listWindow import Ui_Form
 from chatWindow.callChatWindow import ChatWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem, QWidget, QHBoxLayout, QLabel, QSpacerItem, \
     QSizePolicy, QTreeWidget, QMessageBox, QMenu, QAction, QFileDialog
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import Qt, pyqtSignal
 from golbalFile import base_url
 from startGroup.callStartGroup import GroupWindow
@@ -36,11 +36,14 @@ class ListWindow(QMainWindow, Ui_Form):
     def __init__(self, loginInfo):
         super(ListWindow, self).__init__()
         self.setupUi(self)
+        self.setWindowTitle(loginInfo.get('data').get('self').get('nickname'))
+        self.setWindowIcon(QtGui.QIcon('../imgs/user.png'))
         self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)  # 打开右键菜单的策略
         self.treeWidget.customContextMenuRequested.connect(self.treeWidgetItem_fun)  # 绑定事件
         # 记录登录信息
         self.treeWidget.header().setVisible(False)
         self.loginInfo = loginInfo
+        # TODO: 记得修改
         self.token = 'e8921h9h9898189921e9deh91hed912eh9128h9'
         # 加载列表
         self.loadList()
