@@ -8,6 +8,7 @@ import json
 
 from forgetPasswordWindow.forgetPasswordWindow import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QLineEdit
+from PyQt5.QtGui import QIcon
 from golbalFile import base_url
 
 
@@ -15,6 +16,8 @@ class ResetPasswordWindow(QMainWindow, Ui_Form):
     def __init__(self):
         super(ResetPasswordWindow, self).__init__()
         self.setupUi(self)
+        self.setWindowTitle('重置密码')
+        self.setWindowIcon(QIcon('../imgs/password.png'))
         # 禁止拉伸窗口
         self.setFixedSize(self.width(), self.height())
         # 重置密码事件
@@ -54,8 +57,12 @@ class ResetPasswordWindow(QMainWindow, Ui_Form):
 
     # 发送验证码
     def sendCode(self):
+        email = self.emailLineEdit.text()
+        if '@' not in email:
+            QMessageBox.warning(self, '警告', '邮箱输入错误')
+            return
         url = base_url + "/code"
-        data = {"email": self.emailLineEdit.text(), "type": "2"}
+        data = {"email": email, "type": "2"}
         r = requests.get(url=url, params=data)
         print(r.text)
         print(r.json())

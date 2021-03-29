@@ -42,6 +42,7 @@ class Ui_Form(object):
         font = QtGui.QFont()
         font.setPointSize(10)
         self.sendCodeButton.setFont(font)
+        self.sendCodeButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.sendCodeButton.setObjectName("sendCodeButton")
         self.passwordLineEdit = QtWidgets.QLineEdit(Form)
         self.passwordLineEdit.setGeometry(QtCore.QRect(190, 30, 221, 41))
@@ -85,6 +86,7 @@ class Ui_Form(object):
         font.setBold(True)
         font.setWeight(75)
         self.resetButton.setFont(font)
+        self.resetButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.resetButton.setObjectName("resetButton")
 
         self.retranslateUi(Form)
