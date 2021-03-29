@@ -78,6 +78,7 @@ class Ui_Form(object):
         font.setBold(True)
         font.setWeight(75)
         self.registerButton.setFont(font)
+        self.registerButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.registerButton.setObjectName("registerButton")
         self.label_6 = QtWidgets.QLabel(Form)
         self.label_6.setGeometry(QtCore.QRect(40, 330, 91, 31))
@@ -99,6 +100,7 @@ class Ui_Form(object):
         font = QtGui.QFont()
         font.setPointSize(10)
         self.sendCodeButton.setFont(font)
+        self.sendCodeButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.sendCodeButton.setObjectName("sendCodeButton")
 
         self.retranslateUi(Form)

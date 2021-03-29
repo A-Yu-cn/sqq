@@ -58,6 +58,10 @@ class UserRegisterWindow(QMainWindow, Ui_Form):
 
     # 发送验证码
     def sendCode(self):
+        email = self.emailLineEdit.text()
+        if '@' not in email:
+            QMessageBox.warning(self, '警告', '邮箱输入有误')
+            return
         url = base_url + "/code"
         data = {"email": self.emailLineEdit.text(), "type": "1"}
         r = requests.get(url=url, params=data)
