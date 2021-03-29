@@ -49,6 +49,7 @@ class Receiver(Thread):
     def __init__(self, client, user_id, *args, **kwargs):
         super(Receiver, self).__init__(*args, **kwargs)
         self.client = client
+        self.client.settimeout(int(os.environ.get('RECV_TIME_OUT')))     # 接受消息超时
         self.user_id = user_id
         self.recv_buff = int(os.environ.get('TCP_RECV_BUFF'))  # 接受缓冲区
 
@@ -97,12 +98,16 @@ class Receiver(Thread):
                 self.client.sendall(wrap_error_data('wrong user id'))
             except ValueError:
                 self.client.sendall(wrap_error_data("wrong destination"))
-            except (ConnectionError, ConnectionAbortedError):
+            except (ConnectionError, ConnectionAbortedError, ConnectionResetError):
                 # 客户端断开连接
                 self.client.close()
                 client_pool.pop(self.user_id)
                 logger.warning(f'User<{self.user_id}> disconnect')
                 break
+            except socket.timeout:
+                self.client.close()
+                client_pool.pop(self.user_id)
+                logger.warning(f'User<{self.user_id}> time out')
             except Exception as e:
                 self.client.close()
                 logger.error(e)
