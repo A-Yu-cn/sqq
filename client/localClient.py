@@ -17,6 +17,10 @@ class Client:
             "Authorization": self.token
         }).encode())
 
+        __instance = None
+        client = None
+        socket_address = ('sqq.12138.site', 12345)
+
         # t = Thread(target=self.recv, args=(self.client,))
         # t.start()
 

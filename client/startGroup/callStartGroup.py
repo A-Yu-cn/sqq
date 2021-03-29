@@ -1,15 +1,10 @@
-import datetime
 import sys
 import requests
-from PyQt5.QtCore import QDate, pyqtSignal
-from qtpy import QtCore
-from client.golbalFile import base_url
-from client.localClient import localClient
+from PyQt5.QtCore import pyqtSignal
 import json
 
 from client.startGroup.startGroup import Ui_Form
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QAbstractItemView, QListWidget, QMainWindow, QCheckBox, \
-    QListWidgetItem, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 from client.golbalFile import base_url
