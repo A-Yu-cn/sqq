@@ -6,9 +6,9 @@ import sys
 import requests
 import json
 
-from client.registerWindow.userRegister import Ui_Form
+from registerWindow.userRegister import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QLineEdit
-from client.golbalFile import base_url
+from golbalFile import base_url
 
 
 class UserRegisterWindow(QMainWindow, Ui_Form):

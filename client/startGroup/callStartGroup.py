@@ -3,11 +3,11 @@ import requests
 from PyQt5.QtCore import pyqtSignal
 import json
 
-from client.startGroup.startGroup import Ui_Form
+from startGroup.startGroup import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
-from client.golbalFile import base_url
+from golbalFile import base_url
 
 
 class GroupWindow(QMainWindow, Ui_Form):

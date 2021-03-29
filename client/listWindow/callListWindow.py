@@ -6,17 +6,17 @@ import time
 import requests
 from PyQt5.QtGui import QCursor
 
-from client.listWindow.listWindow import Ui_Form
-from client.chatWindow.callChatWindow import ChatWindow
+from listWindow.listWindow import Ui_Form
+from chatWindow.callChatWindow import ChatWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem, QWidget, QHBoxLayout, QLabel, QSpacerItem, \
     QSizePolicy, QTreeWidget, QMessageBox, QMenu, QAction, QFileDialog
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import Qt, pyqtSignal
-from client.golbalFile import base_url
-from client.startGroup.callStartGroup import GroupWindow
+from golbalFile import base_url
+from startGroup.callStartGroup import GroupWindow
 
 
-# from client.richTextEditorWindow.richText import
+# from richTextEditorWindow.richText import
 
 
 # 内嵌自定义item对象

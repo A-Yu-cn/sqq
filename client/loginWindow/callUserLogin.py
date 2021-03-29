@@ -8,12 +8,12 @@ from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 import requests
 
-from client.loginWindow.userLogin import Ui_widget
+from loginWindow.userLogin import Ui_widget
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QLineEdit
-from client.listWindow.callListWindow import ListWindow
-from client.registerWindow.callUserRegister import UserRegisterWindow
-from client.forgetPasswordWindow.callForgetPasswordWindow import ResetPasswordWindow
-from client.golbalFile import base_url
+from listWindow.callListWindow import ListWindow
+from registerWindow.callUserRegister import UserRegisterWindow
+from forgetPasswordWindow.callForgetPasswordWindow import ResetPasswordWindow
+from golbalFile import base_url
 
 
 class UserLoginWindow(QMainWindow, Ui_widget):

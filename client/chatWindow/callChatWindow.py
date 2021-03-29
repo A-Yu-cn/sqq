@@ -3,12 +3,12 @@ import sys
 import requests
 from PyQt5.QtCore import QDate
 from qtpy import QtCore
-from client import localClient
+import localClient
 from threading import Thread
-from client.chatWindow.chatWindow import Ui_Form
+from chatWindow.chatWindow import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
-from client.golbalFile import base_url
-from client.richTextEditorWindow.richText import RichTextWindow
+from golbalFile import base_url
+from richTextEditorWindow.richText import RichTextWindow
 
 
 class ChatWindow(QMainWindow, Ui_Form):
