@@ -125,7 +125,9 @@ class Server(Thread):
             client, addr = server.accept()
             try:
                 logging.warning(f'connecting from {addr}')
+                client.settimeout(3)
                 data = json.loads(client.recv(4096))
+                client.settimeout(None)
                 token = Token.objects.get(content=data.get('Authorization'))
                 client_pool[token.user.id] = client
                 client.sendall(json.dumps({"mes": "", "data": token.user.id}).encode())
@@ -137,6 +139,10 @@ class Server(Thread):
                 client.close()
             except Token.DoesNotExist:
                 client.sendall(wrap_error_data('wrong token'))
+                client.close()
+            except socket.timeout:
+                logger.warning(f'{addr} time out')
+                client.sendall(wrap_error_data('time out'))
                 client.close()
 
 
