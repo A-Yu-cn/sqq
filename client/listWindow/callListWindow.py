@@ -35,15 +35,14 @@ class ListWindow(QMainWindow, Ui_Form):
     def __init__(self, loginInfo):
         super(ListWindow, self).__init__()
         self.setupUi(self)
-        # self.setWindowTitle(loginInfo.get('data').get('self').get('nickname'))
+        self.setWindowTitle(loginInfo.get('data').get('self').get('nickname'))
         self.setWindowIcon(QtGui.QIcon('../imgs/user.png'))
         self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)  # 打开右键菜单的策略
         self.treeWidget.customContextMenuRequested.connect(self.treeWidgetItem_fun)  # 绑定事件
         # 记录登录信息
         self.treeWidget.header().setVisible(False)
         self.loginInfo = loginInfo
-        # TODO: 记得修改
-        self.token = 'e8921h9h9898189921e9deh91hed912eh9128h9'
+        self.token = global_data.token
         # 加载列表
         self.loadList()
         # 隐藏头部

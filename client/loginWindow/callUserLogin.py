@@ -13,6 +13,9 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QLineEdit
 from listWindow.callListWindow import ListWindow
 from registerWindow.callUserRegister import UserRegisterWindow
 from forgetPasswordWindow.callForgetPasswordWindow import ResetPasswordWindow
+from utils.message_sender import MessageSender
+from utils.message_receiver import MessageReceiver
+from utils import connect_server
 from golbalFile import GlobalData
 
 global_data = GlobalData()
@@ -76,8 +79,14 @@ class UserLoginWindow(QMainWindow, Ui_widget):
         if r.status_code == 500:
             return False
         elif json.loads(r.text)['mes'] == "":
+            # 登录成功事件
             self.loginInfo = json.loads(r.text)
-            print(self.loginInfo)
+            global_data.self_data = self.loginInfo.get('data').get('self')
+            global_data.token = self.loginInfo.get('data').get('token')
+            # 建立连接，开启消息发送线程
+            connect_server.connect()
+            MessageSender().start()
+            MessageReceiver().start()
             return True
         else:
             return False

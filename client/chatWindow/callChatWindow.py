@@ -2,6 +2,7 @@ import datetime
 import sys
 import requests
 from PyQt5.QtCore import QDate
+from PyQt5 import QtGui
 from qtpy import QtCore
 import localClient
 from threading import Thread
@@ -20,11 +21,10 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.setupUi(self)
         # 聊天码
         self.chatNumber = chatList[0]
+        global_data.chat_user = self.chatNumber
         self.chatUsername = chatList[1]
         # token
         self.token = token
-        # 建立客户端连接
-        self.cl = localClient.Client(self.token, self.chatNumber)
         '''
         样式控制
         '''
@@ -55,9 +55,6 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.queryHistoryButton.clicked.connect(self.queryHistoryMessageByDate)
         # 富文本编辑
         self.richTextButton.clicked.connect(self.openRichTextEditor)
-        # 接收消息
-        self.cl.t = Thread(target=self.cl.recv, args=(self.cl.client,))
-        self.cl.t.start()
 
     # 查询历史消息
     def queryHistoryMessage(self):
@@ -133,9 +130,7 @@ class ChatWindow(QMainWindow, Ui_Form):
 
     # 客户端发送消息
     def sendMessage(self, mes):
-        # socket发送消息
-        self.cl = localClient.Client(self.token, self.chatNumber)
-        self.cl.sendMessage(mes)
+        global_data.message_sender_queue.put((self.chatNumber, mes))
         # 界面加载消息
         mes_username = "我"
         mes_time = str(datetime.datetime.now().isoformat())
@@ -146,12 +141,6 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.messageTextBrowser.append('{0}\n'.format(mes_content))
         self.clearMessage(1)
 
-    # 发送消息并创建用户消息目录
-
-    # 接收消息事件
-    def receiveMessage(self):
-        self.cl.recv()
-
     # 打开富文本编辑器
     def openRichTextEditor(self):
         self.richText = RichTextWindow()
@@ -161,6 +150,10 @@ class ChatWindow(QMainWindow, Ui_Form):
     # 更新富文本消息
     def updateRichTextMessage(self, mes_html):
         self.textEdit.setText(mes_html)
+
+    def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
+        # 这里是关闭聊天窗口
+        global_data.chat_user = 0
 
 
 if __name__ == '__main__':
