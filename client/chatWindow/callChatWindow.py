@@ -105,7 +105,7 @@ class ChatWindow(QMainWindow, Ui_Form):
         url = global_data.base_url + "/message"
         headers = {"Authorization": self.token}
         data = {"other_id": self.chatNumber, "start_time": dt1, "end_time": dt2}
-        r = requests.get(url=url, json=data, headers=headers)
+        r = requests.get(url=url, json=data, headers=headers, proxies=global_data.proxies)
         # print(r)
         # print(r.text)
         try:

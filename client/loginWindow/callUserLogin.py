@@ -71,7 +71,7 @@ class UserLoginWindow(QMainWindow, Ui_widget):
     def checkLogin(self, username, password):
         url = global_data.base_url + "/users/auth"
         loginData = {"identity": username, "password": password}
-        r = requests.post(url=url, json=loginData)
+        r = requests.post(url=url, json=loginData, proxies=global_data.proxies)
         # 登录错误
         if r.status_code == 500:
             return False

@@ -69,7 +69,7 @@ class ListWindow(QMainWindow, Ui_Form):
         url = global_data.base_url + "/users/friends_and_chatroom"
         try:
             headers = {"Authorization": self.token}
-            r = requests.get(url, headers=headers)
+            r = requests.get(url, headers=headers, proxies=global_data.proxies)
             self.loginInfo = r.json()
             # print(self.loginInfo)
         except KeyError:
@@ -100,7 +100,7 @@ class ListWindow(QMainWindow, Ui_Form):
             addData = {"friend_id": int(f_id)}
             try:
                 headers = {"Authorization": self.token}
-                r = requests.post(url, json=addData, headers=headers)
+                r = requests.post(url, json=addData, headers=headers, proxies=global_data.proxies)
             except KeyError:
                 QMessageBox.warning(self, "警告", "您的用户Token无效！", QMessageBox.Yes)
                 return
@@ -207,7 +207,7 @@ class ListWindow(QMainWindow, Ui_Form):
         # 获取好友信息
         if index_top == 0:
             friend_url = global_data.base_url + "/users/" + str(self.loginInfo['data']['friends'][index_row][0])
-            r = requests.get(url=friend_url)
+            r = requests.get(url=friend_url, proxies=global_data.proxies)
             QMessageBox.information(self, "好友信息",
                                     "好友姓名 : {0}\n好友ID : {1}\n好友邮箱 : {2}".format(
                                         r.json().get('data').get('nickname'),
@@ -217,7 +217,7 @@ class ListWindow(QMainWindow, Ui_Form):
             # print(r.json())
         elif index_top == 1:
             group_url = global_data.base_url + "/chatroom/" + str(self.loginInfo['data']['chatroom_list'][index_row][0])
-            r = requests.get(url=group_url)
+            r = requests.get(url=group_url, proxies=global_data.proxies)
             member = ""
             for i in r.json().get('data').get('users'):
                 member += "账号 : {0}  姓名 : {1} \n".format(i[0], i[1])

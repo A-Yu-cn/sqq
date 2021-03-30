@@ -50,7 +50,7 @@ class UserRegisterWindow(QMainWindow, Ui_Form):
         else:
             regData = {"email": email, "nickname": username, "password": pwd1}
             url = global_data.base_url + "/users/"
-            r = requests.post(url, json=regData)
+            r = requests.post(url, json=regData, proxies=global_data.proxies)
             mes = json.loads(r.text)['mes']
             # 注册成功
             if mes == "":
@@ -69,7 +69,7 @@ class UserRegisterWindow(QMainWindow, Ui_Form):
             return
         url = global_data.base_url + "/code"
         data = {"email": self.emailLineEdit.text(), "type": "1"}
-        r = requests.get(url=url, params=data)
+        r = requests.get(url=url, params=data, proxies=global_data.proxies)
         print(r.text)
         print(r.json())
         if r.json().get("mes"):

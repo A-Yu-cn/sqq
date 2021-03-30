@@ -47,7 +47,7 @@ class ResetPasswordWindow(QMainWindow, Ui_Form):
         else:
             resetData = {"email": email, "password": pwd1, "code": code}
             url = global_data.base_url + "/users/password"
-            r = requests.put(url, data=resetData)
+            r = requests.put(url, data=resetData, proxies=global_data.proxies)
             mes = json.loads(r.text)['mes']
             # 重置成功
             if mes == "":
@@ -65,7 +65,7 @@ class ResetPasswordWindow(QMainWindow, Ui_Form):
             return
         url = global_data.base_url + "/code"
         data = {"email": email, "type": "2"}
-        r = requests.get(url=url, params=data)
+        r = requests.get(url=url, params=data, proxies=global_data.proxies)
         print(r.text)
         print(r.json())
         if r.json().get("mes"):

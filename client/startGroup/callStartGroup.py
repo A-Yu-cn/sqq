@@ -63,7 +63,7 @@ class GroupWindow(QMainWindow, Ui_Form):
             url = global_data.base_url + "/chatroom/"
             headers = {"Authorization": self.token}
             startData = {"friend_ids": chooses, "name": groupName}
-            r = requests.post(url=url, json=startData, headers=headers)
+            r = requests.post(url=url, json=startData, headers=headers, proxies=global_data.proxies)
             try:
                 if json.loads(r.text)["mes"]:
                     QMessageBox.warning(self, "警告", "添加失败！\n原因:{0}".format(json.loads(r.text)["mes"]), QMessageBox.Yes)
