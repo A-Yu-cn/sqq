@@ -12,9 +12,14 @@ def connect():
         'Authorization': global_data.token
     }).encode())
     global_data.client.settimeout(1)
-    if not json.loads(global_data.client.recv(4096)).get('mes'):
-        global_data.logger.info('连接服务器成功')
-        global_data.client.settimeout(None)
-    else:
+    try:
+        if not json.loads(global_data.client.recv(4096)).get('mes'):
+            global_data.logger.info('连接服务器成功')
+            global_data.client.settimeout(None)
+        else:
+            global_data.client = None
+            global_data.logger.warning('连接服务器失败')
+    except socket.timeout:
+        # 连接超时
         global_data.client = None
         global_data.logger.warning('连接服务器失败')
