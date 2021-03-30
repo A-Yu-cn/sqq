@@ -27,9 +27,10 @@
 将该字符串转化为datetime(python):
 
 ```python
-from datetime import datetime
+import datetime
 
-time_string = "2021-03-17T11:48:14.944868+08:00"
-t = datetime.now().fromisoformat(time_string)
+time_str = "2021-03-17T11:48:14.944868+08:00"
+time = datetime.datetime.strptime(time_str, "%Y-%m-%dT%H:%M:%S.%f%z")
+print(time.strftime('%Y-%m-%d %H:%M:%S'))
 ```
 
