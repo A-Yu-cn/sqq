@@ -3,7 +3,7 @@ from win10toast import ToastNotifier
 from globalFile import GlobalData
 
 toaster = ToastNotifier()
-globalData = GlobalData()
+global_data = GlobalData()
 
 
 class ToasterSender(Thread):
@@ -14,4 +14,4 @@ class ToasterSender(Thread):
     def run(self):
         # 清空消息队列
         while True:
-            toaster.show_toast('消息提示', globalData.toast_message_queue.get())
+            toaster.show_toast('消息提示', global_data.toast_message_queue.get())

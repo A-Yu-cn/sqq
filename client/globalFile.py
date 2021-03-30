@@ -20,6 +20,7 @@ class GlobalData(object):
     log_file = ''
     message_receive_queue = queue.Queue()
     toast_message_queue = queue.Queue()
+    db_file_path = "sqq.db"
 
     def __init__(self):
         if self.log_file:

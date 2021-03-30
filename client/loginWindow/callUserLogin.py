@@ -93,7 +93,6 @@ class UserLoginWindow(QMainWindow, Ui_widget):
             connect_server.connect()
             MessageSender().start()
             MessageReceiver().start()
-
             return True
         else:
             return False
