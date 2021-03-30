@@ -122,8 +122,9 @@ class ChatWindow(QMainWindow, Ui_Form):
 
     # 发送消息
     def submitMessage(self):
+        currentMessageText = self.textEdit.toPlainText()
         currentMessage = self.textEdit.toHtml()
-        if currentMessage == "":
+        if currentMessageText == "":
             QMessageBox.warning(self, "提示", "请输入内容！", QMessageBox.Yes)
         else:
             self.sendMessage(currentMessage)
