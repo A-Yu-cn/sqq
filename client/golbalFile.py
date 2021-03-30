@@ -1,3 +1,3 @@
 global base_url
-base_url = "http://sqq.12138.site:1234"
+base_url = "https://sqq.12138.site:1234"
 
