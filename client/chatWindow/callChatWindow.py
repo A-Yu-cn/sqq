@@ -1,7 +1,10 @@
+import _queue
 import datetime
 import sys
+import time
+
 import requests
-from PyQt5.QtCore import QDate
+from PyQt5.QtCore import QDate, QThread, pyqtSignal
 from PyQt5 import QtGui
 from qtpy import QtCore
 import localClient
@@ -9,9 +12,19 @@ from threading import Thread
 from chatWindow.chatWindow import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from golbalFile import GlobalData
+from utils import shutdown_thread
 
 global_data = GlobalData()
 from richTextEditorWindow.richText import RichTextWindow
+
+
+class MessageReceiver(QThread):
+    receive_signal = pyqtSignal(object)
+
+    def run(self):
+        while True:
+            newMessage = global_data.message_receive_queue.get()
+            self.receive_signal.emit(newMessage)
 
 
 class ChatWindow(QMainWindow, Ui_Form):
@@ -55,6 +68,11 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.queryHistoryButton.clicked.connect(self.queryHistoryMessageByDate)
         # 富文本编辑
         self.richTextButton.clicked.connect(self.openRichTextEditor)
+        # 启动接收线程
+        self.receiver = MessageReceiver()
+        self.receiver.receive_signal.connect(self.messageShow)
+        # self.receiver
+        self.receiver.start()
 
     # 查询历史消息
     def queryHistoryMessage(self):
@@ -134,13 +152,16 @@ class ChatWindow(QMainWindow, Ui_Form):
         global_data.message_sender_queue.put((self.chatNumber, mes))
         # 界面加载消息
         mes_username = "我"
-        mes_time = str(datetime.datetime.now().isoformat())
         mes_content = mes
-        self.messageTextBrowser.append(
-            '<p style="color:blue;">{0}\t\t<text style="color:lightblue;">{1}</text></p>'
-                .format(mes_username, str(datetime.datetime.now().fromisoformat(mes_time))))
-        self.messageTextBrowser.append('{0}\n'.format(mes_content))
-        self.clearMessage(1)
+        mes_time = str(datetime.datetime.now().isoformat())
+        self.addMessageContent(mes_username=mes_username, mes_time=mes_time, mes_content=mes_content)
+
+    # 客户端显示消息
+    def messageShow(self, newMessage):
+        mes_username = newMessage.get("from").get("nickname")
+        mes_content = newMessage.get("content")
+        mes_time = datetime.datetime.now().fromisoformat(newMessage.get('time')).isoformat()
+        self.addMessageContent(mes_username=mes_username, mes_time=mes_time, mes_content=mes_content)
 
     # 打开富文本编辑器
     def openRichTextEditor(self):
@@ -152,9 +173,20 @@ class ChatWindow(QMainWindow, Ui_Form):
     def updateRichTextMessage(self, mes_html):
         self.textEdit.setText(mes_html)
 
+    # 这里是关闭聊天窗口
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
-        # 这里是关闭聊天窗口
         global_data.chat_user = 0
+        # 关闭消息接收线程
+        self.receiver.terminate()
+        self.destroy()
+
+    # 增加消息框内容
+    def addMessageContent(self, mes_username, mes_time, mes_content):
+        self.messageTextBrowser.append(
+            '<p style="color:blue;">{0}\t\t<text style="color:lightblue;">{1}</text></p>'
+                .format(mes_username, str(datetime.datetime.now().fromisoformat(mes_time))))
+        self.messageTextBrowser.append('{0}\n'.format(mes_content))
+        self.clearMessage(1)
 
 
 if __name__ == '__main__':

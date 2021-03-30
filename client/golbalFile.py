@@ -18,6 +18,7 @@ class GlobalData(object):
     logger = logging.getLogger()
     chat_user = 0
     log_file = ''
+    message_receive_queue = queue.Queue()
 
     def __init__(self):
         if self.log_file:
@@ -27,6 +28,7 @@ class GlobalData(object):
             logging.basicConfig(format='[%(asctime)s]  %(message)s', datefmt='%m/%d/%Y %H:%M:%S %p', level='INFO')
 
     def __new__(cls, *args, **kwargs):
+        """单例模式"""
         if cls.__instance is None:
             cls.__instance = super().__new__(cls, *args, **kwargs)
         return cls.__instance

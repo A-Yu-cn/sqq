@@ -29,9 +29,9 @@ class MessageReceiver(Thread):
             if global_data.client is not None:
                 try:
                     message = self.message
-                    if str(message.get('from').get('id')) == str(global_data.chat_user) or str(message.get('to')) == str(global_data.chat_user):
-                        # TODO: 这里添加将消息显示到正在聊天的界面上
-                        pass
+                    if str(message.get('from').get('id')) == str(global_data.chat_user) or str(
+                            message.get('to')) == str(global_data.chat_user):
+                        global_data.message_receive_queue.put(message)
                     else:
                         # 这里只做全局提示
                         toaster.show_toast('消息提示', f'收到来自{message.get("from").get("nickname")}的消息')
