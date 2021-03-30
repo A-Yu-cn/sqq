@@ -17,6 +17,7 @@ from utils.message_sender import MessageSender
 from utils.message_receiver import MessageReceiver
 from utils import connect_server
 from golbalFile import GlobalData
+from utils.toaster_sender import ToasterSender
 
 global_data = GlobalData()
 
@@ -44,6 +45,7 @@ class UserLoginWindow(QMainWindow, Ui_widget):
         self.registerButton.clicked.connect(self.userRegister)
         # 忘记密码
         self.forgetPasswordButton.clicked.connect(self.forgetPassword)
+        ToasterSender().start()
 
     # 用户登录
     def userLogin(self):
@@ -83,10 +85,15 @@ class UserLoginWindow(QMainWindow, Ui_widget):
             self.loginInfo = json.loads(r.text)
             global_data.self_data = self.loginInfo.get('data').get('self')
             global_data.token = self.loginInfo.get('data').get('token')
+            unread_message_usernames = list(set([message["from"][1] for message in
+                                                 self.loginInfo.get('data').get('unread_message')]))
+            for unread_mes_username in unread_message_usernames:
+                global_data.toast_message_queue.put(unread_mes_username)
             # 建立连接，开启消息发送线程
             connect_server.connect()
             MessageSender().start()
             MessageReceiver().start()
+
             return True
         else:
             return False

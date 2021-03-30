@@ -2,10 +2,8 @@ from golbalFile import GlobalData
 from threading import Thread
 import json
 from utils import connect_server
-from win10toast import ToastNotifier
 
 global_data = GlobalData()
-toaster = ToastNotifier()
 
 
 class MessageReceiver(Thread):
@@ -34,7 +32,7 @@ class MessageReceiver(Thread):
                         global_data.message_receive_queue.put(message)
                     else:
                         # 这里只做全局提示
-                        toaster.show_toast('消息提示', f'收到来自{message.get("from").get("nickname")}的消息')
+                        global_data.toast_message_queue.put(f"收到来自{message.get('from').get('nickname')}的消息")
                 except (ConnectionError, ConnectionResetError):
                     global_data.client = None
                 except Exception:

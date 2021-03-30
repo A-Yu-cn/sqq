@@ -119,7 +119,9 @@ class ChatWindow(QMainWindow, Ui_Form):
                 mes_content = i.get("content")
                 self.historyTextBrowser.append(
                     '<h3 style="color:blue;">{0}({1})\n<h4 style="color:lightblue;">{2}</h4></h3>'
-                        .format(mes_username, mes_userid, datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime('%Y-%m-%d %H:%M:%S')))
+                        .format(mes_username, mes_userid,
+                                datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime(
+                                    '%Y-%m-%d %H:%M:%S')))
                 self.historyTextBrowser.append('{0}\n'.format(mes_content))
                 # self.historyTextBrowser.append('<img src="logo.png"/>')
         except KeyError:
@@ -208,7 +210,8 @@ class ChatWindow(QMainWindow, Ui_Form):
     def addMessageContent(self, mes_username, mes_time, mes_content):
         self.messageTextBrowser.append(
             '<p style="color:blue;">{0}\t\t<text style="color:lightblue;">{1}</text></p>'
-                .format(mes_username, datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime('%Y-%m-%d %H:%M:%S')))
+                .format(mes_username,
+                        datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime('%Y-%m-%d %H:%M:%S')))
         self.messageTextBrowser.append('{0}\n'.format(mes_content))
         # 添加消息后将光标滚到最底下
         self.messageTextBrowser.moveCursor(QTextCursor.End)

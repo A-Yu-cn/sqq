@@ -19,6 +19,7 @@ class GlobalData(object):
     chat_user = 0
     log_file = ''
     message_receive_queue = queue.Queue()
+    toast_message_queue = queue.Queue()
 
     def __init__(self):
         if self.log_file:
