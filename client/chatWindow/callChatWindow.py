@@ -70,8 +70,28 @@ class ChatWindow(QMainWindow, Ui_Form):
         # 启动接收线程
         self.receiver = MessageReceiver()
         self.receiver.receive_signal.connect(self.messageShow)
-        # self.receiver
         self.receiver.start()
+        self.loadMessage()
+
+    def loadMessage(self):
+        # 获取当天零点和24点
+        tzinfo = datetime.timezone(datetime.timedelta(hours=8.0))
+        now = datetime.datetime.now(tzinfo)
+        zeroToday = now - datetime.timedelta(hours=now.hour, minutes=now.minute, seconds=now.second,
+                                             microseconds=now.microsecond)
+        lastToday = zeroToday + datetime.timedelta(hours=23, minutes=59, seconds=59)
+
+        # 获取当天内的消息
+        message = self.getHisMessage(zeroToday.isoformat(), lastToday.isoformat())
+        if message.get('mes'):
+            QMessageBox.warning('警告', message.get('mes'))
+        else:
+            for message in message.get('data').get('message_list'):
+                mes_username = message['from']['nickname']
+                mes_username = "我" if mes_username == global_data.self_data['nickname'] else mes_username
+                mes_time = datetime.datetime.fromisoformat(message['time']).isoformat()
+                mes_content = message['content']
+                self.addMessageContent(mes_username, mes_time, mes_content)
 
     # 查询历史消息
     def queryHistoryMessage(self):
