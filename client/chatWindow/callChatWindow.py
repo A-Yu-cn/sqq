@@ -12,7 +12,7 @@ import localClient
 from threading import Thread
 from chatWindow.chatWindow import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
-from golbalFile import GlobalData
+from globalFile import GlobalData
 
 global_data = GlobalData()
 from richTextEditorWindow.richText import RichTextWindow

@@ -1,4 +1,4 @@
-from golbalFile import GlobalData
+from globalFile import GlobalData
 import socket
 import json
 

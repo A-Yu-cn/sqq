@@ -16,7 +16,7 @@ from forgetPasswordWindow.callForgetPasswordWindow import ResetPasswordWindow
 from utils.message_sender import MessageSender
 from utils.message_receiver import MessageReceiver
 from utils import connect_server
-from golbalFile import GlobalData
+from globalFile import GlobalData
 from utils.toaster_sender import ToasterSender
 
 global_data = GlobalData()

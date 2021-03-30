@@ -8,7 +8,7 @@ import json
 
 from registerWindow.userRegister import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QLineEdit
-from golbalFile import GlobalData
+from globalFile import GlobalData
 
 global_data = GlobalData()
 from PyQt5.QtGui import QIcon

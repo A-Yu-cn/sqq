@@ -1,4 +1,4 @@
-from golbalFile import GlobalData
+from globalFile import GlobalData
 from threading import Thread
 import json
 from utils import connect_server

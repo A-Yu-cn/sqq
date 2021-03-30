@@ -7,7 +7,7 @@ from startGroup.startGroup import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
-from golbalFile import GlobalData
+from globalFile import GlobalData
 
 global_data = GlobalData()
 

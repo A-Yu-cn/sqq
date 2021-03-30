@@ -1,6 +1,6 @@
 from threading import Thread
 from win10toast import ToastNotifier
-from golbalFile import GlobalData
+from globalFile import GlobalData
 
 toaster = ToastNotifier()
 globalData = GlobalData()

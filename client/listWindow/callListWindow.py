@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem, QWidget,
     QSizePolicy, QTreeWidget, QMessageBox, QMenu, QAction, QFileDialog
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import Qt, pyqtSignal
-from golbalFile import GlobalData
+from globalFile import GlobalData
 
 global_data = GlobalData()
 from startGroup.callStartGroup import GroupWindow

@@ -9,7 +9,7 @@ import json
 from forgetPasswordWindow.forgetPasswordWindow import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QLineEdit
 from PyQt5.QtGui import QIcon
-from golbalFile import GlobalData
+from globalFile import GlobalData
 
 global_data = GlobalData()
 

@@ -1,5 +1,5 @@
 from threading import Thread
-from golbalFile import GlobalData
+from globalFile import GlobalData
 import json
 
 global_data = GlobalData()
