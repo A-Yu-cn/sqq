@@ -7,7 +7,9 @@ from startGroup.startGroup import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
-from golbalFile import base_url
+from golbalFile import GlobalData
+
+global_data = GlobalData()
 
 
 class GroupWindow(QMainWindow, Ui_Form):
@@ -58,7 +60,7 @@ class GroupWindow(QMainWindow, Ui_Form):
             QMessageBox.warning(self, "警告", "你至少要选择一个好友！", QMessageBox.Yes)
             return
         else:
-            url = base_url + "/chatroom/"
+            url = global_data.base_url + "/chatroom/"
             headers = {"Authorization": self.token}
             startData = {"friend_ids": chooses, "name": groupName}
             r = requests.post(url=url, json=startData, headers=headers)

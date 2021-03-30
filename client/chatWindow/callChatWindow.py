@@ -7,7 +7,9 @@ import localClient
 from threading import Thread
 from chatWindow.chatWindow import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
-from golbalFile import base_url
+from golbalFile import GlobalData
+
+global_data = GlobalData()
 from richTextEditorWindow.richText import RichTextWindow
 
 
@@ -100,7 +102,7 @@ class ChatWindow(QMainWindow, Ui_Form):
 
     # 查询历史消息请求
     def getHisMessage(self, dt1, dt2):
-        url = base_url + "/message"
+        url = global_data.base_url + "/message"
         headers = {"Authorization": self.token}
         data = {"other_id": self.chatNumber, "start_time": dt1, "end_time": dt2}
         r = requests.get(url=url, json=data, headers=headers)

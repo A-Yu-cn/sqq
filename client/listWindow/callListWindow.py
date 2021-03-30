@@ -12,7 +12,9 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem, QWidget,
     QSizePolicy, QTreeWidget, QMessageBox, QMenu, QAction, QFileDialog
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import Qt, pyqtSignal
-from golbalFile import base_url
+from golbalFile import GlobalData
+
+global_data = GlobalData()
 from startGroup.callStartGroup import GroupWindow
 
 
@@ -64,7 +66,7 @@ class ListWindow(QMainWindow, Ui_Form):
         for i in range(count2):
             self.treeWidget.topLevelItem(1).removeChild(self.treeWidget.topLevelItem(1).child(0))
         # 刷新好友列表
-        url = base_url + "/users/friends_and_chatroom"
+        url = global_data.base_url + "/users/friends_and_chatroom"
         try:
             headers = {"Authorization": self.token}
             r = requests.get(url, headers=headers)
@@ -94,7 +96,7 @@ class ListWindow(QMainWindow, Ui_Form):
         if f_id == "":
             QMessageBox.warning(self, "提示", "请输入好友码！", QMessageBox.Yes)
         else:
-            url = base_url + "/users/friends"
+            url = global_data.base_url + "/users/friends"
             addData = {"friend_id": int(f_id)}
             try:
                 headers = {"Authorization": self.token}
@@ -204,7 +206,7 @@ class ListWindow(QMainWindow, Ui_Form):
     def getUserInfo(self, index_top, index_row):
         # 获取好友信息
         if index_top == 0:
-            friend_url = base_url + "/users/" + str(self.loginInfo['data']['friends'][index_row][0])
+            friend_url = global_data.base_url + "/users/" + str(self.loginInfo['data']['friends'][index_row][0])
             r = requests.get(url=friend_url)
             QMessageBox.information(self, "好友信息",
                                     "好友姓名 : {0}\n好友ID : {1}\n好友邮箱 : {2}".format(
@@ -214,7 +216,7 @@ class ListWindow(QMainWindow, Ui_Form):
                                     QMessageBox.Yes)
             # print(r.json())
         elif index_top == 1:
-            group_url = base_url + "/chatroom/" + str(self.loginInfo['data']['chatroom_list'][index_row][0])
+            group_url = global_data.base_url + "/chatroom/" + str(self.loginInfo['data']['chatroom_list'][index_row][0])
             r = requests.get(url=group_url)
             member = ""
             for i in r.json().get('data').get('users'):

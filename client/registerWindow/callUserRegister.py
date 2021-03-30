@@ -8,7 +8,9 @@ import json
 
 from registerWindow.userRegister import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QLineEdit
-from golbalFile import base_url
+from golbalFile import GlobalData
+
+global_data = GlobalData()
 from PyQt5.QtGui import QIcon
 
 
@@ -47,7 +49,7 @@ class UserRegisterWindow(QMainWindow, Ui_Form):
         # 注册
         else:
             regData = {"email": email, "nickname": username, "password": pwd1}
-            url = base_url + "/users/"
+            url = global_data.base_url + "/users/"
             r = requests.post(url, json=regData)
             mes = json.loads(r.text)['mes']
             # 注册成功
@@ -65,7 +67,7 @@ class UserRegisterWindow(QMainWindow, Ui_Form):
         if '@' not in email:
             QMessageBox.warning(self, '警告', '邮箱输入有误')
             return
-        url = base_url + "/code"
+        url = global_data.base_url + "/code"
         data = {"email": self.emailLineEdit.text(), "type": "1"}
         r = requests.get(url=url, params=data)
         print(r.text)

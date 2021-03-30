@@ -13,7 +13,9 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QLineEdit
 from listWindow.callListWindow import ListWindow
 from registerWindow.callUserRegister import UserRegisterWindow
 from forgetPasswordWindow.callForgetPasswordWindow import ResetPasswordWindow
-from golbalFile import base_url
+from golbalFile import GlobalData
+
+global_data = GlobalData()
 
 
 class UserLoginWindow(QMainWindow, Ui_widget):
@@ -67,7 +69,7 @@ class UserLoginWindow(QMainWindow, Ui_widget):
 
     # 验证登录
     def checkLogin(self, username, password):
-        url = base_url + "/users/auth"
+        url = global_data.base_url + "/users/auth"
         loginData = {"identity": username, "password": password}
         r = requests.post(url=url, json=loginData)
         # 登录错误
