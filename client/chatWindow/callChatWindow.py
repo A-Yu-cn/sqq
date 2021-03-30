@@ -172,12 +172,14 @@ class ChatWindow(QMainWindow, Ui_Form):
     def updateRichTextMessage(self, mes_html):
         self.textEdit.setText(mes_html)
 
+    def __del__(self):
+        self.receiver.terminate()
+
     # 这里是关闭聊天窗口
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
         global_data.chat_user = 0
         # 关闭消息接收线程
         self.receiver.terminate()
-        self.destroy()
 
     # 增加消息框内容
     def addMessageContent(self, mes_username, mes_time, mes_content):
