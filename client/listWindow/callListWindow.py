@@ -6,7 +6,7 @@ import time
 import requests
 from PyQt5.QtGui import QCursor
 
-from listWindow.listWindow import Ui_Form
+from listWindow.userListWindow import Ui_Form
 from chatWindow.callChatWindow import ChatWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem, QWidget, QHBoxLayout, QLabel, QSpacerItem, \
     QSizePolicy, QTreeWidget, QMessageBox, QMenu, QAction, QFileDialog
@@ -16,9 +16,6 @@ from golbalFile import GlobalData
 
 global_data = GlobalData()
 from startGroup.callStartGroup import GroupWindow
-
-
-# from richTextEditorWindow.richText import
 
 
 # 内嵌自定义item对象
@@ -38,7 +35,7 @@ class ListWindow(QMainWindow, Ui_Form):
     def __init__(self, loginInfo):
         super(ListWindow, self).__init__()
         self.setupUi(self)
-        self.setWindowTitle(loginInfo.get('data').get('self').get('nickname'))
+        # self.setWindowTitle(loginInfo.get('data').get('self').get('nickname'))
         self.setWindowIcon(QtGui.QIcon('../imgs/user.png'))
         self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)  # 打开右键菜单的策略
         self.treeWidget.customContextMenuRequested.connect(self.treeWidgetItem_fun)  # 绑定事件
