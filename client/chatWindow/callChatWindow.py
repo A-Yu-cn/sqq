@@ -90,7 +90,7 @@ class ChatWindow(QMainWindow, Ui_Form):
             for message in message.get('data').get('message_list'):
                 mes_username = message['from']['nickname']
                 mes_username = "我" if mes_username == global_data.self_data['nickname'] else mes_username
-                mes_time = datetime.datetime.fromisoformat(message['time']).isoformat()
+                mes_time = message['time']
                 mes_content = message['content']
                 self.addMessageContent(mes_username, mes_time, mes_content)
 
@@ -119,7 +119,7 @@ class ChatWindow(QMainWindow, Ui_Form):
                 mes_content = i.get("content")
                 self.historyTextBrowser.append(
                     '<h3 style="color:blue;">{0}({1})\n<h4 style="color:lightblue;">{2}</h4></h3>'
-                        .format(mes_username, mes_userid, str(datetime.datetime.now().fromisoformat(mes_time))))
+                        .format(mes_username, mes_userid, datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime('%Y-%m-%d %H:%M:%S')))
                 self.historyTextBrowser.append('{0}\n'.format(mes_content))
                 # self.historyTextBrowser.append('<img src="logo.png"/>')
         except KeyError:
@@ -173,14 +173,16 @@ class ChatWindow(QMainWindow, Ui_Form):
         # 界面加载消息
         mes_username = "我"
         mes_content = mes
-        mes_time = str(datetime.datetime.now().isoformat())
+        # 获取UTC+8当前时间
+        tzinfo = datetime.timezone(datetime.timedelta(hours=8.0))
+        mes_time = datetime.datetime.now(tzinfo).isoformat()
         self.addMessageContent(mes_username=mes_username, mes_time=mes_time, mes_content=mes_content)
 
     # 客户端显示消息
     def messageShow(self, newMessage):
         mes_username = newMessage.get("from").get("nickname")
         mes_content = newMessage.get("content")
-        mes_time = datetime.datetime.now().fromisoformat(newMessage.get('time')).isoformat()
+        mes_time = newMessage.get('time')
         self.addMessageContent(mes_username=mes_username, mes_time=mes_time, mes_content=mes_content)
 
     # 打开富文本编辑器
@@ -206,7 +208,7 @@ class ChatWindow(QMainWindow, Ui_Form):
     def addMessageContent(self, mes_username, mes_time, mes_content):
         self.messageTextBrowser.append(
             '<p style="color:blue;">{0}\t\t<text style="color:lightblue;">{1}</text></p>'
-                .format(mes_username, str(datetime.datetime.now().fromisoformat(mes_time))))
+                .format(mes_username, datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime('%Y-%m-%d %H:%M:%S')))
         self.messageTextBrowser.append('{0}\n'.format(mes_content))
         # 添加消息后将光标滚到最底下
         self.messageTextBrowser.moveCursor(QTextCursor.End)
