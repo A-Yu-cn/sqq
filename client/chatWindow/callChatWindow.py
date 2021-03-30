@@ -6,6 +6,7 @@ import time
 import requests
 from PyQt5.QtCore import QDate, QThread, pyqtSignal
 from PyQt5 import QtGui
+from PyQt5.QtGui import QTextCursor
 from qtpy import QtCore
 import localClient
 from threading import Thread
@@ -207,6 +208,8 @@ class ChatWindow(QMainWindow, Ui_Form):
             '<p style="color:blue;">{0}\t\t<text style="color:lightblue;">{1}</text></p>'
                 .format(mes_username, str(datetime.datetime.now().fromisoformat(mes_time))))
         self.messageTextBrowser.append('{0}\n'.format(mes_content))
+        # 添加消息后将光标滚到最底下
+        self.messageTextBrowser.moveCursor(QTextCursor.End)
         self.clearMessage(1)
 
 
