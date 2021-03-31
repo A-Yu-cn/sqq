@@ -46,6 +46,8 @@ class UserLoginWindow(QMainWindow, Ui_widget):
         # 忘记密码
         self.forgetPasswordButton.clicked.connect(self.forgetPassword)
         ToasterSender().start()
+        # 窗体样式
+        # self.setWindowFlags(Qt.SubWindow)
 
     # 用户登录
     def userLogin(self):

@@ -2,7 +2,7 @@ import sys
 import requests
 from PyQt5.QtCore import pyqtSignal
 import json
-
+from PyQt5 import QtGui
 from startGroup.startGroup import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PyQt5 import QtWidgets
@@ -19,6 +19,8 @@ class GroupWindow(QMainWindow, Ui_Form):
     def __init__(self, friendList=[], token=""):
         super(GroupWindow, self).__init__()
         self.setupUi(self)
+        self.setWindowIcon(QtGui.QIcon('../imgs/group.png'))
+        self.setWindowTitle('发起群聊')
         self.friendList = friendList
         self.token = token
         # 绑定按钮
