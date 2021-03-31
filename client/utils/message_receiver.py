@@ -36,7 +36,7 @@ class MessageReceiver(Thread):
                         # 这里只做全局提示
                         from_user = message.get('from').get('nickname')
                         if len(str(message.get('to'))) > 5:
-                            global_data.toast_message_queue.put(f'收到群消息，来自{from_user}')
+                            global_data.toast_message_queue.put(f'收到群({message.get("to")})消息，来自{from_user}')
                         else:
                             global_data.toast_message_queue.put(f"收到来自{from_user}的消息")
                 except (ConnectionError, ConnectionResetError):
