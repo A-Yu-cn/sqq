@@ -45,6 +45,7 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.setFixedSize(self.width(), self.height())
         # 设置标题
         self.setWindowTitle("聊天 " + self.chatUsername)
+        self.setWindowIcon(QtGui.QIcon('../imgs/chatroom.png'))
         # 设置日历控件允许弹出
         self.dateTimeEdit_1.setCalendarPopup(True)
         self.dateTimeEdit_1.setDate(QtCore.QDate(2020, 1, 1))
