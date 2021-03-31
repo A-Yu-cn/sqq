@@ -1,8 +1,11 @@
+beautifulsoup4==4.9.3
+bs4==0.0.1
 certifi==2020.12.5
 chardet==4.0.0
 click==7.1.2
 idna==2.10
 importlib-metadata==3.9.0
+lxml==4.6.3
 prettytable==2.1.0
 pypiwin32==223
 PyQt5==5.15.2
@@ -16,6 +19,7 @@ qt5-applications==5.15.2.2.1
 qt5-tools==5.15.2.1.0.1
 QtPy==1.9.0
 requests==2.25.1
+soupsieve==2.2.1
 typing-extensions==3.7.4.3
 urllib3==1.26.4
 wcwidth==0.2.5
