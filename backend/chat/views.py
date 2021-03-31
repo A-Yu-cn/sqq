@@ -200,7 +200,7 @@ def modify_friend(request, user):
 
 @csrf_exempt
 @token_verify
-def create_chatroom(request, user):
+def modify_chatroom(request, user):
     if request.method == "POST":
         data = json.loads(request.body)
         friend_ids = data.get("friend_ids")
@@ -218,6 +218,14 @@ def create_chatroom(request, user):
             "wrong ids": wrong_ids,
             "room_id": chatroom.id
         })
+    elif request.method == "DELETE":
+        data = json.loads(request.body)
+        try:
+            chatroom = Chatroom.objects.get(id=int(data.get('chatroom_id')))
+            chatroom.users.remove(user)
+            return wrap_response('')
+        except Chatroom.DoesNotExist:
+            return wrap_response('wrong chatroom id')
     else:
         return wrap_response("wrong method")
 
