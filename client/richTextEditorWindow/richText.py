@@ -4,11 +4,14 @@
 # @Author: zizle
 import sys
 from PyQt5.QtWidgets import (QApplication, QWidget, QMainWindow, QTextEdit, QToolBar, QPushButton, QComboBox,
-                             QFontComboBox, QAction, QColorDialog, QMenu, QSizePolicy, QLabel, QMessageBox)
+                             QFontComboBox, QAction, QColorDialog, QMenu, QSizePolicy, QLabel, QMessageBox, QFileDialog)
 from PyQt5.QtCore import pyqtSignal, Qt, QSize, QMargins
 from PyQt5.QtGui import QFont, QBrush, QColor, QIcon, QPixmap, QPalette, QTextCharFormat, QTextCursor
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
+import base64
+import os
+from bs4 import BeautifulSoup
 
 
 class RichTextWindow(QMainWindow):
@@ -73,6 +76,9 @@ class RichTextWindow(QMainWindow):
         # 右对齐
         self.right_action = self.tool_bar.addAction(QIcon('media/rich_text/right.png'), '')
         self.right_action.triggered.connect(lambda: self.change_row_alignment('right'))
+        # 图片
+        self.select_img_action = self.tool_bar.addAction("图片")
+        self.select_img_action.triggered.connect(self.openImage)
         # 发送
         self.submit_action = self.tool_bar.addAction("保存")
         self.submit_action.triggered.connect(self.submitMessage)
@@ -268,10 +274,30 @@ class RichTextWindow(QMainWindow):
             return
 
     def toHtml(self):
-        return self.text_edit.toHtml()
+        html = self.text_edit.toHtml()
+        soup = BeautifulSoup(html, 'lxml')
+        style = soup.new_tag('style')
+        style.string = 'img{width:192px}'
+        soup.html.head.append(style)
+        return soup.prettify()
 
     def toPlainText(self):
         return self.text_edit.toPlainText()
+
+    # 选取图像路径
+    def openImage(self):
+        try:
+            imgName, imgType = QFileDialog.getOpenFileName(self, "打开图片", "", "*.jpg;;*.png;;All Files(*)")
+            imgSize = os.path.getsize(imgName)
+            if imgSize > 130000:
+                QMessageBox.warning(self, "警告", "图片大小不能超过128k！", QMessageBox.Yes)
+                return
+            with open(imgName, "rb") as f:  # 转为二进制格式
+                base64_data = base64.b64encode(f.read()).decode()  # 使用base64进行加密
+                img_data = '<img src="data:image/bmp;base64,' + base64_data + '">'
+                self.text_edit.append(img_data)
+        except FileNotFoundError:
+            pass
 
     # 发送消息
     def submitMessage(self):
