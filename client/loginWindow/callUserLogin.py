@@ -1,6 +1,7 @@
 """
 登录界面
 """
+import configparser
 import json
 import sys
 
@@ -46,6 +47,8 @@ class UserLoginWindow(QMainWindow, Ui_widget):
         # 忘记密码
         self.forgetPasswordButton.clicked.connect(self.forgetPassword)
         ToasterSender().start()
+        # 加载配置文件
+        self.load_config()
         # 窗体样式
         # self.setWindowFlags(Qt.SubWindow)
 
@@ -91,6 +94,32 @@ class UserLoginWindow(QMainWindow, Ui_widget):
                                                  self.loginInfo.get('data').get('unread_message')]))
             for unread_mes_username in unread_message_usernames:
                 global_data.toast_message_queue.put(unread_mes_username)
+            config = configparser.ConfigParser()
+            # 记住密码
+            if self.checkBox_2.isChecked():
+                config["DEFAULT"] = {
+                    "username": self.usernameLineEdit.text(),
+                    "password": self.passwordLineEdit.text(),
+                    "remember_username": self.checkBox.isChecked(),
+                    "remember_password": self.checkBox_2.isChecked()
+                }
+            # 记住账号
+            elif self.checkBox.isChecked():
+                config["DEFAULT"] = {
+                    "username": self.usernameLineEdit.text(),
+                    "password": "",
+                    "remember_username": self.checkBox.isChecked(),
+                    "remember_password": self.checkBox_2.isChecked()
+                }
+            else:
+                config["DEFAULT"] = {
+                    "username": "",
+                    "password": "",
+                    "remember_username": self.checkBox.isChecked(),
+                    "remember_password": self.checkBox_2.isChecked()
+                }
+            with open('user.cfg', 'w')as configfile:
+                config.write(configfile)
             # 建立连接，开启消息发送线程
             connect_server.connect()
             MessageSender().start()
@@ -108,6 +137,30 @@ class UserLoginWindow(QMainWindow, Ui_widget):
             qss = ''.join(qss).strip('\n')
         self.regWindow.setStyleSheet(qss)
         self.regWindow.show()
+
+    # 加载配置文件
+    def load_config(self):
+        config = configparser.ConfigParser()
+        file = config.read('user.cfg')
+        config_dict = config.defaults()
+
+        try:
+            username = config_dict['username']
+            if config_dict['remember_username'] == 'True':
+                self.usernameLineEdit.setText(username)
+                self.checkBox.setChecked(True)
+            else:
+                self.checkBox.setChecked(False)
+            if config_dict['remember_password'] == 'True':
+                password = config_dict['password']
+                self.passwordLineEdit.setText(password)
+                self.checkBox.setChecked(True)
+                self.checkBox_2.setChecked(True)
+            else:
+                self.checkBox_2.setChecked(False)
+        except KeyError:
+            self.checkBox.setChecked(False)
+            self.checkBox_2.setChecked(False)
 
     # 忘记密码
     def forgetPassword(self):
