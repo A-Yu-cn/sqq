@@ -1,17 +1,18 @@
 import _queue
+import base64
 import datetime
 import sys
 import time
 
 import requests
-from PyQt5.QtCore import QDate, QThread, pyqtSignal, Qt
+from PyQt5.QtCore import QDate, QThread, pyqtSignal, Qt, QSize
 from PyQt5 import QtGui
-from PyQt5.QtGui import QTextCursor, QKeySequence
+from PyQt5.QtGui import QTextCursor, QKeySequence, QIcon
 from qtpy import QtCore
 import localClient
 from threading import Thread
 from chatWindow.chatWindow import Ui_Form
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox
 from globalFile import GlobalData
 
 global_data = GlobalData()
@@ -65,7 +66,7 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.clearButton.clicked.connect(self.clearMessage)
         # 发送按钮
         self.submitButton.clicked.connect(self.submitMessage)
-        seq = QKeySequence(Qt.Key_Return)
+        seq = QKeySequence(Qt.CTRL + Qt.Key_Return)
         self.submitButton.setShortcut(seq)
         # 查询按钮
         self.queryHistoryButton.clicked.connect(self.queryHistoryMessageByDate)
@@ -76,6 +77,28 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.receiver.receive_signal.connect(self.messageShow)
         self.receiver.start()
         self.loadMessage()
+        # 添加表情
+        self.combo = QComboBox(self)
+        self.combo.resize(100, 40)
+        size = QSize(35, 35)
+        self.combo.setIconSize(size)
+        self.combo.move(170, 715)
+        self.emojy_list = ["emojy/001-anxious.png", "emojy/002-crying.png", "emojy/003-dizzy.png",
+                           "emojy/005-blowkiss.png", "emojy/006-full.png",
+                           "emojy/008-vomiting.png",
+                           "emojy/009-laughing.png", "emojy/010-rollingeyes.png",
+                           "emojy/012-laughing.png", "emojy/013-flushed.png",
+                           "emojy/015-grinning.png",
+                           "emojy/017-hug.png", "emojy/018-crying.png", "emojy/019-angry.png",
+                           "emojy/020-sleeping.png", "emojy/021-fallinlove.png",
+                           "emojy/022-smilingface.png", "emojy/025-thinking.png",
+                           "emojy/026-tired.png",
+                           "emojy/027-unamused.png"]
+        self.emojy_name_list = ['焦虑', '哭', '懒', '飞吻', '满足', '呕吐', '大笑', '白眼', '笑哭', '害羞', '汗', '拥抱', '泪', '生气', '睡觉',
+                                '喜欢', '微笑', '思考', '困倦', '斜眼']
+        for emojy, emojy_name in zip(self.emojy_list, self.emojy_name_list):
+            self.combo.addItem(QIcon(emojy), emojy_name)
+        self.combo.currentIndexChanged.connect(self.addEmojy)
 
     def loadMessage(self):
         # 获取当天零点和24点
@@ -227,6 +250,15 @@ class ChatWindow(QMainWindow, Ui_Form):
         # 添加消息后将光标滚到最底下
         self.messageTextBrowser.moveCursor(QTextCursor.End)
         self.clearMessage(1)
+
+    # 添加表情
+    def addEmojy(self):
+        emojy_index = self.combo.currentIndex()
+        emojy = self.emojy_list[emojy_index]
+        with open(emojy, "rb") as f:  # 转为二进制格式
+            base64_data = base64.b64encode(f.read()).decode()  # 使用base64进行加密
+            img_data = '<img src="data:image/bmp;base64,' + base64_data + '">'
+            self.textEdit.append(img_data)
 
 
 if __name__ == '__main__':

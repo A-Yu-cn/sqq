@@ -4,7 +4,7 @@ import sys
 import time
 
 import requests
-from PyQt5.QtGui import QCursor
+from PyQt5.QtGui import QCursor, QFont
 
 from listWindow.userListWindow import Ui_Form
 from chatWindow.callChatWindow import ChatWindow
@@ -24,10 +24,17 @@ class ItemWidget(QWidget):
         super(ItemWidget, self).__init__()
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        label = QLabel(text, self, styleSheet='color: white;font-size:20px;')
-        layout.addWidget(label)
-        layout.addSpacerItem(QSpacerItem(
-            60, 1, QSizePolicy.Maximum, QSizePolicy.Minimum))
+        # label1 = QLabel(text[0], self, styleSheet='color:yellow;')
+        # font = QtGui.QFont()
+        # font.setPointSize(40)
+        # font.setBold(True)
+        # font.setWeight(75)
+        # label1.setFont(font)
+        label2 = QLabel(text, self, styleSheet='color: white;font-size:20px;')
+        # layout.addWidget(label1)
+        layout.addWidget(label2)
+        # layout.addSpacerItem(QSpacerItem(
+        #     60, 1, QSizePolicy.Maximum, QSizePolicy.Minimum))
 
 
 class ListWindow(QMainWindow, Ui_Form):
