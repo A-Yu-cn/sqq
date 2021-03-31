@@ -81,7 +81,7 @@ class Receiver(Thread):
                     for user in chatroom.users.all():
                         # 群消息不发给自己
                         if user.id == token.user.id:
-                            break
+                            continue
                         send_message(user, message)
             except json.decoder.JSONDecodeError:
                 try:
