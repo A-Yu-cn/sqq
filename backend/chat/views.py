@@ -174,7 +174,7 @@ class UserView:
 
 @csrf_exempt
 @token_verify
-def add_friend(request, user):
+def modify_friend(request, user):
     if request.method == "POST":
         friend_id = json.loads(request.body).get("friend_id")
         try:
@@ -183,6 +183,17 @@ def add_friend(request, user):
             return wrap_response("")
         except User.DoesNotExist:
             return wrap_response("wrong friend_id")
+    elif request.method == "DELETE":
+        # 删除用户
+        friend_id = json.loads(request.body).get('friend_id')
+        try:
+            friend = User.objects.get(id=friend_id)
+            # 双向解除用户关系
+            user.friends.remove(friend)
+            friend.friends.remove(user)
+            return wrap_response('')
+        except User.DoesNotExist:
+            return wrap_response('wrong friend_id')
     else:
         return wrap_response("wrong method")
 
