@@ -4,9 +4,9 @@ import sys
 import time
 
 import requests
-from PyQt5.QtCore import QDate, QThread, pyqtSignal
+from PyQt5.QtCore import QDate, QThread, pyqtSignal, Qt
 from PyQt5 import QtGui
-from PyQt5.QtGui import QTextCursor
+from PyQt5.QtGui import QTextCursor, QKeySequence
 from qtpy import QtCore
 import localClient
 from threading import Thread
@@ -65,6 +65,8 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.clearButton.clicked.connect(self.clearMessage)
         # 发送按钮
         self.submitButton.clicked.connect(self.submitMessage)
+        seq = QKeySequence(Qt.Key_Return)
+        self.submitButton.setShortcut(seq)
         # 查询按钮
         self.queryHistoryButton.clicked.connect(self.queryHistoryMessageByDate)
         # 富文本编辑

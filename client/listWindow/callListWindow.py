@@ -76,14 +76,14 @@ class ListWindow(QMainWindow, Ui_Form):
             # 生成item
             _item = QtWidgets.QTreeWidgetItem(self.treeWidget.topLevelItem(0))
             # _item.setCheckState(0, Qt.Unchecked)
-            _widget = ItemWidget(i[1])
+            _widget = ItemWidget(str(i[1]) + '（' + str(i[0]) + '）')
             self.treeWidget.setItemWidget(_item, 0, _widget)
         # 加载群聊列表
         for i in self.loginInfo['data']['chatroom_list']:
             # 生成item
             _item = QtWidgets.QTreeWidgetItem(self.treeWidget.topLevelItem(1))
             # _item.setCheckState(0, Qt.Unchecked)
-            _widget = ItemWidget(i[1])
+            _widget = ItemWidget(str(i[1]) + '（' + str(i[0]) + '）')
             self.treeWidget.setItemWidget(_item, 0, _widget)
 
     # 添加好友
