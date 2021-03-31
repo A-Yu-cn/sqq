@@ -126,20 +126,14 @@ class ListWindow(QMainWindow, Ui_Form):
             return
         # 好友聊天
         elif index_top == 0:
-            try:
-                chatNumber = self.loginInfo.get('data').get('friends')[index_row]
-                self.chatWindow = ChatWindow(chatList=chatNumber, token=self.token)
-                # 加载样式
-                with open('../css/chatWindow.css') as file:
-                    qss = file.readlines()
-                    qss = ''.join(qss).strip('\n')
-                self.chatWindow.setStyleSheet(qss)
-                self.chatWindow.show()
-            except IndexError:
-                QMessageBox.warning(self, "警告", "用户信息错误！", QMessageBox.Yes)
-            except ValueError:
-                QMessageBox.warning(self, "警告", "用户信息错误！", QMessageBox.Yes)
-                return
+            chatNumber = self.loginInfo.get('data').get('friends')[index_row]
+            self.chatWindow = ChatWindow(chatList=chatNumber, token=self.token)
+            # 加载样式
+            with open('../css/chatWindow.css') as file:
+                qss = file.readlines()
+                qss = ''.join(qss).strip('\n')
+            self.chatWindow.setStyleSheet(qss)
+            self.chatWindow.show()
         # 群聊
         elif index_top == 1:
             try:
@@ -194,7 +188,7 @@ class ListWindow(QMainWindow, Ui_Form):
                 self.startChat(item)
                 return
             elif command == "查看信息":
-                self.getUserInfo(index_top, index_top)
+                self.getUserInfo(index_top, index_row)
         except KeyError:
             return
 

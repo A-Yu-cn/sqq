@@ -209,10 +209,18 @@ class ChatWindow(QMainWindow, Ui_Form):
 
     # 增加消息框内容
     def addMessageContent(self, mes_username, mes_time, mes_content):
-        self.messageTextBrowser.append(
-            '<p style="color:blue;">{0}\t\t<text style="color:lightblue;">{1}</text></p>'
-                .format(mes_username,
-                        datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime('%Y-%m-%d %H:%M:%S')))
+        try:
+            self.messageTextBrowser.append(
+                '<p style="color:blue;">{0}\t\t<text style="color:lightblue;">{1}</text></p>'
+                    .format(mes_username,
+                            datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime(
+                                '%Y-%m-%d %H:%M:%S')))
+        except ValueError:
+            self.messageTextBrowser.append(
+                '<p style="color:blue;">{0}\t\t<text style="color:lightblue;">{1}</text></p>'
+                    .format(mes_username,
+                            datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S%z").strftime(
+                                '%Y-%m-%d %H:%M:%S')))
         self.messageTextBrowser.append('{0}\n'.format(mes_content))
         # 添加消息后将光标滚到最底下
         self.messageTextBrowser.moveCursor(QTextCursor.End)
