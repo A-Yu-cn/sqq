@@ -48,7 +48,7 @@ class UserRegisterWindow(QMainWindow, Ui_Form):
             QMessageBox.warning(self, "警告", "请填写验证码！", QMessageBox.Yes)
         # 注册
         else:
-            regData = {"email": email, "nickname": username, "password": pwd1}
+            regData = {"email": email, "nickname": username, "password": pwd1, "code": code}
             url = global_data.base_url + "/users/"
             r = requests.post(url, json=regData, proxies=global_data.proxies)
             mes = json.loads(r.text)['mes']
