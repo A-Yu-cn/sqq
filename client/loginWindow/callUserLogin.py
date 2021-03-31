@@ -93,7 +93,7 @@ class UserLoginWindow(QMainWindow, Ui_widget):
             unread_message_usernames = list(set([message["from"][1] for message in
                                                  self.loginInfo.get('data').get('unread_message')]))
             for unread_mes_username in unread_message_usernames:
-                global_data.toast_message_queue.put(unread_mes_username)
+                global_data.toast_message_queue.put(f'有来自{unread_mes_username}的未读消息')
             config = configparser.ConfigParser()
             # 记住密码
             if self.checkBox_2.isChecked():
