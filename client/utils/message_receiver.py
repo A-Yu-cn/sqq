@@ -2,6 +2,7 @@ from globalFile import GlobalData
 from threading import Thread
 import json
 from utils import connect_server
+import winsound
 
 global_data = GlobalData()
 
@@ -30,6 +31,7 @@ class MessageReceiver(Thread):
                     if str(message.get('from').get('id')) == str(global_data.chat_user) or str(
                             message.get('to')) == str(global_data.chat_user):
                         global_data.message_receive_queue.put(message)
+                        # todo 消息提示音
                     else:
                         # 这里只做全局提示
                         global_data.toast_message_queue.put(f"收到来自{message.get('from').get('nickname')}的消息")
