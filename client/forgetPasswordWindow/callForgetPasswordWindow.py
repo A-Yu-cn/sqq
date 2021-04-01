@@ -47,8 +47,8 @@ class ResetPasswordWindow(QMainWindow, Ui_Form):
         else:
             resetData = {"email": email, "password": pwd1, "code": code}
             url = global_data.base_url + "/users/password"
-            r = requests.put(url, data=resetData, proxies=global_data.proxies)
-            mes = json.loads(r.text)['mes']
+            r = requests.put(url, json=resetData, proxies=global_data.proxies)
+            mes = r.json().get("mes")
             # 重置成功
             if mes == "":
                 QMessageBox.information(self, "提示", "密码重置成功！", QMessageBox.Yes)

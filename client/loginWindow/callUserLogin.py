@@ -4,6 +4,8 @@
 import configparser
 import json
 import sys
+from PyQt5 import QtWidgets
+import os
 
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
@@ -172,6 +174,24 @@ class UserLoginWindow(QMainWindow, Ui_widget):
             qss = ''.join(qss).strip('\n')
         self.regWindow.setStyleSheet(qss)
         self.regWindow.show()
+
+    def closeEvent(self, event):
+        """
+        对MainWindow的函数closeEvent进行重构
+        退出软件时结束所有进程
+        :param event:
+        :return:
+        """
+        reply = QtWidgets.QMessageBox.question(self,
+                                               '本程序',
+                                               "是否要退出程序？",
+                                               QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            event.accept()
+            os._exit(0)
+        else:
+            event.ignore()
 
 
 def start():

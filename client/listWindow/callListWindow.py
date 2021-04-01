@@ -2,6 +2,7 @@ from datetime import datetime
 import json
 import sys
 import time
+import os
 
 import requests
 from PyQt5.QtGui import QCursor, QFont
@@ -226,6 +227,24 @@ class ListWindow(QMainWindow, Ui_Form):
                                         member),
                                     QMessageBox.Yes)
             # print(r.json())
+
+    def closeEvent(self, event):
+        """
+        对MainWindow的函数closeEvent进行重构
+        退出软件时结束所有进程
+        :param event:
+        :return:
+        """
+        reply = QtWidgets.QMessageBox.question(self,
+                                               '本程序',
+                                               "是否要退出程序？",
+                                               QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                                               QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            event.accept()
+            os._exit(0)
+        else:
+            event.ignore()
 
 
 if __name__ == '__main__':
