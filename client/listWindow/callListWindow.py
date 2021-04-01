@@ -12,7 +12,7 @@ from chatWindow.callChatWindow import ChatWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem, QWidget, QHBoxLayout, QLabel, QSpacerItem, \
     QSizePolicy, QTreeWidget, QMessageBox, QMenu, QAction, QFileDialog
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal, QPropertyAnimation
 from globalFile import GlobalData
 
 global_data = GlobalData()
@@ -60,6 +60,24 @@ class ListWindow(QMainWindow, Ui_Form):
         # 发起群聊按钮
         self.startGroupPushButton.clicked.connect(self.startGroup)
         self.treeWidget.itemDoubleClicked.connect(self.startChat)
+        # 窗口透明度动画类
+        self.animation = QPropertyAnimation(self, b'windowOpacity')
+        self.animation.setDuration(1000)  # 持续时间1秒
+        # 执行淡入
+        self.doShow()
+
+    # 淡入效果
+    def doShow(self):
+        try:
+            # 尝试先取消动画完成后关闭窗口的信号
+            self.animation.finished.disconnect(self.close)
+        except:
+            pass
+        self.animation.stop()
+        # 透明度范围从0逐渐增加到1
+        self.animation.setStartValue(0)
+        self.animation.setEndValue(1)
+        self.animation.start()
 
     # 加载列表
     def loadList(self):
