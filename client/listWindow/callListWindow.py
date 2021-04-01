@@ -222,6 +222,8 @@ class ListWindow(QMainWindow, Ui_Form):
                     return
                 elif command == "查看信息":
                     self.getUserInfo(index_top, index_row)
+                elif command == "退出群聊":
+                    self.quitGroup(self.loginInfo['data']['chatroom_list'][index_row][0])
         except KeyError:
             return
 
@@ -265,14 +267,27 @@ class ListWindow(QMainWindow, Ui_Form):
             if mes:
                 QMessageBox.warning(self, "警告", "删除好友失败！\n原因:{0}".format(mes), QMessageBox.Yes)
             else:
-                QMessageBox.information(self, "提醒", "删除成功！".format(mes), QMessageBox.Yes)
+                QMessageBox.information(self, "提醒", "删除成功！", QMessageBox.Yes)
                 self.loadList()
         else:
             return
 
     # 退出群聊
-    def quitGroup(self):
-        pass
+    def quitGroup(self, group_id):
+        choice = QMessageBox.warning(self, "警告", "确定退出此群聊?", QMessageBox.Yes | QMessageBox.Cancel)
+        if choice == QtWidgets.QMessageBox.Yes:
+            url = global_data.base_url + "/chatroom/"
+            headers = {"Authorization": self.token}
+            data = {"chatroom_id": group_id}
+            r = requests.delete(url=url, json=data, headers=headers)
+            mes = r.json().get("mes")
+            if mes:
+                QMessageBox.warning(self, "警告", "退出群聊失败！\n原因:{0}".format(mes), QMessageBox.Yes)
+            else:
+                QMessageBox.information(self, "提醒", "退出成功！", QMessageBox.Yes)
+                self.loadList()
+        else:
+            return
 
     # 程序退出
     def closeEvent(self, event):

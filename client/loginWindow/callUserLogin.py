@@ -8,7 +8,7 @@ from PyQt5 import QtWidgets
 import os
 
 from PyQt5 import QtGui
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QPropertyAnimation
 import requests
 
 from loginWindow.userLogin import Ui_widget
@@ -51,8 +51,24 @@ class UserLoginWindow(QMainWindow, Ui_widget):
         ToasterSender().start()
         # 加载配置文件
         self.load_config()
-        # 窗体样式
-        # self.setWindowFlags(Qt.SubWindow)
+        # 窗口透明度动画类
+        self.animation = QPropertyAnimation(self, b'windowOpacity')
+        self.animation.setDuration(1000)  # 持续时间1秒
+        # 执行淡入
+        self.doShow()
+
+    # 淡入效果
+    def doShow(self):
+        try:
+            # 尝试先取消动画完成后关闭窗口的信号
+            self.animation.finished.disconnect(self.close)
+        except:
+            pass
+        self.animation.stop()
+        # 透明度范围从0逐渐增加到1
+        self.animation.setStartValue(0)
+        self.animation.setEndValue(1)
+        self.animation.start()
 
     # 用户登录
     def userLogin(self):
