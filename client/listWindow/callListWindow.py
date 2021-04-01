@@ -62,7 +62,7 @@ class ListWindow(QMainWindow, Ui_Form):
         self.treeWidget.itemDoubleClicked.connect(self.startChat)
         # 窗口透明度动画类
         self.animation = QPropertyAnimation(self, b'windowOpacity')
-        self.animation.setDuration(1000)  # 持续时间1秒
+        self.animation.setDuration(300)  # 持续时间1秒
         # 执行淡入
         self.doShow()
 

@@ -19,7 +19,7 @@
      <x>10</x>
      <y>10</y>
      <width>851</width>
-     <height>531</height>
+     <height>501</height>
     </rect>
    </property>
   </widget>
@@ -141,8 +141,8 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>300</x>
-     <y>730</y>
+     <x>740</x>
+     <y>530</y>
      <width>131</width>
      <height>20</height>
     </rect>
@@ -160,6 +160,45 @@
    </property>
    <property name="text">
     <string>Ctrl+Enter快速发送</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="recordLabel">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>530</y>
+     <width>61</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>00:00</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="recordButton">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>520</y>
+     <width>101</width>
+     <height>35</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>发送语音</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="cancleButton">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>520</y>
+     <width>101</width>
+     <height>35</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>取消发送</string>
    </property>
   </widget>
  </widget>

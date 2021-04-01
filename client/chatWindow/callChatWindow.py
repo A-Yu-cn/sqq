@@ -5,7 +5,7 @@ import sys
 import time
 
 import requests
-from PyQt5.QtCore import QDate, QThread, pyqtSignal, Qt, QSize
+from PyQt5.QtCore import QDate, QThread, pyqtSignal, Qt, QSize, QTimer, QDateTime
 from PyQt5 import QtGui
 from PyQt5.QtGui import QTextCursor, QKeySequence, QIcon
 from qtpy import QtCore
@@ -14,6 +14,7 @@ from threading import Thread
 from chatWindow.chatWindow import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox
 from globalFile import GlobalData
+from utils import record_voice
 
 global_data = GlobalData()
 from richTextEditorWindow.richText import RichTextWindow
@@ -70,6 +71,16 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.submitButton.setShortcut(seq)
         # 查询按钮
         self.queryHistoryButton.clicked.connect(self.queryHistoryMessageByDate)
+        # 录制语音按钮
+        self.recordButton.clicked.connect(self.record)
+        # 初始化一个定时器
+        self.timer = QTimer(self)
+        # 将定时器超时信号与槽函数连接
+        self.timer.timeout.connect(self.showTime)
+        self.time_text = 0
+        # 设置语音发送模块初始样式
+        self.recordLabel.hide()
+        self.cancleButton.hide()
         # 富文本编辑
         self.richTextButton.clicked.connect(self.openRichTextEditor)
         # 启动接收线程
@@ -82,7 +93,7 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.combo.resize(100, 40)
         size = QSize(35, 35)
         self.combo.setIconSize(size)
-        self.combo.move(170, 715)
+        self.combo.move(620, 520)
         self.emojy_list = ["emojy/001-anxious.png", "emojy/002-crying.png", "emojy/003-dizzy.png",
                            "emojy/005-blowkiss.png", "emojy/006-full.png",
                            "emojy/008-vomiting.png",
@@ -259,6 +270,42 @@ class ChatWindow(QMainWindow, Ui_Form):
             base64_data = base64.b64encode(f.read()).decode()  # 使用base64进行加密
             img_data = '<img src="data:image/bmp;base64,' + base64_data + '">'
             self.textEdit.append(img_data)
+
+    # 改变时间显示
+    def showTime(self):
+        # 在标签上显示时间
+        self.time_text += 1
+        time_text_show = ""
+        if self.time_text > 30:
+            self.endRecord()
+        elif self.time_text < 10:
+            time_text_show = "00:0" + str(self.time_text)
+        else:
+            time_text_show = "00:" + str(self.time_text)
+        self.recordLabel.setText(time_text_show)
+
+    # 停止录制
+    def endRecord(self):
+        self.timer.stop()
+        global_data.record_signal = False
+        self.time_text = 0
+        self.recordLabel.setText("00:00")
+        self.recordLabel.hide()
+        self.cancleButton.hide()
+        self.recordButton.setText("发送语音")
+
+    # 录制语音
+    def record(self):
+        # 开始录音
+        if self.recordButton.text() == "发送语音":
+            global_data.record_signal = True
+            self.timer.start(1000)  # 设置计时间隔并启动，每隔1000毫秒（1秒）发送一次超时信号，循环进行
+            record_voice.Recorder().start()
+            self.recordLabel.show()
+            self.cancleButton.show()
+            self.recordButton.setText("停止并发送")
+        elif self.recordButton.text() == "停止并发送":
+            self.endRecord()
 
 
 if __name__ == '__main__':
