@@ -315,11 +315,7 @@ class ListWindow(QMainWindow, Ui_Form):
         :param event:
         :return:
         """
-        reply = QtWidgets.QMessageBox.question(self,
-                                               '本程序',
-                                               "是否要退出程序？",
-                                               QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
-                                               QtWidgets.QMessageBox.No)
+        reply = QMessageBox.question(self, '本程序', "是否要退出程序？", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
             event.accept()
             os._exit(0)

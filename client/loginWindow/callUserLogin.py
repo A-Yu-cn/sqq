@@ -198,12 +198,8 @@ class UserLoginWindow(QMainWindow, Ui_widget):
         :param event:
         :return:
         """
-        reply = QtWidgets.QMessageBox.question(self,
-                                               '本程序',
-                                               "是否要退出程序？",
-                                               QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
-                                               QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
+        reply = QMessageBox.question(self, '本程序', "是否要退出程序？", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
             event.accept()
             os._exit(0)
         else:
