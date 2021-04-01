@@ -46,7 +46,7 @@ class ListWindow(QMainWindow, Ui_Form):
         self.setWindowTitle(loginInfo.get('data').get('self').get('nickname'))
         self.setWindowIcon(QtGui.QIcon('../imgs/user.png'))
         self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)  # 打开右键菜单的策略
-        self.treeWidget.customContextMenuRequested.connect(self.treeWidgetItem_fun)  # 绑定事件
+        self.treeWidget.customContextMenuRequested.connect(self.treeWidgetItem_fun)  # 绑定右键点击事件
         # 记录登录信息
         self.treeWidget.header().setVisible(False)
         self.loginInfo = loginInfo
@@ -173,13 +173,29 @@ class ListWindow(QMainWindow, Ui_Form):
     def treeWidgetItem_fun(self, pos):
         item = self.treeWidget.currentItem()
         item1 = self.treeWidget.itemAt(pos)
-        if item != None and item1 != None:
-            popMenu = QMenu()
-            popMenu.addAction(QAction('查看信息', self))
-            popMenu.addAction(QAction('发送消息', self))
-            popMenu.addAction(QAction('删除', self))
-            popMenu.triggered[QAction].connect(self.processtrigger)
-            popMenu.exec_(QCursor.pos())
+        parent = item.parent()
+        try:
+            index_top = self.treeWidget.indexOfTopLevelItem(parent)
+            index_row = parent.indexOfChild(item)
+            if index_top == 0:
+                if item != None and item1 != None:
+                    popMenu = QMenu()
+                    popMenu.addAction(QAction('查看信息', self))
+                    popMenu.addAction(QAction('发送消息', self))
+                    popMenu.addAction(QAction('删除好友', self))
+                    popMenu.triggered[QAction].connect(self.processtrigger)
+                    popMenu.exec_(QCursor.pos())
+            elif index_top == 1:
+                if item != None and item1 != None:
+                    popMenu = QMenu()
+                    popMenu.addAction(QAction('查看信息', self))
+                    popMenu.addAction(QAction('发送消息', self))
+                    popMenu.addAction(QAction('退出群聊', self))
+                    popMenu.triggered[QAction].connect(self.processtrigger)
+                    popMenu.exec_(QCursor.pos())
+        # 子菜单取消右键效果
+        except AttributeError:
+            pass
 
     # 右键菜单事件处理
     def processtrigger(self, q):
@@ -190,13 +206,22 @@ class ListWindow(QMainWindow, Ui_Form):
             parent = item.parent()
             index_top = self.treeWidget.indexOfTopLevelItem(parent)
             index_row = parent.indexOfChild(item)
-            # print(index_top)
-            # print(index_row)
-            if command == "发送消息":
-                self.startChat(item)
-                return
-            elif command == "查看信息":
-                self.getUserInfo(index_top, index_row)
+            # 好友
+            if index_top == 0:
+                if command == "发送消息":
+                    self.startChat(item)
+                    return
+                elif command == "查看信息":
+                    self.getUserInfo(index_top, index_row)
+                elif command == "删除好友":
+                    self.deleteFriend(self.loginInfo['data']['friends'][index_row][0])
+            # 群聊
+            elif index_top == 1:
+                if command == "发送消息":
+                    self.startChat(item)
+                    return
+                elif command == "查看信息":
+                    self.getUserInfo(index_top, index_row)
         except KeyError:
             return
 
@@ -212,7 +237,7 @@ class ListWindow(QMainWindow, Ui_Form):
                                         r.json().get('data').get('id'),
                                         r.json().get('data').get('email')),
                                     QMessageBox.Yes)
-            # print(r.json())
+        # 获取群聊信息
         elif index_top == 1:
             group_url = global_data.base_url + "/chatroom/" + str(self.loginInfo['data']['chatroom_list'][index_row][0])
             r = requests.get(url=group_url, proxies=global_data.proxies)
@@ -228,6 +253,28 @@ class ListWindow(QMainWindow, Ui_Form):
                                     QMessageBox.Yes)
             # print(r.json())
 
+    # 删除好友
+    def deleteFriend(self, friend_id):
+        choice = QMessageBox.warning(self, "警告", "确定删除好友?", QMessageBox.Yes | QMessageBox.Cancel)
+        if choice == QtWidgets.QMessageBox.Yes:
+            url = global_data.base_url + "/users/friends"
+            headers = {"Authorization": self.token}
+            data = {"friend_id": friend_id}
+            r = requests.delete(url=url, json=data, headers=headers)
+            mes = r.json().get("mes")
+            if mes:
+                QMessageBox.warning(self, "警告", "删除好友失败！\n原因:{0}".format(mes), QMessageBox.Yes)
+            else:
+                QMessageBox.information(self, "提醒", "删除成功！".format(mes), QMessageBox.Yes)
+                self.loadList()
+        else:
+            return
+
+    # 退出群聊
+    def quitGroup(self):
+        pass
+
+    # 程序退出
     def closeEvent(self, event):
         """
         对MainWindow的函数closeEvent进行重构
