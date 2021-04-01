@@ -82,6 +82,8 @@ class ChatWindow(QMainWindow, Ui_Form):
         # 设置语音发送模块初始样式
         self.recordLabel.hide()
         self.cancleButton.hide()
+        # 取消发送
+        self.cancleButton.clicked.connect(self.cancleRecord)
         # 富文本编辑
         self.richTextButton.clicked.connect(self.openRichTextEditor)
         # 启动接收线程
@@ -294,6 +296,10 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.recordLabel.hide()
         self.cancleButton.hide()
         self.recordButton.setText("发送语音")
+
+    # 取消录制
+    def cancleRecord(self):
+        self.endRecord()
         NotificationWindow.info('提示', '停止录制语音')
 
     # 录制语音
@@ -309,6 +315,7 @@ class ChatWindow(QMainWindow, Ui_Form):
             NotificationWindow.success('提示', '开始录制语音')
         elif self.recordButton.text() == "停止并发送":
             self.endRecord()
+            NotificationWindow.success("提示", "语音成功发送")
 
 
 if __name__ == '__main__':
