@@ -30,7 +30,7 @@ class ItemWidget(QWidget):
         # font.setBold(True)
         # font.setWeight(75)
         # label1.setFont(font)
-        label2 = QLabel(text, self, styleSheet='color: white;font-size:20px;')
+        label2 = QLabel(text, self, styleSheet='color: black;font-size:20px;')
         # layout.addWidget(label1)
         layout.addWidget(label2)
         # layout.addSpacerItem(QSpacerItem(

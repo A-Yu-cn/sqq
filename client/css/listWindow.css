@@ -1,51 +1,36 @@
 QTreeView {
-    outline: 0px;
-    background: rgb(47, 64, 78);
+    outline: 0;
+    background: #fff;
 }
+
 QTreeView::item {
+    color: #000;
     min-height: 92px;
 }
 QTreeView::item:hover {
-    background: rgb(41, 56, 71);
-}
-QTreeView::item:selected {
-    background: rgb(41, 56, 71);
+    background: #eee;
 }
 
-QTreeView::item:selected:active{
-    background: rgb(41, 56, 71);
-}
-QTreeView::item:selected:!active{
-    background: rgb(41, 56, 71);
+QTreeView::item::open:has-children{
+    background-color: #aaa;
 }
 
-QTreeView::branch:open:has-children {
-    background: rgb(41, 56, 71);
+QTreeView::item:selected{
+    background-color: #ddd;
 }
 
-QTreeView::branch:has-siblings:!adjoins-item {
-    background: green;
-}
-QTreeView::branch:closed:has-children:has-siblings {
-    background: rgb(47, 64, 78);
+QTreeView::item:selected:has-children{
+    background: #aaa;
 }
 
-QTreeView::branch:has-children:!has-siblings:closed {
-    background: rgb(47, 64, 78);
+QTreeView::branch:adjoins-item {
+    /*right*/
+    background: #aaa;
 }
 
-QTreeView::branch:open:has-children:has-siblings {
-    background: rgb(41, 56, 71);
-}
-
-QTreeView::branch:open:has-children:!has-siblings {
-    background: rgb(41, 56, 71);
-}
-QTreeView:branch:hover {
-    background: rgb(41, 56, 71);
-}
-QTreeView:branch:selected {
-    background: rgb(41, 56, 71);
+QTreeView::branch:!adjoins-item {
+    /* left*/
+    background: #aaa;
 }
 
 QLineEdit{
