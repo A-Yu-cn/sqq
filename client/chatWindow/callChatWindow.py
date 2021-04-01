@@ -205,6 +205,7 @@ class ChatWindow(QMainWindow, Ui_Form):
         tzinfo = datetime.timezone(datetime.timedelta(hours=8.0))
         mes_time = datetime.datetime.now(tzinfo).isoformat()
         self.addMessageContent(mes_username=mes_username, mes_time=mes_time, mes_content=mes_content)
+        self.clearMessage(1)
 
     # 客户端显示消息
     def messageShow(self, newMessage):
@@ -249,7 +250,6 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.messageTextBrowser.append('{0}\n'.format(mes_content))
         # 添加消息后将光标滚到最底下
         self.messageTextBrowser.moveCursor(QTextCursor.End)
-        self.clearMessage(1)
 
     # 添加表情
     def addEmojy(self):
