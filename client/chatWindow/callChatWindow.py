@@ -15,6 +15,7 @@ from chatWindow.chatWindow import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox
 from globalFile import GlobalData
 from utils import record_voice
+from utils.notice_sender import NotificationWindow
 
 global_data = GlobalData()
 from richTextEditorWindow.richText import RichTextWindow
@@ -293,6 +294,7 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.recordLabel.hide()
         self.cancleButton.hide()
         self.recordButton.setText("发送语音")
+        NotificationWindow.info('提示', '停止录制语音')
 
     # 录制语音
     def record(self):
@@ -304,6 +306,7 @@ class ChatWindow(QMainWindow, Ui_Form):
             self.recordLabel.show()
             self.cancleButton.show()
             self.recordButton.setText("停止并发送")
+            NotificationWindow.success('提示', '开始录制语音')
         elif self.recordButton.text() == "停止并发送":
             self.endRecord()
 
