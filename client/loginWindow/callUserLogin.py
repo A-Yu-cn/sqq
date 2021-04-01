@@ -191,6 +191,7 @@ class UserLoginWindow(QMainWindow, Ui_widget):
         self.regWindow.setStyleSheet(qss)
         self.regWindow.show()
 
+
     def closeEvent(self, event):
         """
         对MainWindow的函数closeEvent进行重构

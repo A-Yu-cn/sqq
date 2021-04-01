@@ -5,7 +5,7 @@ import sys
 import time
 
 import requests
-from PyQt5.QtCore import QDate, QThread, pyqtSignal, Qt, QSize, QTimer, QDateTime
+from PyQt5.QtCore import QDate, QThread, pyqtSignal, Qt, QSize, QTimer, QDateTime, QUrl
 from PyQt5 import QtGui
 from PyQt5.QtGui import QTextCursor, QKeySequence, QIcon
 from qtpy import QtCore

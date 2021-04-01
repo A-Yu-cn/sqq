@@ -43,7 +43,9 @@ class ListWindow(QMainWindow, Ui_Form):
     def __init__(self, loginInfo):
         super(ListWindow, self).__init__()
         self.setupUi(self)
-        self.setWindowTitle(loginInfo.get('data').get('self').get('nickname'))
+        self.setWindowTitle(
+            loginInfo.get('data').get('self').get('nickname') + "（" + str(loginInfo.get('data').get('self').get(
+                'id')) + "）")
         self.setWindowIcon(QtGui.QIcon('../imgs/user.png'))
         self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)  # 打开右键菜单的策略
         self.treeWidget.customContextMenuRequested.connect(self.treeWidgetItem_fun)  # 绑定右键点击事件
