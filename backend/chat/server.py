@@ -14,26 +14,61 @@ logging.basicConfig(format='[%(asctime)s]  %(message)s', datefmt='%m/%d/%Y %H:%M
 client_pool = {}
 
 
-def send_message(user, message):
+def send_message(user, message, type_=0):
     """向指定用户发送消息"""
-    if user.id in client_pool:
-        client_pool[user.id].sendall(wrap_message(message))
-    else:
-        # 记录未读消息
-        unread_message = UnreadMessage(user=user, message=message)
-        unread_message.save()
+    if type_ == 0:
+        # 发送聊天消息
+        if user.id in client_pool:
+            client_pool[user.id].sendall(wrap_message(message))
+        else:
+            # 记录未读消息
+            unread_message = UnreadMessage(user=user, message=message)
+            unread_message.save()
+    elif type_ == 1:
+        if user.id in client_pool and isinstance(message, User):
+            # 被某人添加为好友
+            client_pool[user.id].sendall(json.dumps({
+                'type': 1,
+                'data': {
+                    'id': message.id,
+                    'nickname': message.nickname
+                }
+            }).encode())
+    elif type_ == 2:
+        # 被某人删除好友
+        if user.id in client_pool and isinstance(message, User):
+            client_pool[user.id].sendall(json.dumps({
+                'type': 2,
+                'data': {
+                    'id': message.id,
+                    'nickname': message.nickname
+                }
+            }).encode())
+    elif type_ == 3:
+        # 被某人拉进群聊
+        if user.id in client_pool and isinstance(message, Chatroom):
+            client_pool[user.id].sendall(json.dumps({
+                'type': 3,
+                'data': {
+                    'id': message.id,
+                    'name': message.name
+                }
+            }).encode())
 
 
 def wrap_message(message):
     """包装向客户发送的消息"""
     return json.dumps({
-        'from': {
-            'id': message.from_user.id,
-            'nickname': message.from_user.nickname
-        },
-        'to': message.to,
-        'content': message.content,
-        'time': timezone.localtime(message.createTime).isoformat()
+        'type': 0,
+        'data': {
+            'from': {
+                'id': message.from_user.id,
+                'nickname': message.from_user.nickname
+            },
+            'to': message.to,
+            'content': message.content,
+            'time': timezone.localtime(message.createTime).isoformat()
+        }
     }).encode()
 
 
@@ -49,7 +84,7 @@ class Receiver(Thread):
     def __init__(self, client, user_id, *args, **kwargs):
         super(Receiver, self).__init__(*args, **kwargs)
         self.client = client
-        self.client.settimeout(int(os.environ.get('RECV_TIME_OUT')))     # 接受消息超时
+        self.client.settimeout(int(os.environ.get('RECV_TIME_OUT')))  # 接受消息超时
         self.user_id = user_id
         self.recv_buff = int(os.environ.get('TCP_RECV_BUFF'))  # 接受缓冲区
 

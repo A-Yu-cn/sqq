@@ -1,7 +1,7 @@
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .utils import *
-import chat.server
+from chat import server
 from itertools import chain
 from datetime import datetime
 from .codeSender import codeSender
@@ -175,22 +175,28 @@ class UserView:
 @csrf_exempt
 @token_verify
 def modify_friend(request, user):
+    """对好友做的操作"""
     if request.method == "POST":
+        #  添加好友
         friend_id = json.loads(request.body).get("friend_id")
         try:
             friend = User.objects.get(id=friend_id)
             user.friends.add(friend)
+            # 添加成功向被添加着发送通知
+            server.send_message(friend, user, 1)
             return wrap_response("")
         except User.DoesNotExist:
             return wrap_response("wrong friend_id")
     elif request.method == "DELETE":
-        # 删除用户
+        # 删除好友
         friend_id = json.loads(request.body).get('friend_id')
         try:
             friend = User.objects.get(id=friend_id)
             # 双向解除用户关系
             user.friends.remove(friend)
             friend.friends.remove(user)
+            # 删除成功之后向被删除者发送通知
+            server.send_message(friend, user, 2)
             return wrap_response('')
         except User.DoesNotExist:
             return wrap_response('wrong friend_id')
@@ -202,6 +208,7 @@ def modify_friend(request, user):
 @token_verify
 def modify_chatroom(request, user):
     if request.method == "POST":
+        # 创建聊天室
         data = json.loads(request.body)
         friend_ids = data.get("friend_ids")
         chatroom_name = data.get("name")
@@ -211,7 +218,9 @@ def modify_chatroom(request, user):
         chatroom.users.add(user)
         for friend_id in friend_ids:
             try:
-                chatroom.users.add(User.objects.get(id=friend_id))
+                chatroom_user = User.objects.get(id=friend_id)
+                chatroom.users.add(chatroom_user)
+                server.send_message(chatroom_user, chatroom, 3)
             except User.DoesNotExist:
                 wrong_ids.append(friend_ids)
         return wrap_response("", {
