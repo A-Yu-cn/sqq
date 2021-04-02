@@ -27,8 +27,9 @@ class MessageReceiver(Thread):
         while True:
             if global_data.client is not None:
                 try:
+                    message = self.message
                     message_type = message.get("type")
-                    message = self.message.get("data")
+                    message = message.get("data")
                     # 正常接收消息
                     if message_type == 0:
                         if str(message.get('from').get('id')) == str(global_data.chat_user) or str(
