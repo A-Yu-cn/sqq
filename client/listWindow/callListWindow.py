@@ -347,7 +347,7 @@ class ListWindow(QMainWindow, Ui_Form):
             url = global_data.base_url + "/users/friends"
             headers = {"Authorization": self.token}
             data = {"friend_id": friend_id}
-            r = requests.delete(url=url, json=data, headers=headers)
+            r = requests.delete(url=url, json=data, headers=headers, proxies=global_data.proxies)
             mes = r.json().get("mes")
             if mes:
                 QMessageBox.warning(self, "警告", "删除好友失败！\n原因:{0}".format(mes), QMessageBox.Yes)
@@ -364,7 +364,7 @@ class ListWindow(QMainWindow, Ui_Form):
             url = global_data.base_url + "/chatroom/"
             headers = {"Authorization": self.token}
             data = {"chatroom_id": group_id}
-            r = requests.delete(url=url, json=data, headers=headers)
+            r = requests.delete(url=url, json=data, headers=headers, proxies=global_data.proxies)
             mes = r.json().get("mes")
             if mes:
                 QMessageBox.warning(self, "警告", "退出群聊失败！\n原因:{0}".format(mes), QMessageBox.Yes)
