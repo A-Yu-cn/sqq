@@ -239,6 +239,13 @@ def modify_chatroom(request, user):
             return wrap_response('')
         except Chatroom.DoesNotExist:
             return wrap_response('wrong chatroom id')
+    elif request.method == "PUT":
+        try:
+            chatroom = Chatroom.objects.get(id=int(json.loads(request.body).get('chatroom_id')))
+            chatroom.users.add(user)
+            return wrap_response('')
+        except (ValueError, Chatroom.DoesNotExist):
+            return wrap_response('wrong id')
     else:
         return wrap_response("wrong method")
 
