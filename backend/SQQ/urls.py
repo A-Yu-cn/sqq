@@ -17,7 +17,6 @@ from django.contrib import admin
 from django.urls import path
 from chat.views import *
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("users/", UserView.register),
@@ -32,4 +31,5 @@ urlpatterns = [
     path('code', UserView.send_code),
     path('query/<query_id>', query),
     path('file/', upload_file),
+    path('file/query', file_query),
 ]

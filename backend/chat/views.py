@@ -328,22 +328,37 @@ def get_message(request, user):
 @csrf_exempt
 @token_verify
 def upload_file(request, user):
-    file_ = request.FILES['file']
-    file_content = file_.read()
-    if len(file_content) > 1024*1024*100:
-        return wrap_response('文件大于100M，上传失败')
-    file_md5 = md5(file_content).hexdigest()
-    if '.' in file_.name:
-        filename = f'{file_md5}.{file_.name.split(".")[-1]}'
-    else:
-        filename = file_md5
-    file_dir = os.path.join('static', 'file_upload')
-    if not os.path.exists(file_dir):
-        os.mkdir(file_dir)
-    filepath = os.path.join(file_dir, filename).replace('\\', '/')
-    if not os.path.exists(filepath):
-        with open(filepath, 'wb') as f:
-            f.write(file_content)
-        _file = File(user=user, filename=file_.name, filepath=filepath, create_time=timezone.now(), file_md5=file_md5)
-        _file.save()
-    return wrap_response('', filepath)
+    try:
+        file_ = request.FILES['file']
+        file_content = file_.read()
+        if len(file_content) > 1024 * 1024 * 100:
+            return wrap_response('文件大于100M，上传失败')
+        file_md5 = md5(file_content).hexdigest()
+        if '.' in file_.name:
+            filename = f'{file_md5}.{file_.name.split(".")[-1]}'
+        else:
+            filename = file_md5
+        file_dir = os.path.join('static', 'file_upload')
+        if not os.path.exists(file_dir):
+            os.mkdir(file_dir)
+        filepath = os.path.join(file_dir, filename).replace('\\', '/')
+        if not os.path.exists(filepath):
+            with open(filepath, 'wb') as f:
+                f.write(file_content)
+            _file = File(user=user, filename=file_.name, filepath=filepath, create_time=timezone.now(),
+                         file_md5=file_md5)
+            _file.save()
+        return wrap_response('', filepath)
+    except Exception as e:
+        return wrap_response('请求方式有误')
+
+
+@csrf_exempt
+@token_verify
+def file_query(request, user):
+    file_md5 = request.GET.get("file_md5")
+    try:
+        _file = File.objects.get(file_md5=file_md5)
+        return wrap_response('', _file.filepath)
+    except File.DoesNotExist:
+        return wrap_response('N')
