@@ -18,9 +18,12 @@
     <rect>
      <x>0</x>
      <y>140</y>
-     <width>431</width>
+     <width>441</width>
      <height>801</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border: 0</string>
    </property>
    <column>
     <property name="text">
@@ -38,63 +41,18 @@
     </property>
    </item>
   </widget>
-  <widget class="QLineEdit" name="friendLineEdit">
-   <property name="geometry">
-    <rect>
-     <x>220</x>
-     <y>40</y>
-     <width>211</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="placeholderText">
-    <string>请输入好友ID</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="addFriendPushButton">
-   <property name="geometry">
-    <rect>
-     <x>220</x>
-     <y>90</y>
-     <width>101</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="cursor">
-    <cursorShape>PointingHandCursor</cursorShape>
-   </property>
-   <property name="text">
-    <string>添加好友</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="startGroupPushButton">
-   <property name="geometry">
-    <rect>
-     <x>330</x>
-     <y>90</y>
-     <width>101</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="cursor">
-    <cursorShape>PointingHandCursor</cursorShape>
-   </property>
-   <property name="text">
-    <string>发起群聊</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="firstNameLabel">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>30</x>
      <y>30</y>
-     <width>101</width>
-     <height>101</height>
+     <width>80</width>
+     <height>80</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>50</pointsize>
+     <pointsize>32</pointsize>
      <weight>75</weight>
      <bold>true</bold>
      <stylestrategy>PreferDefault</stylestrategy>
@@ -105,7 +63,7 @@
    </property>
    <property name="styleSheet">
     <string notr="true">border-color: lightyellow;background-color: #FFD700;
-border-radius:50%;
+border-radius:40px;
 color: black;
 </string>
    </property>
@@ -119,7 +77,7 @@ color: black;
     <set>Qt::AlignBottom|Qt::AlignHCenter</set>
    </property>
    <property name="margin">
-    <number>0</number>
+    <number>8</number>
    </property>
    <property name="indent">
     <number>0</number>
@@ -128,15 +86,15 @@ color: black;
   <widget class="QLabel" name="usernameLabel">
    <property name="geometry">
     <rect>
-     <x>125</x>
-     <y>35</y>
-     <width>81</width>
+     <x>130</x>
+     <y>30</y>
+     <width>151</width>
      <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>10</pointsize>
+     <pointsize>14</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -151,8 +109,8 @@ color: black;
   <widget class="QLabel" name="idLabel">
    <property name="geometry">
     <rect>
-     <x>125</x>
-     <y>65</y>
+     <x>130</x>
+     <y>70</y>
      <width>81</width>
      <height>31</height>
     </rect>
@@ -190,92 +148,6 @@ color: black;
     <string>x</string>
    </property>
   </widget>
-  <widget class="QLabel" name="firstNameLabel_2">
-   <property name="geometry">
-    <rect>
-     <x>110</x>
-     <y>100</y>
-     <width>45</width>
-     <height>28</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>8</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-     <stylestrategy>PreferDefault</stylestrategy>
-    </font>
-   </property>
-   <property name="layoutDirection">
-    <enum>Qt::LeftToRight</enum>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">border-width: 1px;border-style: solid;
-border-color: lightyellow;background-color:	#00FF00;
-border-radius:50%;
-color: black;
-</string>
-   </property>
-   <property name="text">
-    <string>LV5</string>
-   </property>
-   <property name="textFormat">
-    <enum>Qt::RichText</enum>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-   <property name="margin">
-    <number>6</number>
-   </property>
-   <property name="indent">
-    <number>0</number>
-   </property>
-  </widget>
-  <widget class="QLabel" name="firstNameLabel_3">
-   <property name="geometry">
-    <rect>
-     <x>160</x>
-     <y>100</y>
-     <width>45</width>
-     <height>28</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>8</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-     <stylestrategy>PreferDefault</stylestrategy>
-    </font>
-   </property>
-   <property name="layoutDirection">
-    <enum>Qt::LeftToRight</enum>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">border-width: 1px;border-style: solid;
-border-color: lightyellow;background-color: #F0E68C;
-border-radius:50%;
-color: black;
-</string>
-   </property>
-   <property name="text">
-    <string>VIP</string>
-   </property>
-   <property name="textFormat">
-    <enum>Qt::RichText</enum>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-   <property name="margin">
-    <number>6</number>
-   </property>
-   <property name="indent">
-    <number>0</number>
-   </property>
-  </widget>
   <widget class="QPushButton" name="hideButton">
    <property name="geometry">
     <rect>
@@ -293,6 +165,29 @@ color: black;
    </property>
    <property name="text">
     <string>-</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>50</y>
+     <width>60</width>
+     <height>60</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>24</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: #f2f5fa;
+border-radius: 30px;
+box-shadow: 0, 0, 0, 12px, #eee;</string>
+   </property>
+   <property name="text">
+    <string> +</string>
    </property>
   </widget>
  </widget>
