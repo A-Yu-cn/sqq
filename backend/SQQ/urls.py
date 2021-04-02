@@ -31,4 +31,5 @@ urlpatterns = [
     path('message', get_message),
     path('code', UserView.send_code),
     path('query/<query_id>', query),
+    path('file/', upload_file),
 ]

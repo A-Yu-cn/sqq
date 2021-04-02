@@ -5,6 +5,8 @@ from chat import server
 from itertools import chain
 from datetime import datetime
 from .codeSender import codeSender
+from hashlib import md5
+import os
 
 code_sender = codeSender()
 
@@ -321,3 +323,27 @@ def get_message(request, user):
     return wrap_response('', {
         'message_list': message_list
     })
+
+
+@csrf_exempt
+@token_verify
+def upload_file(request, user):
+    file_ = request.FILES['file']
+    file_content = file_.read()
+    if len(file_content) > 1024*1024*100:
+        return wrap_response('文件大于100M，上传失败')
+    file_md5 = md5(file_content).hexdigest()
+    if '.' in file_.name:
+        filename = f'{file_md5}.{file_.name.split(".")[-1]}'
+    else:
+        filename = file_md5
+    file_dir = os.path.join('static', 'file_upload')
+    if not os.path.exists(file_dir):
+        os.mkdir(file_dir)
+    filepath = os.path.join(file_dir, filename).replace('\\', '/')
+    if not os.path.exists(filepath):
+        with open(filepath, 'wb') as f:
+            f.write(file_content)
+        _file = File(user=user, filename=file_.name, filepath=filepath, create_time=timezone.now(), file_md5=file_md5)
+        _file.save()
+    return wrap_response('', filepath)
