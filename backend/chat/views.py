@@ -183,7 +183,8 @@ def modify_friend(request, user):
             friend = User.objects.get(id=friend_id)
             user.friends.add(friend)
             # 添加成功向被添加着发送通知
-            server.send_message(friend, user, 1)
+            # server.send_message(friend, user, 1)
+            server.send_queue.put((friend, user, 1))
             return wrap_response("")
         except User.DoesNotExist:
             return wrap_response("wrong friend_id")
@@ -196,7 +197,8 @@ def modify_friend(request, user):
             user.friends.remove(friend)
             friend.friends.remove(user)
             # 删除成功之后向被删除者发送通知
-            server.send_message(friend, user, 2)
+            # server.send_message(friend, user, 2)
+            server.send_queue.put((friend, user, 2))
             return wrap_response('')
         except User.DoesNotExist:
             return wrap_response('wrong friend_id')
@@ -220,7 +222,9 @@ def modify_chatroom(request, user):
             try:
                 chatroom_user = User.objects.get(id=friend_id)
                 chatroom.users.add(chatroom_user)
-                server.send_message(chatroom_user, chatroom, 3)
+                # 向聊天室用户发送被拉入群聊通知
+                # server.send_message(chatroom_user, chatroom, 3)
+                server.send_queue.put((chatroom_user, chatroom, 3))
             except User.DoesNotExist:
                 wrong_ids.append(friend_ids)
         return wrap_response("", {

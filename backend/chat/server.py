@@ -5,13 +5,23 @@ from chat.models import *
 from django.utils import timezone
 import logging
 import os
+import queue
 
 # 设置日志等级和格式
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='[%(asctime)s]  %(message)s', datefmt='%m/%d/%Y %H:%M:%S %p')
-
 # 客户端连接池
 client_pool = {}
+
+send_queue = queue.Queue()
+
+
+class Sender(Thread):
+
+    def run(self):
+        while True:
+            user, message, type_ = send_queue.get()
+            send_message(user, message, type_)
 
 
 def send_message(user, message, type_=0):
@@ -193,3 +203,6 @@ class Server(Thread):
 s = Server()
 s.setDaemon(True)
 s.start()
+sender = Sender()
+sender.setDaemon(True)
+sender.start()
