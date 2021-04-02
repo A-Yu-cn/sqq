@@ -19,7 +19,7 @@ class ResetPasswordWindow(QMainWindow, Ui_Form):
         super(ResetPasswordWindow, self).__init__()
         self.setupUi(self)
         self.setWindowTitle('重置密码')
-        self.setWindowIcon(QIcon('../imgs/password.png'))
+        self.setWindowIcon(QIcon('imgs/password.png'))
         # 禁止拉伸窗口
         self.setFixedSize(self.width(), self.height())
         # 重置密码事件
@@ -80,7 +80,7 @@ if __name__ == '__main__':
 
     myWin = ResetPasswordWindow()
 
-    with open('../css/forgetWindow.css') as file:
+    with open('css/forgetWindow.css') as file:
         qss = file.readlines()
         qss = ''.join(qss).strip('\n')
     myWin.setStyleSheet(qss)

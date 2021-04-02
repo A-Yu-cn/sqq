@@ -1,16 +1,12 @@
-import _queue
 import base64
 import datetime
 import sys
-import time
 
 import requests
 from PyQt5.QtCore import QDate, QThread, pyqtSignal, Qt, QSize, QTimer, QDateTime, QUrl
 from PyQt5 import QtGui
 from PyQt5.QtGui import QTextCursor, QKeySequence, QIcon
 from qtpy import QtCore
-import localClient
-from threading import Thread
 from chatWindow.chatWindow import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox
 from globalFile import GlobalData
@@ -48,7 +44,7 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.setFixedSize(self.width(), self.height())
         # 设置标题
         self.setWindowTitle("聊天 " + self.chatUsername)
-        self.setWindowIcon(QtGui.QIcon('../imgs/chatroom.png'))
+        self.setWindowIcon(QtGui.QIcon('imgs/chatroom.png'))
         # 设置日历控件允许弹出
         self.dateTimeEdit_1.setCalendarPopup(True)
         self.dateTimeEdit_1.setDate(QtCore.QDate(2020, 1, 1))
@@ -110,6 +106,7 @@ class ChatWindow(QMainWindow, Ui_Form):
                            "emojy/027-unamused.png"]
         self.emojy_name_list = ['焦虑', '哭', '懒', '飞吻', '满足', '呕吐', '大笑', '白眼', '笑哭', '害羞', '汗', '拥抱', '泪', '生气', '睡觉',
                                 '喜欢', '微笑', '思考', '困倦', '斜眼']
+        # 加载表情
         for emojy, emojy_name in zip(self.emojy_list, self.emojy_name_list):
             self.combo.addItem(QIcon(emojy), emojy_name)
         self.combo.currentIndexChanged.connect(self.addEmojy)
@@ -203,6 +200,7 @@ class ChatWindow(QMainWindow, Ui_Form):
     # 发送消息
     def submitMessage(self):
         currentMessageText = self.textEdit.toPlainText()
+
         currentMessage = self.textEdit.toHtml()
         if currentMessageText == "":
             QMessageBox.warning(self, "提示", "请输入内容！", QMessageBox.Yes)
@@ -323,7 +321,7 @@ if __name__ == '__main__':
 
     myWin = ChatWindow()
 
-    with open('../css/chatWindow.css') as file:
+    with open('css/chatWindow.css') as file:
         qss = file.readlines()
         qss = ''.join(qss).strip('\n')
     myWin.setStyleSheet(qss)

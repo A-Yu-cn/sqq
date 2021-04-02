@@ -51,7 +51,7 @@ class ListWindow(QMainWindow, Ui_Form):
         self.firstNameLabel.setText(loginInfo.get('data').get('self').get('nickname')[0])
         self.usernameLabel.setText(loginInfo.get('data').get('self').get('nickname'))
         self.idLabel.setText(str(loginInfo.get('data').get('self').get('id')))
-        self.setWindowIcon(QtGui.QIcon('../imgs/user.png'))
+        self.setWindowIcon(QtGui.QIcon('imgs/user.png'))
         self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)  # 打开右键菜单的策略
         self.treeWidget.customContextMenuRequested.connect(self.treeWidgetItem_fun)  # 绑定右键点击事件
         # 记录登录信息
@@ -222,7 +222,7 @@ class ListWindow(QMainWindow, Ui_Form):
             chatNumber = self.loginInfo.get('data').get('friends')[index_row]
             self.chatWindow = ChatWindow(chatList=chatNumber, token=self.token)
             # 加载样式
-            with open('../css/chatWindow.css') as file:
+            with open('css/chatWindow.css') as file:
                 qss = file.readlines()
                 qss = ''.join(qss).strip('\n')
             self.chatWindow.setStyleSheet(qss)
@@ -233,7 +233,7 @@ class ListWindow(QMainWindow, Ui_Form):
                 chatNumber = self.loginInfo.get('data').get('chatroom_list')[index_row]
                 self.chatWindow = ChatWindow(chatList=chatNumber, token=self.token)
                 # 加载样式
-                with open('../css/chatWindow.css') as file:
+                with open('css/chatWindow.css') as file:
                     qss = file.readlines()
                     qss = ''.join(qss).strip('\n')
                 self.chatWindow.setStyleSheet(qss)
@@ -247,7 +247,7 @@ class ListWindow(QMainWindow, Ui_Form):
     # 发起群聊
     def startGroup(self):
         self.groupWindow = GroupWindow(self.loginInfo['data']['friends'], self.token)
-        with open('../css/startGroup.css') as file:
+        with open('css/startGroup.css') as file:
             qss = file.readlines()
             qss = ''.join(qss).strip('\n')
         self.groupWindow.setStyleSheet(qss)
@@ -409,7 +409,7 @@ if __name__ == '__main__':
 
     myWin = ListWindow({})
 
-    with open('../css/listWindow.css') as file:
+    with open('css/listWindow.css') as file:
         qss = file.readlines()
         qss = ''.join(qss).strip('\n')
     myWin.setStyleSheet(qss)

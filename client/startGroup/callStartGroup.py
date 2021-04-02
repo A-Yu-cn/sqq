@@ -19,7 +19,7 @@ class GroupWindow(QMainWindow, Ui_Form):
     def __init__(self, friendList=[], token=""):
         super(GroupWindow, self).__init__()
         self.setupUi(self)
-        self.setWindowIcon(QtGui.QIcon('../imgs/group.png'))
+        self.setWindowIcon(QtGui.QIcon('imgs/group.png'))
         self.setWindowTitle('发起群聊')
         self.friendList = friendList
         self.token = token
@@ -90,7 +90,7 @@ if __name__ == '__main__':
 
     myWin = GroupWindow()
 
-    with open('../css/startGroup.css') as file:
+    with open('css/startGroup.css') as file:
         qss = file.readlines()
         qss = ''.join(qss).strip('\n')
     myWin.setStyleSheet(qss)

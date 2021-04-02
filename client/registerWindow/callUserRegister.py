@@ -17,7 +17,7 @@ from PyQt5.QtGui import QIcon
 class UserRegisterWindow(QMainWindow, Ui_Form):
     def __init__(self):
         super(UserRegisterWindow, self).__init__()
-        self.setWindowIcon(QIcon('../imgs/register.png'))
+        self.setWindowIcon(QIcon('imgs/register.png'))
         self.setWindowTitle('注册')
         self.setupUi(self)
         # 禁止拉伸窗口
@@ -84,7 +84,7 @@ if __name__ == '__main__':
 
     myWin = UserRegisterWindow()
 
-    with open('../css/userRegister.css') as file:
+    with open('css/userRegister.css') as file:
         qss = file.readlines()
         qss = ''.join(qss).strip('\n')
     myWin.setStyleSheet(qss)

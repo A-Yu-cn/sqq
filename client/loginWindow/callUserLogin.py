@@ -29,7 +29,7 @@ class UserLoginWindow(QMainWindow, Ui_widget):
     def __init__(self):
         super(UserLoginWindow, self).__init__()
         self.setupUi(self)
-        self.setWindowIcon(QtGui.QIcon('../imgs/chat.png'))
+        self.setWindowIcon(QtGui.QIcon('imgs/chat.png'))
         self.setWindowTitle('SQQ')
         # 待传递消息
         self.loginInfo = dict()
@@ -40,9 +40,9 @@ class UserLoginWindow(QMainWindow, Ui_widget):
         self.passwordLineEdit.setEchoMode(QLineEdit.Password)
         self.label_4.setAlignment(Qt.AlignCenter)
         # 图片加载
-        jpg = QtGui.QPixmap("../imgs/logo2.png").scaled(self.imageLabel.width(), self.imageLabel.height())
+        jpg = QtGui.QPixmap("imgs/logo2.png").scaled(self.imageLabel.width(), self.imageLabel.height())
         self.imageLabel.setPixmap(jpg)
-        jpg = QtGui.QPixmap("../imgs/background.jpg").scaled(self.label.width(), self.label.height())
+        jpg = QtGui.QPixmap("imgs/background.jpg").scaled(self.label.width(), self.label.height())
         self.label.setPixmap(jpg)
         # 绑定注册事件
         self.registerButton.clicked.connect(self.userRegister)
@@ -85,7 +85,7 @@ class UserLoginWindow(QMainWindow, Ui_widget):
                 self.loginButton.setText("登陆成功，请稍后...")
                 self.main_ui = ListWindow(self.loginInfo)
                 # 加载样式
-                with open('../css/listWindow.css') as file:
+                with open('css/listWindow.css') as file:
                     qss = file.readlines()
                     qss = ''.join(qss).strip('\n')
                 self.main_ui.setStyleSheet(qss)
@@ -136,7 +136,7 @@ class UserLoginWindow(QMainWindow, Ui_widget):
                     "remember_username": self.checkBox.isChecked(),
                     "remember_password": self.checkBox_2.isChecked()
                 }
-            with open('user.cfg', 'w')as configfile:
+            with open('users/user.cfg', 'w')as configfile:
                 config.write(configfile)
             # 建立连接，开启消息发送线程
             connect_server.connect()
@@ -150,7 +150,7 @@ class UserLoginWindow(QMainWindow, Ui_widget):
     def userRegister(self):
         self.regWindow = UserRegisterWindow()
         # 加载样式
-        with open('../css/userRegister.css') as file:
+        with open('css/userRegister.css') as file:
             qss = file.readlines()
             qss = ''.join(qss).strip('\n')
         self.regWindow.setStyleSheet(qss)
@@ -159,7 +159,7 @@ class UserLoginWindow(QMainWindow, Ui_widget):
     # 加载配置文件
     def load_config(self):
         config = configparser.ConfigParser()
-        file = config.read('user.cfg')
+        file = config.read('users/user.cfg')
         config_dict = config.defaults()
 
         try:
@@ -185,7 +185,7 @@ class UserLoginWindow(QMainWindow, Ui_widget):
         """忘记密码"""
         self.regWindow = ResetPasswordWindow()
         # 加载样式
-        with open('../css/forgetWindow.css') as file:
+        with open('css/forgetWindow.css') as file:
             qss = file.readlines()
             qss = ''.join(qss).strip('\n')
         self.regWindow.setStyleSheet(qss)
@@ -212,7 +212,7 @@ def start():
 
     myWin = UserLoginWindow()
 
-    with open('../css/userLogin.css') as file:
+    with open('css/userLogin.css') as file:
         qss = file.readlines()
         qss = ''.join(qss).strip('\n')
     myWin.setStyleSheet(qss)
@@ -227,7 +227,7 @@ if __name__ == '__main__':
 
     myWin = UserLoginWindow()
 
-    with open('../css/userLogin.css') as file:
+    with open('css/userLogin.css') as file:
         qss = file.readlines()
         qss = ''.join(qss).strip('\n')
     myWin.setStyleSheet(qss)
