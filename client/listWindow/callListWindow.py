@@ -43,20 +43,25 @@ class ListWindow(QMainWindow, Ui_Form):
     def __init__(self, loginInfo):
         super(ListWindow, self).__init__()
         self.setupUi(self)
+        self.loginInfo = loginInfo
         self.setWindowTitle(
             loginInfo.get('data').get('self').get('nickname') + "（" + str(loginInfo.get('data').get('self').get(
                 'id')) + "）")
+        # 设置标题栏
+        self.firstNameLabel.setText(loginInfo.get('data').get('self').get('nickname')[0])
+        self.usernameLabel.setText(loginInfo.get('data').get('self').get('nickname'))
+        self.idLabel.setText(str(loginInfo.get('data').get('self').get('id')))
         self.setWindowIcon(QtGui.QIcon('../imgs/user.png'))
         self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)  # 打开右键菜单的策略
         self.treeWidget.customContextMenuRequested.connect(self.treeWidgetItem_fun)  # 绑定右键点击事件
         # 记录登录信息
         self.treeWidget.header().setVisible(False)
-        self.loginInfo = loginInfo
         self.token = global_data.token
         # 加载列表
         self.loadList()
         # 隐藏头部
         self.treeWidget.header().setVisible(False)
+        self.closeButton.clicked.connect(self.closeSimpleQQ)
         # 添加好友按钮
         self.addFriendPushButton.clicked.connect(self.addFriend)
         # 发起群聊按钮
@@ -383,6 +388,20 @@ class ListWindow(QMainWindow, Ui_Form):
             os._exit(0)
         else:
             event.ignore()
+
+    # 自定义程序退出
+    def closeSimpleQQ(self):
+        """
+        对MainWindow的函数closeEvent进行重构
+        退出软件时结束所有进程
+        :param event:
+        :return:
+        """
+        reply = QMessageBox.question(self, '本程序', "是否要退出程序？", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            os._exit(0)
+        else:
+            return
 
 
 if __name__ == '__main__':

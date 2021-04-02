@@ -58,4 +58,31 @@ QPushButton#addFriendPushButton, #startGroupPushButton{
     background-color: #007bff;
     border-radius: 3px;
 }
+QPushButton#closeButton{
+    position: relative;
+	margin: 3px;
+	width: 24px;
+	height: 20px;
+    background: white;
+    border-radius: 30px;
+    border: 2px groove gray;
+    border-style: outset;
+}
+QPushButton#closeButton:hover{
+	background: red;
+}
+
+QPushButton#hideButton{
+    position: relative;
+	margin: 3px;
+	width: 24px;
+	height: 20px;
+    background: white;
+    border-radius: 30px;
+    border: 2px groove gray;
+    border-style: outset;
+}
+QPushButton#hideButton:hover{
+	background: red;
+}
 
