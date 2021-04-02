@@ -62,10 +62,6 @@ class ListWindow(QMainWindow, Ui_Form):
         # 隐藏头部
         self.treeWidget.header().setVisible(False)
         self.closeButton.clicked.connect(self.closeSimpleQQ)
-        # 添加好友按钮
-        self.addFriendPushButton.clicked.connect(self.addFriend)
-        # 发起群聊按钮
-        self.startGroupPushButton.clicked.connect(self.startGroup)
         self.treeWidget.itemDoubleClicked.connect(self.startChat)
         # 窗口透明度动画类
         self.animation = QPropertyAnimation(self, b'windowOpacity')
