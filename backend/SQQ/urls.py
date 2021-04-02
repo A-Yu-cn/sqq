@@ -30,4 +30,5 @@ urlpatterns = [
     path("chatroom/<room_id>", get_chatroom_info),
     path('message', get_message),
     path('code', UserView.send_code),
+    path('query/<query_id>', query),
 ]

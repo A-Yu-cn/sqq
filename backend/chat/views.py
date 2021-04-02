@@ -256,6 +256,34 @@ def get_chatroom_info(request, room_id):
         return wrap_response("wrong id")
 
 
+def query(request, query_id):
+    try:
+        query_id = int(query_id)
+    except ValueError:
+        return wrap_response('wrong id')
+
+    if query_id < 100000:
+        try:
+            user = User.objects.get(id=query_id)
+            res = {
+                'id': user.id,
+                'name': user.nickname,
+                'email': user.email
+            }
+        except User.DoesNotExist:
+            return wrap_response('wrong id')
+    else:
+        try:
+            chatroom = Chatroom.objects.get(id=query_id)
+            res = {
+                'id': chatroom.id,
+                'name': chatroom.name
+            }
+        except Chatroom.DoesNotExist:
+            return wrap_response('wrong id')
+    return wrap_response('', res)
+
+
 @token_verify
 def get_message(request, user):
     try:
@@ -275,14 +303,14 @@ def get_message(request, user):
     else:
         message_list = Message.objects.filter(to=other_id, createTime__gte=start_time, createTime__lte=end_time)
     message_list = [{
-            'from': {
-                'id': message.from_user.id,
-                'nickname': message.from_user.nickname
-            },
-            'to': message.to,
-            'content': message.content,
-            'time': timezone.localtime(message.createTime).isoformat()
-        } for message in sorted(message_list, key=lambda x: x.createTime)]
+        'from': {
+            'id': message.from_user.id,
+            'nickname': message.from_user.nickname
+        },
+        'to': message.to,
+        'content': message.content,
+        'time': timezone.localtime(message.createTime).isoformat()
+    } for message in sorted(message_list, key=lambda x: x.createTime)]
     return wrap_response('', {
         'message_list': message_list
     })
