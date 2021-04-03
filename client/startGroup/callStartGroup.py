@@ -13,9 +13,6 @@ global_data = GlobalData()
 
 
 class GroupWindow(QMainWindow, Ui_Form):
-    # 信号
-    my_Signal = pyqtSignal(str)
-
     def __init__(self, friendList=[], token=""):
         super(GroupWindow, self).__init__()
         self.setupUi(self)
@@ -71,18 +68,10 @@ class GroupWindow(QMainWindow, Ui_Form):
                     QMessageBox.warning(self, "警告", "添加失败！\n原因:{0}".format(json.loads(r.text)["mes"]), QMessageBox.Yes)
                 else:
                     QMessageBox.information(self, "提示", "群聊添加成功！", QMessageBox.Yes)
-                    self.sendEditContent()
                     self.destroy()
                 return
             except KeyError:
                 QMessageBox.warning(self, "警告", "添加失败！", QMessageBox.Yes)
-
-    def sendEditContent(self):
-        content = '1'
-        self.my_Signal.emit(content)
-
-    def closeEvent(self, event):
-        self.sendEditContent()
 
 
 if __name__ == '__main__':

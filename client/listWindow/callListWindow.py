@@ -14,9 +14,9 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem, QWidget,
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import Qt, pyqtSignal, QPropertyAnimation
 from globalFile import GlobalData
+from listWindow.callUserAndGroupWindow import AddWindow
 
 global_data = GlobalData()
-from startGroup.callStartGroup import GroupWindow
 
 
 # 内嵌自定义item对象
@@ -36,6 +36,22 @@ class ItemWidget(QWidget):
         layout.addWidget(label2)
         # layout.addSpacerItem(QSpacerItem(
         #     60, 1, QSizePolicy.Maximum, QSizePolicy.Minimum))
+
+
+# 自定义QLabel类
+class MyQLabel(QtWidgets.QLabel):
+    # 自定义信号, 注意信号必须为类属性
+    button_clicked_signal = QtCore.pyqtSignal()
+
+    def __init__(self, parent=None):
+        super(MyQLabel, self).__init__(parent)
+
+    def mouseReleaseEvent(self, QMouseEvent):
+        self.button_clicked_signal.emit()
+
+    # 可在外部与槽函数连接
+    def connect_customized_slot(self, func):
+        self.button_clicked_signal.connect(func)
 
 
 class ListWindow(QMainWindow, Ui_Form):
@@ -59,6 +75,8 @@ class ListWindow(QMainWindow, Ui_Form):
         self.token = global_data.token
         # 加载列表
         self.loadList()
+        # 添加好友和群聊
+        self.addButton.clicked.connect(self.addFriendAndGroup)
         # 隐藏头部
         self.treeWidget.header().setVisible(False)
         self.closeButton.clicked.connect(self.closeSimpleQQ)
@@ -175,27 +193,11 @@ class ListWindow(QMainWindow, Ui_Form):
             _widget = ItemWidget(str(i[1]) + '（' + str(i[0]) + '）')
             self.treeWidget.setItemWidget(_item, 0, _widget)
 
-    # 添加好友
-    def addFriend(self):
-        f_id = self.friendLineEdit.text()
-        if f_id == "":
-            QMessageBox.warning(self, "提示", "请输入好友码！", QMessageBox.Yes)
-        else:
-            url = global_data.base_url + "/users/friends"
-            addData = {"friend_id": int(f_id)}
-            try:
-                headers = {"Authorization": self.token}
-                r = requests.post(url, json=addData, headers=headers, proxies=global_data.proxies)
-            except KeyError:
-                QMessageBox.warning(self, "警告", "您的用户Token无效！", QMessageBox.Yes)
-                return
-            mes = r.json().get("mes")
-            if mes:
-                QMessageBox.warning(self, "警告", "好友ID无效！", QMessageBox.Yes)
-            # 添加成功
-            else:
-                QMessageBox.information(self, "提示", "添加成功！", QMessageBox.Yes)
-                self.loadList()
+    # 打开添加好友和群聊界面
+    def addFriendAndGroup(self):
+        self.addWindow = AddWindow(self.loginInfo, self.token)
+        self.addWindow.my_Signal.connect(self.loadList)
+        self.addWindow.show()
 
     # 打开聊天界面
     def startChat(self, item):
@@ -239,16 +241,6 @@ class ListWindow(QMainWindow, Ui_Form):
             except ValueError:
                 QMessageBox.warning(self, "警告", "用户信息错误！", QMessageBox.Yes)
                 return
-
-    # 发起群聊
-    def startGroup(self):
-        self.groupWindow = GroupWindow(self.loginInfo['data']['friends'], self.token)
-        with open('css/startGroup.css') as file:
-            qss = file.readlines()
-            qss = ''.join(qss).strip('\n')
-        self.groupWindow.setStyleSheet(qss)
-        self.groupWindow.my_Signal.connect(self.loadList)
-        self.groupWindow.show()
 
     # 右键菜单绑定事件
     def treeWidgetItem_fun(self, pos):

@@ -167,7 +167,7 @@ color: black;
     <string>-</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QPushButton" name="addButton">
    <property name="geometry">
     <rect>
      <x>330</x>
@@ -178,16 +178,24 @@ color: black;
    </property>
    <property name="font">
     <font>
+     <family>AcadEref</family>
      <pointsize>24</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
     </font>
    </property>
+   <property name="cursor">
+    <cursorShape>PointingHandCursor</cursorShape>
+   </property>
    <property name="styleSheet">
-    <string notr="true">background-color: #f2f5fa;
-border-radius: 30px;
-box-shadow: 0, 0, 0, 12px, #eee;</string>
+    <string notr="true">border-radius: 30px;
+border-style: outset;
+background-color: #f2f5fa;
+</string>
    </property>
    <property name="text">
-    <string> +</string>
+    <string>+</string>
    </property>
   </widget>
  </widget>
