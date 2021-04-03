@@ -11,10 +11,11 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView
 from qtpy import QtCore
 from chatWindow.chatWindow import Ui_Form
 from chatWindow.chatWindowNew import Ui_Form as u
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox, QTextBrowser
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox, QTextBrowser, QFileDialog
 from globalFile import GlobalData
 from utils import record_voice
 from utils.notice_sender import NotificationWindow
+from utils.md5_ import getFileMd5
 
 global_data = GlobalData()
 from richTextEditorWindow.richText import RichTextWindow
@@ -29,7 +30,7 @@ class MessageReceiver(QThread):
             self.receive_signal.emit(newMessage)
 
 
-class ChatWindow(QMainWindow, Ui_Form):
+class ChatWindow(QMainWindow, u):
 
     def __init__(self, chatList=[], token=""):
         super(ChatWindow, self).__init__()
@@ -55,6 +56,11 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.dateTimeEdit_2.setDate(QDate.currentDate())
         self.dateTimeEdit_1.setDisplayFormat("yyyy-MM-dd HH:mm:ss")
         self.dateTimeEdit_2.setDisplayFormat("yyyy/MM/dd HH-mm-ss")
+        # 加载图片
+        jpg = QtGui.QPixmap("imgs/file.png").scaled(30, 30)
+        self.fileLabel.setPixmap(jpg)
+        jpg = QtGui.QPixmap("imgs/phone.png").scaled(30, 30)
+        self.phoneLabel.setPixmap(jpg)
         '''
         逻辑绑定   
         '''
@@ -85,6 +91,9 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.cancleButton.clicked.connect(self.cancleRecord)
         # 富文本编辑
         self.richTextButton.clicked.connect(self.openRichTextEditor)
+        # 电话和语音
+        self.fileButton.clicked.connect(self.chooseFile)
+        # self.phoneButton.clicked.connect()
         # 启动接收线程
         self.receiver = MessageReceiver()
         self.receiver.receive_signal.connect(self.messageShow)
@@ -333,6 +342,37 @@ class ChatWindow(QMainWindow, Ui_Form):
         elif self.recordButton.text() == "停止并发送":
             self.endRecord()
             NotificationWindow.success("提示", "语音成功发送")
+
+    # 选择文件
+    def chooseFile(self):
+        try:
+            file_, filetype = QFileDialog.getOpenFileName(self, "选取文件", "C:/", "All Files (*);;Text Files (*.txt)")
+            print(file_)
+            print(filetype)
+            query_url = global_data.base_url + "/file/query"
+            file_md5 = getFileMd5(file_)
+            query_data = {"file_md5": str(file_md5)}
+            headers = {"Authorization": self.token}
+            r = requests.get(url=query_url, headers=headers, params=query_data, proxies=global_data.proxies)
+            mes = r.json().get("mes")
+            print(r.text)
+            # 需要上传
+            if mes:
+                headers = {"Authorization": self.token}
+                load_url = global_data.base_url + "/file/"
+                files = {
+                    'file': (file_, open(file_, 'rb'))
+                }
+                r_load = requests.post(url=load_url, headers=headers, files=files, proxies=global_data.proxies)
+                mes = r_load.json().get("mes")
+                file_path = r_load.json().get("data")
+            # 直接返回链接
+            else:
+                file_path = r.json().get("data")
+            file_text = global_data.base_url + "/" + file_path
+            self.sendMessage(mes=file_text, type_=2)
+        except:
+            pass
 
 
 if __name__ == '__main__':
