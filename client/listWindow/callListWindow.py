@@ -85,7 +85,9 @@ class ListWindow(QMainWindow, Ui_Form):
         self.animation = QPropertyAnimation(self, b'windowOpacity')
         self.animation.setDuration(300)  # 持续时间1秒
         # 贴边隐藏
-        self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)
+        self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
+        # 置顶↑
+        # | QtCore.Qt.WindowStaysOnTopHint
         self._width = QApplication.desktop().availableGeometry(self).width()
         # 执行淡入
         self.doShow()
