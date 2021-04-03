@@ -301,8 +301,12 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.recordLabel.hide()
         self.cancleButton.hide()
         self.recordButton.setText("发送语音")
-        record = base64.b64encode(global_data.record_queue.get(timeout=1)).decode()
-        self.sendMessage(record, type_=1)
+        # 可能出现timeoutError
+        try:
+            record = base64.b64encode(global_data.record_queue.get(timeout=1)).decode()
+            self.sendMessage(record, type_=1)
+        except:
+            QMessageBox.warning(self, "警告", "语音消息发送失败！", QMessageBox.Yes)
 
     # 取消录制
     def cancleRecord(self):
