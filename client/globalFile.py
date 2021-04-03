@@ -22,6 +22,7 @@ class GlobalData(object):
     toast_message_queue = queue.Queue()
     db_file_path = "sqq.db"
     record_signal = False  # 语音录制信号
+    record_queue = queue.Queue()  # 语音队列
 
     def __init__(self):
         if self.log_file:

@@ -34,13 +34,7 @@ class Recorder(Thread):
         stream.stop_stream()
         stream.close()
         p.terminate()
-        # 保存录音文件
-        wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')  # 保存
-        wf.setnchannels(CHANNELS)
-        wf.setsampwidth(p.get_sample_size(FORMAT))
-        wf.setframerate(RATE)
-        wf.writeframes(b''.join(frames))
-        wf.close()
+        globalData.record_queue.put(b''.join(frames))
 
     def run(self) -> None:
         self.start_record()

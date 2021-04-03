@@ -1,6 +1,7 @@
 import base64
 import datetime
 import sys
+import json
 
 import requests
 from PyQt5.QtCore import QDate, QThread, pyqtSignal, Qt, QSize, QTimer, QDateTime, QUrl
@@ -208,15 +209,21 @@ class ChatWindow(QMainWindow, Ui_Form):
             self.sendMessage(currentMessage)
 
     # 客户端发送消息
-    def sendMessage(self, mes):
-        global_data.message_sender_queue.put((self.chatNumber, mes))
+    def sendMessage(self, mes, type_=0):
+        content = mes
+        if type_ == 0:
+            # 普通文字消息
+            pass
+        elif type_ == 1:
+            # 语音消息
+            mes = "语音消息"
+        global_data.message_sender_queue.put((self.chatNumber, content))
         # 界面加载消息
         mes_username = "我"
-        mes_content = mes
         # 获取UTC+8当前时间
         tzinfo = datetime.timezone(datetime.timedelta(hours=8.0))
         mes_time = datetime.datetime.now(tzinfo).isoformat()
-        self.addMessageContent(mes_username=mes_username, mes_time=mes_time, mes_content=mes_content)
+        self.addMessageContent(mes_username=mes_username, mes_time=mes_time, mes_content=content)
         self.clearMessage(1)
 
     # 客户端显示消息
@@ -294,6 +301,8 @@ class ChatWindow(QMainWindow, Ui_Form):
         self.recordLabel.hide()
         self.cancleButton.hide()
         self.recordButton.setText("发送语音")
+        record = base64.b64encode(global_data.record_queue.get(timeout=1)).decode()
+        self.sendMessage(record, type_=1)
 
     # 取消录制
     def cancleRecord(self):
