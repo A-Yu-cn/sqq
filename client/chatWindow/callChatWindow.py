@@ -7,10 +7,11 @@ import requests
 from PyQt5.QtCore import QDate, QThread, pyqtSignal, Qt, QSize, QTimer, QDateTime, QUrl
 from PyQt5 import QtGui
 from PyQt5.QtGui import QTextCursor, QKeySequence, QIcon
+from PyQt5.QtWebEngineWidgets import QWebEngineView
 from qtpy import QtCore
 from chatWindow.chatWindow import Ui_Form
 from chatWindow.chatWindowNew import Ui_Form as u
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox, QTextBrowser
 from globalFile import GlobalData
 from utils import record_voice
 from utils.notice_sender import NotificationWindow
@@ -112,6 +113,10 @@ class ChatWindow(QMainWindow, Ui_Form):
         for emojy, emojy_name in zip(self.emojy_list, self.emojy_name_list):
             self.combo.addItem(QIcon(emojy), emojy_name)
         self.combo.currentIndexChanged.connect(self.addEmojy)
+        # 加载网页版消息提示框
+        # self.messageTextBrowser = QWebEngineView()
+        # self.messageTextBrowser.resize(851, 501)
+        # self.messageTextBrowser.move(10, 10)
 
     def loadMessage(self):
         # 获取当天零点和24点

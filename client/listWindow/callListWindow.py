@@ -65,11 +65,6 @@ class ListWindow(QMainWindow, Ui_Form):
             loginInfo.get('data').get('self').get('nickname') + "（" + str(loginInfo.get('data').get('self').get(
                 'id')) + "）")
 
-        # 临时添加
-        self.messageTextBrowser = QWebEngineView()
-        self.messageTextBrowser.resize(851, 501)
-        self.messageTextBrowser.move(10, 10)
-
         # 设置标题栏
         self.firstNameLabel.setText(loginInfo.get('data').get('self').get('nickname')[0])
         self.usernameLabel.setText(loginInfo.get('data').get('self').get('nickname'))
