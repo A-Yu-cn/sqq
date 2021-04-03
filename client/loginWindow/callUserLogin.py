@@ -169,7 +169,8 @@ class UserLoginWindow(QMainWindow, Ui_widget):
                 self.checkBox.setChecked(True)
             else:
                 self.checkBox.setChecked(False)
-            if config_dict['remember_password'] == 'True':
+                self.checkBox_2.setChecked(False)
+            if config_dict['remember_username'] == 'True' and config_dict['remember_password'] == 'True':
                 password = config_dict['password']
                 self.passwordLineEdit.setText(password)
                 self.checkBox.setChecked(True)
