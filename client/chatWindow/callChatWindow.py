@@ -9,6 +9,7 @@ from PyQt5 import QtGui
 from PyQt5.QtGui import QTextCursor, QKeySequence, QIcon
 from qtpy import QtCore
 from chatWindow.chatWindow import Ui_Form
+from chatWindow.chatWindowNew import Ui_Form as u
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QComboBox
 from globalFile import GlobalData
 from utils import record_voice
