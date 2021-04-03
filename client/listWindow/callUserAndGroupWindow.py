@@ -6,6 +6,7 @@ from listWindow.addUserAndGroup import Ui_Form
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QLineEdit
 from globalFile import GlobalData
 from startGroup.callStartGroup import GroupWindow
+from PyQt5 import QtGui
 
 global_data = GlobalData()
 
@@ -67,6 +68,21 @@ TextStyle = """
     QMessageBox QPushButton[text="Ignore"] {
         qproperty-text: "忽略";
     }
+    QPushButton#searchButton,#startGroupButton{
+    color: #fff;
+    border:1px solid transparent;
+    background-color: #007bff;
+    border-radius: 3px;
+    }
+    QLineEdit#{
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+    QLineEdit:focus{
+    outline: 0;
+    border: 2px solid #80bdff;
+}
+}
     """
 
 
@@ -77,6 +93,8 @@ class AddWindow(QMainWindow, Ui_Form):
     def __init__(self, loginInfo={}, token=""):
         super(AddWindow, self).__init__()
         self.setupUi(self)
+        self.setWindowTitle("添加")
+        self.setWindowIcon(QtGui.QIcon('imgs/chatroom.png'))
         self.loginInfo = loginInfo
         self.token = token
         self.setStyleSheet(TextStyle)
