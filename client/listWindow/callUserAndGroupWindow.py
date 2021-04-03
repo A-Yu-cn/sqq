@@ -74,15 +74,14 @@ TextStyle = """
     background-color: #007bff;
     border-radius: 3px;
     }
-    QLineEdit#{
+    QLineEdit{
     border: 1px solid #ccc;
     border-radius: 4px;
-}
+    }
     QLineEdit:focus{
     outline: 0;
     border: 2px solid #80bdff;
-}
-}
+    }
     """
 
 
