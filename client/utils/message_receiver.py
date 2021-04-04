@@ -2,9 +2,6 @@ from globalFile import GlobalData
 from threading import Thread
 import json
 from utils import connect_server
-import winsound
-import pyaudio
-import base64
 
 global_data = GlobalData()
 
