@@ -24,6 +24,7 @@ class GlobalData(object):
     record_signal = False  # 语音录制信号
     record_queue = queue.Queue()  # 语音队列
     refresh_friend_list_single = queue.Queue()
+    notice_queue = queue.Queue()    # 消息提示队列
 
     def __init__(self):
         if self.log_file:

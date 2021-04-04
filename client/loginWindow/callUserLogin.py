@@ -21,6 +21,7 @@ from utils.message_receiver import MessageReceiver
 from utils import connect_server
 from globalFile import GlobalData
 from utils.toaster_sender import ToasterSender
+from utils.notice_player import NoticePlayer
 
 global_data = GlobalData()
 
@@ -145,6 +146,7 @@ class UserLoginWindow(QMainWindow, Ui_widget):
             connect_server.connect()
             MessageSender().start()
             MessageReceiver().start()
+            NoticePlayer().start()
             return True
         else:
             return False
