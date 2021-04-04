@@ -110,7 +110,7 @@ class AddWindow(QMainWindow, Ui_Form):
                 return
             else:
                 url = global_data.base_url + "/query/" + search_id
-                r = requests.get(url=url)
+                r = requests.get(url=url, proxies=global_data.proxies)
                 user_data = r.json()
                 if user_data.get("mes"):
                     QMessageBox.warning(self, "提示", "出现错误！\n原因:{0}".format(user_data.get("mes")), QMessageBox.Yes)
