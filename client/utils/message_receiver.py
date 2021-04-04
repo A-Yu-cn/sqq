@@ -71,6 +71,7 @@ class MessageReceiver(Thread):
                 except (ConnectionError, ConnectionResetError):
                     global_data.client = None
                 except Exception as e:
+                    global_data.logger.error(e)
                     global_data.client = None
             else:
                 connect_server.connect()
