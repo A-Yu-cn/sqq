@@ -136,6 +136,9 @@ class UserLoginWindow(QMainWindow, Ui_widget):
                     "remember_username": self.checkBox.isChecked(),
                     "remember_password": self.checkBox_2.isChecked()
                 }
+            # 创建用户配置文件夹
+            if not os.path.exists('users') and not os.path.isdir('users'):
+                os.mkdir('users')
             with open('users/user.cfg', 'w')as configfile:
                 config.write(configfile)
             # 建立连接，开启消息发送线程
