@@ -3,11 +3,23 @@ from threading import Thread
 import json
 from utils import connect_server
 import winsound
+import pyaudio
+import base64
 
 global_data = GlobalData()
 
 
 class MessageReceiver(Thread):
+
+    def __init__(self):
+        super(MessageReceiver, self).__init__()
+        self.chunk_size = 1024
+        self.audio_format = pyaudio.paInt16
+        self.channels = 2
+        self.rate = 32000
+        self.p = pyaudio.PyAudio()
+        with open('media/notice', 'r') as f:
+            self.notice = base64.b64decode(f.read())
 
     @property
     def message(self):
@@ -36,6 +48,10 @@ class MessageReceiver(Thread):
                                 message.get('to')) == str(global_data.chat_user):
                             global_data.message_receive_queue.put(message)
                             # todo 消息提示音
+                            self.play_stream = self.p.open(format=self.audio_format, channels=self.channels,
+                                                           rate=self.rate, output=True,
+                                                           frames_per_buffer=self.chunk_size)
+                            self.play_stream.write(self.notice)
                         else:
                             # 这里只做全局提示
                             from_user = message.get('from').get('nickname')
