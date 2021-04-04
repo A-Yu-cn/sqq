@@ -24,6 +24,7 @@ class MessageReceiver(Thread):
     @property
     def message(self):
         res = b""
+        data = ""
         while True:
             try:
                 data = global_data.client.recv(global_data.recv_buff)

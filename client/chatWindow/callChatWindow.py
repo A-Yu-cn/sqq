@@ -2,6 +2,7 @@ import base64
 import datetime
 import sys
 import json
+import queue
 
 import requests
 from PyQt5.QtCore import QDate, QThread, pyqtSignal, Qt, QSize, QTimer, QDateTime, QUrl
@@ -26,8 +27,12 @@ class MessageReceiver(QThread):
 
     def run(self):
         while True:
-            newMessage = global_data.message_receive_queue.get()
-            self.receive_signal.emit(newMessage)
+            try:
+                newMessage = global_data.message_receive_queue.get(timeout=0.2)
+                # global_data.logger.info('recv a message')
+                self.receive_signal.emit(newMessage)
+            except queue.Empty:
+                pass
 
 
 class ChatWindow(QMainWindow, u):
@@ -243,6 +248,9 @@ class ChatWindow(QMainWindow, u):
 
     # 客户端显示消息
     def messageShow(self, newMessage):
+        if str(newMessage.get('from').get('id')) != str(self.chatNumber) and str(newMessage.get('to') != str(self.chatNumber)):
+            # 不显示别人的消息
+            return
         mes_username = newMessage.get("from").get("nickname")
         mes_content = newMessage.get("content")
         mes_time = newMessage.get('time')
