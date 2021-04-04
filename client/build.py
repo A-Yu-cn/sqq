@@ -31,7 +31,7 @@ class Build(object):
                 self.global_data.logger.error(e)
 
     def run_build(self):
-        os.system(f'pyinstaller -F -w {self.start_name}')
+        os.system(f'pyinstaller -F -w -i imgs/chat.ico {self.start_name}')
 
     def run(self):
         self.run_build()
