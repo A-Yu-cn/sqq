@@ -17,6 +17,7 @@ from globalFile import GlobalData
 from utils import record_voice
 from utils.notice_sender import NotificationWindow
 from utils.md5_ import getFileMd5
+from voice_call.callVoiceCallWindow import VoicePhoneWindow
 
 from richTextEditorWindow.richText import RichTextWindow
 
@@ -46,6 +47,7 @@ class ChatWindow(QMainWindow, u):
         self.chatUsername = chatList[1]
         # token
         self.token = token
+        self.mes_html = ""
         '''
         样式控制
         '''
@@ -94,6 +96,8 @@ class ChatWindow(QMainWindow, u):
         self.cancleButton.hide()
         # 取消发送
         self.cancleButton.clicked.connect(self.cancleRecord)
+        # 语音电话
+        # self.phoneButton.clicked.connect(self.voice_phone)
         # 富文本编辑
         self.richTextButton.clicked.connect(self.openRichTextEditor)
         # 电话和语音
@@ -185,7 +189,6 @@ class ChatWindow(QMainWindow, u):
                                 datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime(
                                     '%Y-%m-%d %H:%M:%S')))
                 self.historyTextBrowser.append('{0}\n'.format(mes_content))
-                # self.historyTextBrowser.append('<img src="logo.png"/>')
         except KeyError:
             return
 
@@ -225,7 +228,6 @@ class ChatWindow(QMainWindow, u):
     # 发送消息
     def submitMessage(self):
         currentMessageText = self.textEdit.toPlainText()
-
         currentMessage = self.textEdit.toHtml()
         if currentMessageText == "":
             QMessageBox.warning(self, "提示", "请输入内容！", QMessageBox.Yes)
@@ -282,21 +284,21 @@ class ChatWindow(QMainWindow, u):
 
     # 增加消息框内容
     def addMessageContent(self, mes_username, mes_time, mes_content):
-        try:
-            self.messageTextBrowser.append(
-                '<p style="color:blue;">{0}\t\t<text style="color:lightblue;">{1}</text></p>'
-                    .format(mes_username,
-                            datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime(
-                                '%Y-%m-%d %H:%M:%S')))
+        # HTML加载消息
+        try:  # html自动移至底部
+            self.mes_html += '<body onload="window.scrollTo(0,document.body.scrollHeight); " >' \
+                             '<p style="color:blue;">{0}\t\t<text style="color:lightblue;">{1}</text></p>'.format(
+                mes_username,
+                datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime('%Y-%m-%d %H:%M:%S'))
+            self.messageTextBrowser.setHtml(self.mes_html)
         except ValueError:
-            self.messageTextBrowser.append(
-                '<p style="color:blue;">{0}\t\t<text style="color:lightblue;">{1}</text></p>'
-                    .format(mes_username,
-                            datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S%z").strftime(
-                                '%Y-%m-%d %H:%M:%S')))
-        self.messageTextBrowser.append('{0}\n'.format(mes_content))
+            self.mes_html += '<body onload="window.scrollTo(0,document.body.scrollHeight); " >' \
+                             '<p style="color:blue;">{0}\t\t<text style="color:lightblue;">{1}</text></p>'.format(
+                mes_username, datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S%z").strftime('%Y-%m-%d %H:%M:%S'))
+        self.mes_html += '{0}\n'.format(mes_content)
+        self.messageTextBrowser.setHtml(self.mes_html)
         # 添加消息后将光标滚到最底下
-        self.messageTextBrowser.moveCursor(QTextCursor.End)
+        # self.messageTextBrowser.moveCursor(QTextCursor.End)
 
     # 添加表情
     def addEmojy(self):
@@ -356,19 +358,23 @@ class ChatWindow(QMainWindow, u):
             self.endRecord()
             NotificationWindow.success("提示", "语音成功发送")
 
+    # 语音电话
+    # def openVoicePhone(self):
+    #     self.voicePhone = VoicePhoneWindow(self.chatNumber, self.chatUsername, self.token)
+
     # 选择文件
     def chooseFile(self):
         try:
             file_, filetype = QFileDialog.getOpenFileName(self, "选取文件", "C:/", "All Files (*);;Text Files (*.txt)")
-            print(file_)
-            print(filetype)
+            # print(file_)
+            # print(filetype)
             query_url = global_data.base_url + "/file/query"
             file_md5 = getFileMd5(file_)
             query_data = {"file_md5": str(file_md5)}
             headers = {"Authorization": self.token}
             r = requests.get(url=query_url, headers=headers, params=query_data, proxies=global_data.proxies)
             mes = r.json().get("mes")
-            print(r.text)
+            # print(r.text)
             # 需要上传
             if mes:
                 headers = {"Authorization": self.token}

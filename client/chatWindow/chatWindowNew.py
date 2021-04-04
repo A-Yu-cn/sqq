@@ -12,9 +12,6 @@ class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(1119, 767)
-        self.messageTextBrowser = QtWidgets.QTextBrowser(Form)
-        self.messageTextBrowser.setGeometry(QtCore.QRect(10, 10, 851, 501))
-        self.messageTextBrowser.setObjectName("messageTextBrowser")
         self.textEdit = QtWidgets.QTextEdit(Form)
         self.textEdit.setGeometry(QtCore.QRect(10, 560, 851, 141))
         self.textEdit.setObjectName("textEdit")
@@ -75,6 +72,9 @@ class Ui_Form(object):
         self.fileLabel.setGeometry(QtCore.QRect(465, 520, 31, 31))
         self.fileLabel.setText("")
         self.fileLabel.setObjectName("fileLabel")
+        self.messageTextBrowser = QtWebEngineWidgets.QWebEngineView(Form)
+        self.messageTextBrowser.setGeometry(QtCore.QRect(10, 10, 851, 501))
+        self.messageTextBrowser.setObjectName("messageTextBrowser")
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -95,3 +95,4 @@ class Ui_Form(object):
         self.fileButton.setText(_translate("Form", "发送文件"))
         self.phoneButton.setText(_translate("Form", "语音电话"))
 
+from PyQt5 import QtWebEngineWidgets
