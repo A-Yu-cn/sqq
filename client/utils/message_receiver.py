@@ -61,16 +61,16 @@ class MessageReceiver(Thread):
                                 global_data.toast_message_queue.put(f"收到来自{from_user}的消息")
                     # 被添加为好友
                     elif message_type == 1:
-                        pass
+                        global_data.refresh_friend_list_single.put(1)
                     # 被某人删除好友
                     elif message_type == 2:
-                        pass
+                        global_data.refresh_friend_list_single.put(2)
                     # 被拉进群聊
                     elif message_type == 3:
-                        pass
+                        global_data.refresh_friend_list_single.put(3)
                 except (ConnectionError, ConnectionResetError):
                     global_data.client = None
-                except Exception:
+                except Exception as e:
                     global_data.client = None
             else:
                 connect_server.connect()

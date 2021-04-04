@@ -23,6 +23,7 @@ class GlobalData(object):
     db_file_path = "sqq.db"
     record_signal = False  # 语音录制信号
     record_queue = queue.Queue()  # 语音队列
+    refresh_friend_list_single = queue.Queue()
 
     def __init__(self):
         if self.log_file:

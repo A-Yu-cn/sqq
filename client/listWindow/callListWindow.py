@@ -20,6 +20,15 @@ from listWindow.callUserAndGroupWindow import AddWindow
 global_data = GlobalData()
 
 
+class RefreshList(QThread):
+    refresh_single = pyqtSignal(object)
+
+    def run(self):
+        while True:
+            s = global_data.refresh_friend_list_single.get()
+            self.refresh_single.emit(1)
+
+
 # 内嵌自定义item对象
 class ItemWidget(QWidget):
     def __init__(self, text):
@@ -93,6 +102,12 @@ class ListWindow(QMainWindow, Ui_Form):
         self._width = QApplication.desktop().availableGeometry(self).width()
         # 执行淡入
         self.doShow()
+        self.refresh_thread = RefreshList()
+        self.refresh_thread.refresh_single.connect(self.refresh_list)
+        self.refresh_thread.start()
+
+    def refresh_list(self, type_):
+        self.loadList()
 
     # 淡入效果
     def doShow(self):
