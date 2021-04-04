@@ -18,8 +18,9 @@ from utils import record_voice
 from utils.notice_sender import NotificationWindow
 from utils.md5_ import getFileMd5
 
-global_data = GlobalData()
 from richTextEditorWindow.richText import RichTextWindow
+
+global_data = GlobalData()
 
 
 class MessageReceiver(QThread):
@@ -29,7 +30,6 @@ class MessageReceiver(QThread):
         while True:
             try:
                 newMessage = global_data.message_receive_queue.get(timeout=0.2)
-                # global_data.logger.info('recv a message')
                 self.receive_signal.emit(newMessage)
             except queue.Empty:
                 pass
@@ -103,7 +103,7 @@ class ChatWindow(QMainWindow, u):
         self.receiver = MessageReceiver()
         self.receiver.receive_signal.connect(self.messageShow)
         self.receiver.start()
-        self.loadMessage()
+        # self.loadMessage()
         # 添加表情
         self.combo = QComboBox(self)
         self.combo.resize(100, 40)
@@ -131,6 +131,10 @@ class ChatWindow(QMainWindow, u):
         # self.messageTextBrowser = QWebEngineView()
         # self.messageTextBrowser.resize(851, 501)
         # self.messageTextBrowser.move(10, 10)
+
+    def show(self) -> None:
+        super().show()
+        self.loadMessage()
 
     def loadMessage(self):
         # 获取当天零点和24点
@@ -248,7 +252,8 @@ class ChatWindow(QMainWindow, u):
 
     # 客户端显示消息
     def messageShow(self, newMessage):
-        if str(newMessage.get('from').get('id')) != str(self.chatNumber) and str(newMessage.get('to') != str(self.chatNumber)):
+        if str(newMessage.get('from').get('id')) != str(self.chatNumber) and str(
+                newMessage.get('to') != str(self.chatNumber)):
             # 不显示别人的消息
             return
         mes_username = newMessage.get("from").get("nickname")
