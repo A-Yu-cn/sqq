@@ -8,7 +8,6 @@ idna==2.10
 importlib-metadata==3.9.0
 lxml==4.6.3
 prettytable==2.1.0
-PyAudio @ file:///F:/backups/sqq/client/whls/PyAudio-0.2.11-cp37-cp37m-win_amd64.whl
 pypiwin32==223
 PyQt5==5.10.1
 pyqt5-plugins==5.15.2.2.1.0
@@ -29,3 +28,4 @@ urllib3==1.26.4
 wcwidth==0.2.5
 win10toast==0.9
 zipp==3.4.1
+whls\PyAudio-0.2.11-cp37-cp37m-win_amd64.whl
