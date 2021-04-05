@@ -12,6 +12,8 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(format='[%(asctime)s]  %(message)s', datefmt='%m/%d/%Y %H:%M:%S %p')
 # 客户端连接池
 client_pool = {}
+voice_item_value = {}
+voice_client = {}
 
 send_queue = queue.Queue()
 
@@ -25,7 +27,14 @@ class Sender(Thread):
 
 
 def send_message(user, message, type_=0):
-    """向指定用户发送消息"""
+    """
+    向指定用户发送消息
+
+    :param user: 发给的用户
+    :param message: 发送的消息
+    :param type_: 发送类型， 0-聊天消息, 1-被某人添加为好友, 2-被某人删除好友
+                    3-被拉进群聊， 4-语音通话请求， 5-语音通话请求结果
+    """
     if type_ == 0:
         # 发送聊天消息
         if user.id in client_pool:
@@ -64,6 +73,23 @@ def send_message(user, message, type_=0):
                     'name': message.name
                 }
             }).encode())
+    elif type_ == 4:
+        # 语音通话请求
+        if user.id in client_pool and isinstance(message, User):
+            client_pool[user.id].sendall(json.dumps({
+                'type': 4,
+                'from': {
+                    'id': message.id,
+                    'nickname': message.nickname
+                }
+            }).encode())
+    elif type_ == 5:
+        # 语音通话请求结果
+        if user.id in client_pool:
+            client_pool[user.id].sendall(json.dumps({
+                'type': 5,
+                'res': message  # 0-同意， 1-不同意
+            }).encode())
 
 
 def wrap_message(message):
@@ -89,6 +115,67 @@ def wrap_error_data(mes):
     }).encode()
 
 
+class VoiceServer(Thread):
+
+    def __init__(self):
+        super(VoiceServer, self).__init__()
+        self.port = int(os.environ.get('VOICE_SERVER_PORT'))
+
+    @staticmethod
+    def listener(client, user_id):
+        wrong_times = 0
+        to_id = 0
+        while True:
+            try:
+                data = client.recv(1024)
+                if not data:
+                    raise ConnectionError
+                if to_id < 10000:
+                    to_id = voice_item_value[user_id]
+                voice_client[to_id].sendall(data)
+            except (ConnectionError, ConnectionResetError):
+                try:
+                    voice_client[to_id].close()
+                    voice_item_value.pop(voice_item_value[user_id])
+                    voice_item_value.pop(user_id)
+                except KeyError:
+                    pass
+                except Exception as e:
+                    logger.error(e)
+                break
+            except KeyError:
+                wrong_times += 1
+                if wrong_times >= 1000:
+                    client.close()
+                    break
+                pass
+            except Exception as e:
+                logger.error(e)
+                break
+
+    def run(self):
+        global voice_item_value
+        server = socket.socket()
+        server.bind(('', self.port))
+        server.listen(5)
+        logger.warning(f'voice server start at {self.port}...')
+        while True:
+            client, addr = server.accept()
+            try:
+                client.settimeout(3)
+                data = client.recv(4096)
+                data = json.loads(data)
+                client.settimeout(None)
+                token = Token.objects.get(content=data.get('Authorization'))
+                voice_client[token.user.id] = client
+                client.sendall(wrap_error_data(''))
+                Thread(target=VoiceServer.listener, args=(client, token.user_id)).start()
+            except json.JSONDecodeError:
+                client.sendall(wrap_error_data('wrong data type'))
+            except Token.DoesNotExist:
+                client.sendall(wrap_error_data('wrong token'))
+
+
 class Receiver(Thread):
 
     def __init__(self, client, user_id, *args, **kwargs):
@@ -97,6 +184,7 @@ class Receiver(Thread):
         self.client.settimeout(int(os.environ.get('RECV_TIME_OUT')))  # 接受消息超时
         self.user_id = user_id
         self.recv_buff = int(os.environ.get('TCP_RECV_BUFF'))  # 接受缓冲区
+        self.user = User.objects.get(id=self.user_id)
 
     def recv_message(self):
         """接受一个完整的消息"""
@@ -113,6 +201,24 @@ class Receiver(Thread):
         while True:
             try:
                 data = self.recv_message()
+                if 'type' in data:
+                    # 语音通话相关
+                    type_ = data['type']
+                    if type_ == 0:
+                        # 请求建立通话连接
+                        send_message(User.objects.get(id=data['user_id']), self.user, type_=4)
+                    elif type_ == 1:
+                        # 请求通话回复
+                        response = int(data['response'])  # 0-同意， 1-不同意
+                        from_id = int(data['from_id'])
+                        if response == 0:
+                            # 同意建立连接动作
+                            voice_item_value[self.user_id] = from_id
+                            voice_item_value[from_id] = self.user_id
+                        # 告知请求方
+                        send_message(User.objects.get(id=from_id), response, type_=5)
+                    continue
+
                 token = Token.objects.get(content=data.get('Authorization'))
                 to = int(data.get('to'))
                 message = Message(from_user=token.user, to=to, content=data.get('content'),
@@ -145,9 +251,12 @@ class Receiver(Thread):
                 self.client.sendall(wrap_error_data("wrong destination"))
             except (ConnectionError, ConnectionAbortedError, ConnectionResetError):
                 # 客户端断开连接
-                self.client.close()
-                client_pool.pop(self.user_id)
-                logger.warning(f'User<{self.user_id}> disconnect')
+                try:
+                    self.client.close()
+                    client_pool.pop(self.user_id)
+                    logger.warning(f'User<{self.user_id}> disconnect')
+                except Exception:
+                    pass
                 break
             except socket.timeout:
                 self.client.close()
@@ -206,3 +315,6 @@ s.start()
 sender = Sender()
 sender.setDaemon(True)
 sender.start()
+voice_server = VoiceServer()
+voice_server.setDaemon(True)
+voice_server.start()
