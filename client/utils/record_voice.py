@@ -38,5 +38,3 @@ class Recorder(Thread):
 
     def run(self) -> None:
         self.start_record()
-
-

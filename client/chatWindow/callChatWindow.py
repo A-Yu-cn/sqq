@@ -373,24 +373,9 @@ class ChatWindow(QMainWindow, u):
         mes_time = newMessage.get('time')
         self.addMessageContent(mes_username=mes_username, mes_time=mes_time, mes_content=mes_content, type=0)
 
-    # 打开富文本编辑器
-    def openRichTextEditor(self):
-        self.richText = RichTextWindow()
-        self.richText.Signal.connect(self.updateRichTextMessage)
-        self.richText.show()
-
-    # 更新富文本消息
-    def updateRichTextMessage(self, mes_html):
-        self.textEdit.setText(mes_html)
-
-    def __del__(self):
-        self.receiver.terminate()
-
-    # 这里是关闭聊天窗口
-    def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
-        global_data.chat_user = 0
-        # 关闭消息接收线程
-        self.receiver.terminate()
+    # 增加语音消息提示
+    def addVoiceMessageContent(self):
+        pass
 
     # 增加消息框内容（文本消息）
     def addMessageContent(self, mes_username, mes_time, mes_content, type):
@@ -462,6 +447,25 @@ class ChatWindow(QMainWindow, u):
             # 添加消息后将光标滚到最底下
             # self.messageTextBrowser.moveCursor(QTextCursor.End)
 
+    # 打开富文本编辑器
+    def openRichTextEditor(self):
+        self.richText = RichTextWindow()
+        self.richText.Signal.connect(self.updateRichTextMessage)
+        self.richText.show()
+
+    # 更新富文本消息
+    def updateRichTextMessage(self, mes_html):
+        self.textEdit.setText(mes_html)
+
+    def __del__(self):
+        self.receiver.terminate()
+
+    # 这里是关闭聊天窗口
+    def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
+        global_data.chat_user = 0
+        # 关闭消息接收线程
+        self.receiver.terminate()
+
     # 显示文件消息
     def addFileMessage(self, src=""):
         file_str = ""
@@ -497,12 +501,6 @@ class ChatWindow(QMainWindow, u):
         self.recordLabel.hide()
         self.cancleButton.hide()
         self.recordButton.setText("发送语音")
-        # 可能出现timeoutError
-        try:
-            record = base64.b64encode(global_data.record_queue.get(timeout=1)).decode()
-            self.sendMessage(record, type_=1)
-        except:
-            QMessageBox.warning(self, "警告", "语音消息发送失败！", QMessageBox.Yes)
 
     # 取消录制
     def cancleRecord(self):
@@ -522,7 +520,14 @@ class ChatWindow(QMainWindow, u):
             NotificationWindow.success('提示', '开始录制语音')
         elif self.recordButton.text() == "停止并发送":
             self.endRecord()
-            NotificationWindow.success("提示", "语音成功发送")
+            # 可能出现timeoutError
+            try:
+                record = base64.b64encode(global_data.record_queue.get()).decode()
+                self.sendMessage(record, type_=1)
+                NotificationWindow.success("提示", "语音成功发送")
+            except Exception as e:
+                global_data.logger.error(e)
+                QMessageBox.warning(self, "警告", "语音消息发送失败！", QMessageBox.Yes)
 
     # 语音电话
     # def openVoicePhone(self):
