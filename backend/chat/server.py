@@ -88,7 +88,8 @@ def send_message(user, message, type_=0):
         if user.id in client_pool:
             client_pool[user.id].sendall(json.dumps({
                 'type': 5,
-                'res': message  # 0-同意， 1-不同意
+                'res': message['response'],  # 0-同意， 1-不同意
+                'user': message['user']
             }).encode())
 
 
@@ -130,27 +131,36 @@ class VoiceServer(Thread):
                 data = client.recv(1024)
                 if not data:
                     raise ConnectionError
-                if to_id < 10000:
-                    to_id = voice_item_value[user_id]
+                to_id = voice_item_value[user_id]
+                logger.info('recv')
                 voice_client[to_id].sendall(data)
             except (ConnectionError, ConnectionResetError):
+                logger.error(f'{user_id} disconn')
                 try:
                     voice_client[to_id].close()
+                    voice_client.pop(user_id)
+                    voice_client.pop(voice_item_value[user_id])
                     voice_item_value.pop(voice_item_value[user_id])
                     voice_item_value.pop(user_id)
                 except KeyError:
-                    pass
+                    try:
+                        voice_client.pop(user_id)
+                    except:
+                        pass
                 except Exception as e:
                     logger.error(e)
                 break
             except KeyError:
                 wrong_times += 1
-                if wrong_times >= 1000:
+                if wrong_times >= 80:
                     client.close()
                     break
                 pass
             except Exception as e:
+                voice_client.pop(user_id)
+                voice_client.pop(voice_item_value[user_id])
                 logger.error(e)
+                client.close()
                 break
 
     def run(self):
@@ -168,12 +178,17 @@ class VoiceServer(Thread):
                 client.settimeout(None)
                 token = Token.objects.get(content=data.get('Authorization'))
                 voice_client[token.user.id] = client
-                client.sendall(wrap_error_data(''))
+                client.sendall(json.dumps({
+                    'mes': '',
+                    'data': token.user.id
+                }).encode())
                 Thread(target=VoiceServer.listener, args=(client, token.user_id)).start()
             except json.JSONDecodeError:
                 client.sendall(wrap_error_data('wrong data type'))
+                client.close()
             except Token.DoesNotExist:
                 client.sendall(wrap_error_data('wrong token'))
+                client.close()
 
 
 class Receiver(Thread):
@@ -216,7 +231,10 @@ class Receiver(Thread):
                             voice_item_value[self.user_id] = from_id
                             voice_item_value[from_id] = self.user_id
                         # 告知请求方
-                        send_message(User.objects.get(id=from_id), response, type_=5)
+                        send_message(User.objects.get(id=from_id), {
+                            'response': response,
+                            'user': self.user_id
+                        }, type_=5)
                     continue
 
                 token = Token.objects.get(content=data.get('Authorization'))
