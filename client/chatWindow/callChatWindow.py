@@ -3,6 +3,7 @@ import datetime
 import sys
 import json
 import queue
+from urllib.parse import urlparse
 
 import requests
 from PyQt5.QtCore import QDate, QThread, pyqtSignal, Qt, QSize, QTimer, QDateTime, QUrl
@@ -46,14 +47,16 @@ class ChatWindow(QMainWindow, u):
         self.chatUsername = chatList[1]
         # token
         self.token = token
-        self.mes_html = '''<style>
+        self.mes_html = '''
+                        <body onload="window.scrollTo(0,document.body.scrollHeight); " >
+        <style>
         span {
         word-wrap: break-word;
     }
     
     .text-content {
-        max-width: 50%;
-        width: fit-content;
+        /*max-width: 50%;
+        width: fit-content;*/
     }
     
     body {
@@ -366,6 +369,7 @@ class ChatWindow(QMainWindow, u):
         # 文件消息
         elif type_ == 2:
             mes = "文件消息"
+            self.addFileMessageContent(mes_username, mes_time, content, 1)
         self.clearMessage(1)
 
     # 客户端显示消息
@@ -380,16 +384,46 @@ class ChatWindow(QMainWindow, u):
         self.addMessageContent(mes_username=mes_username, mes_time=mes_time, mes_content=mes_content, type=0)
 
     # 增加语音消息提示
-    def addVoiceMessageContent(self):
-        pass
+    def addVoiceMessageContent(self, mes_username, mes_time, mes_content, type):
+        # 他人发送
+        if type == 0:
+            mes_voice = ''''''
+
+            self.mes_html += mes_voice
+            self.messageTextBrowser.setHtml(self.mes_html)
+        # 自己发送
+        else:
+            mes_voice = ''''''
+
+            self.mes_html += mes_voice
+            self.messageTextBrowser.setHtml(self.mes_html)
+
+    # 增加文件消息提示
+    # todo
+    def addFileMessageContent(self, mes_username, mes_time, mes_content, type):
+        # 他人发送
+        if type == 0:
+            mes_file = '''
+            
+            '''
+
+            self.mes_html += mes_file
+            self.messageTextBrowser.setHtml(self.mes_html)
+        # 自己发送
+        else:
+            mes_file = ''''''
+
+            self.mes_html += mes_file
+            self.messageTextBrowser.setHtml(self.mes_html)
 
     # 增加消息框内容（文本消息）
+    # todo
     def addMessageContent(self, mes_username, mes_time, mes_content, type):
         # HTML加载消息
+        # 收到消息
         if type == 0:
             try:  # html自动移至底部
                 self.mes_html += '''
-                <body onload="window.scrollTo(0,document.body.scrollHeight); " >
                             <div class="chat-sender">
                             <div><img src="img/ben.png"></div>
                             <div>{0} {1}</div>
@@ -405,7 +439,6 @@ class ChatWindow(QMainWindow, u):
                 self.messageTextBrowser.setHtml(self.mes_html)
             except ValueError:
                 self.mes_html += '''
-                <body onload="window.scrollTo(0,document.body.scrollHeight); " >
                 <div class="chat-sender">
                 <div><img src="img/ben.png"></div>
                 <div>{0} {1}</div>
@@ -418,10 +451,10 @@ class ChatWindow(QMainWindow, u):
                            datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S%z").strftime('%Y-%m-%d %H:%M:%S'),
                            mes_content)
                 self.messageTextBrowser.setHtml(self.mes_html)
+        # 自己发送
         else:
             try:  # html自动移至底部
                 self.mes_html += '''
-                <body onload="window.scrollTo(0,document.body.scrollHeight); " >
                             <div class="chat-receiver">
                             <div><img src="img/ben.png"></div>
                             <div>{0} {1}</div>
@@ -437,7 +470,6 @@ class ChatWindow(QMainWindow, u):
                 self.messageTextBrowser.setHtml(self.mes_html)
             except ValueError:
                 self.mes_html += '''
-                <body onload="window.scrollTo(0,document.body.scrollHeight); " >
                 <div class="chat-receiver">
                 <div><img src="img/ben.png"></div>
                 <div>{0} {1}</div>
@@ -471,10 +503,6 @@ class ChatWindow(QMainWindow, u):
         global_data.chat_user = 0
         # 关闭消息接收线程
         self.receiver.terminate()
-
-    # 显示文件消息
-    def addFileMessage(self, src=""):
-        file_str = ""
 
     # 添加表情
     def addEmojy(self):
