@@ -50,6 +50,12 @@ class ChatWindow(QMainWindow, u):
         span {
         word-wrap: break-word;
     }
+    
+    .text-content {
+        max-width: 50%;
+        width: fit-content;
+    }
+    
     body {
         background-color: #ebebeb;
         font-family: -apple-system;
@@ -100,9 +106,9 @@ class ChatWindow(QMainWindow, u):
     }
     
     .chat-receiver div:nth-of-type(3) {
-        /*float:right;*/
+        float:right;
         background-color: #b2e281;
-        margin: 0px 70px 20px 50px;
+        margin: 0px 10px 20px 50px;
         padding: 10px 10px 10px 10px;
         border-radius: 7px;
     }
@@ -387,7 +393,7 @@ class ChatWindow(QMainWindow, u):
                             <div class="chat-sender">
                             <div><img src="img/ben.png"></div>
                             <div>{0} {1}</div>
-                            <div>
+                            <div class="text-content">
                                 <div class="chat-left_triangle"></div>
                                 <span class=“message_content”>{2}</span>
                             </div>
@@ -403,7 +409,7 @@ class ChatWindow(QMainWindow, u):
                 <div class="chat-sender">
                 <div><img src="img/ben.png"></div>
                 <div>{0} {1}</div>
-                <div>
+                <div class="text-content">
                     <div class="chat-left_triangle"></div>
                     <span class=“message_content”>{2}</span>
                 </div>
@@ -419,7 +425,7 @@ class ChatWindow(QMainWindow, u):
                             <div class="chat-receiver">
                             <div><img src="img/ben.png"></div>
                             <div>{0} {1}</div>
-                            <div>
+                            <div class="text-content">
                                 <div class="chat-right_triangle"></div>
                                 <span class=“message_content”>{2}</span>
                             </div>
@@ -435,7 +441,7 @@ class ChatWindow(QMainWindow, u):
                 <div class="chat-receiver">
                 <div><img src="img/ben.png"></div>
                 <div>{0} {1}</div>
-                <div>
+                <div class="text-content">
                     <div class="chat-right_triangle"></div>
                     <span class=“message_content”>{2}</span>
                 </div>
