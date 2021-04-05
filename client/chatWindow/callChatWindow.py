@@ -37,7 +37,6 @@ class MessageReceiver(QThread):
 
 
 class ChatWindow(QMainWindow, u):
-
     def __init__(self, chatList=[], token=""):
         super(ChatWindow, self).__init__()
         self.setupUi(self)
@@ -47,7 +46,112 @@ class ChatWindow(QMainWindow, u):
         self.chatUsername = chatList[1]
         # token
         self.token = token
-        self.mes_html = ""
+        self.mes_html = '''<style>
+        span {
+        word-wrap: break-word;
+    }
+    body {
+        background-color: #ebebeb;
+        font-family: -apple-system;
+        font-family: "-apple-system", "Helvetica Neue", "Roboto", "Segoe UI", sans-serif;
+    }
+    
+    .chat-sender {
+        clear: both;
+        font-size: 20px;
+    }
+    
+    .chat-sender div:nth-of-type(1) {
+        float: left;
+    }
+    
+    .chat-sender div:nth-of-type(2) {
+        margin: 0 50px 2px 70px;
+        padding: 0px;
+        color: #848484;
+        font-size: 20px;
+        text-align: left;
+    }
+    
+    .chat-sender div:nth-of-type(3) {
+        background-color: white;
+        /*float: left;*/
+        margin: 0 50px 20px 70px;
+        padding: 10px 10px 10px 10px;
+        border-radius: 7px;
+        text-indent: -12px;
+    }
+    
+    .chat-receiver {
+        clear: both;
+        font-size: 20px;
+    }
+    
+    .chat-receiver div:nth-of-type(1) {
+        float: right;
+    }
+    
+    .chat-receiver div:nth-of-type(2) {
+        margin: 0px 70px 2px 50px;
+        padding: 0px;
+        color: #848484;
+        font-size: 20px;
+        text-align: right;
+    }
+    
+    .chat-receiver div:nth-of-type(3) {
+        /*float:right;*/
+        background-color: #b2e281;
+        margin: 0px 70px 20px 50px;
+        padding: 10px 10px 10px 10px;
+        border-radius: 7px;
+    }
+    
+    .chat-receiver div:first-child img,
+    .chat-sender div:first-child img {
+        width: 60px;
+        height: 60px;
+        /*border-radius: 10%;*/
+    }
+    
+    .chat-left_triangle {
+        height: 0px;
+        width: 0px;
+        border-width: 6px;
+        border-style: solid;
+        border-color: transparent white transparent transparent;
+        position: relative;
+        left: -22px;
+        top: 3px;
+    }
+    
+    .chat-right_triangle {
+        height: 0px;
+        width: 0px;
+        border-width: 6px;
+        border-style: solid;
+        border-color: transparent transparent transparent #b2e281;
+        position: relative;
+        right: -22px;
+        top: 3px;
+    }
+    
+    .chat-notice {
+        clear: both;
+        font-size: 20px;
+        color: white;
+        text-align: center;
+        margin-top: 22px;
+        margin-bottom: 20px;
+    }
+    
+    .chat-notice span {
+        background-color: #cecece;
+        line-height: 25px;
+        border-radius: 5px;
+        padding: 5px 10px;
+    }
+</style>'''
         '''
         样式控制
         '''
@@ -155,10 +259,13 @@ class ChatWindow(QMainWindow, u):
         else:
             for message in message.get('data').get('message_list'):
                 mes_username = message['from']['nickname']
-                mes_username = "我" if mes_username == global_data.self_data['nickname'] else mes_username
                 mes_time = message['time']
                 mes_content = message['content']
-                self.addMessageContent(mes_username, mes_time, mes_content)
+                if mes_username == global_data.self_data['nickname']:
+                    mes_username = "我"
+                    self.addMessageContent(mes_username, mes_time, mes_content, 1)
+                else:
+                    self.addMessageContent(mes_username, mes_time, mes_content, 0)
 
     # 查询历史消息
     def queryHistoryMessage(self):
@@ -237,19 +344,22 @@ class ChatWindow(QMainWindow, u):
     # 客户端发送消息
     def sendMessage(self, mes, type_=0):
         content = mes
-        if type_ == 0:
-            # 普通文字消息
-            pass
-        elif type_ == 1:
-            # 语音消息
-            mes = "语音消息"
-        global_data.message_sender_queue.put((self.chatNumber, content))
         # 界面加载消息
         mes_username = "我"
         # 获取UTC+8当前时间
         tzinfo = datetime.timezone(datetime.timedelta(hours=8.0))
         mes_time = datetime.datetime.now(tzinfo).isoformat()
-        self.addMessageContent(mes_username=mes_username, mes_time=mes_time, mes_content=content)
+        if type_ == 0:
+            # 普通文字消息
+            global_data.message_sender_queue.put((self.chatNumber, content))
+            self.addMessageContent(mes_username=mes_username, mes_time=mes_time, mes_content=content, type=1)
+        # 语音消息
+        elif type_ == 1:
+            # 语音消息
+            mes = "语音消息"
+        # 文件消息
+        elif type_ == 2:
+            mes = "文件消息"
         self.clearMessage(1)
 
     # 客户端显示消息
@@ -261,7 +371,7 @@ class ChatWindow(QMainWindow, u):
         mes_username = newMessage.get("from").get("nickname")
         mes_content = newMessage.get("content")
         mes_time = newMessage.get('time')
-        self.addMessageContent(mes_username=mes_username, mes_time=mes_time, mes_content=mes_content)
+        self.addMessageContent(mes_username=mes_username, mes_time=mes_time, mes_content=mes_content, type=0)
 
     # 打开富文本编辑器
     def openRichTextEditor(self):
@@ -282,23 +392,79 @@ class ChatWindow(QMainWindow, u):
         # 关闭消息接收线程
         self.receiver.terminate()
 
-    # 增加消息框内容
-    def addMessageContent(self, mes_username, mes_time, mes_content):
+    # 增加消息框内容（文本消息）
+    def addMessageContent(self, mes_username, mes_time, mes_content, type):
         # HTML加载消息
-        try:  # html自动移至底部
-            self.mes_html += '<body onload="window.scrollTo(0,document.body.scrollHeight); " >' \
-                             '<p style="color:blue;">{0}\t\t<text style="color:lightblue;">{1}</text></p>'.format(
-                mes_username,
-                datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime('%Y-%m-%d %H:%M:%S'))
-            self.messageTextBrowser.setHtml(self.mes_html)
-        except ValueError:
-            self.mes_html += '<body onload="window.scrollTo(0,document.body.scrollHeight); " >' \
-                             '<p style="color:blue;">{0}\t\t<text style="color:lightblue;">{1}</text></p>'.format(
-                mes_username, datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S%z").strftime('%Y-%m-%d %H:%M:%S'))
-        self.mes_html += '{0}\n'.format(mes_content)
-        self.messageTextBrowser.setHtml(self.mes_html)
-        # 添加消息后将光标滚到最底下
-        # self.messageTextBrowser.moveCursor(QTextCursor.End)
+        if type == 0:
+            try:  # html自动移至底部
+                self.mes_html += '''
+                <body onload="window.scrollTo(0,document.body.scrollHeight); " >
+                            <div class="chat-sender">
+                            <div><img src="img/ben.png"></div>
+                            <div>{0} {1}</div>
+                            <div>
+                                <div class="chat-left_triangle"></div>
+                                <span class=“message_content”>{2}</span>
+                            </div>
+                        </div>
+                            '''.format(mes_username,
+                                       datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime(
+                                           '%Y-%m-%d %H:%M:%S'),
+                                       mes_content)
+                self.messageTextBrowser.setHtml(self.mes_html)
+            except ValueError:
+                self.mes_html += '''
+                <body onload="window.scrollTo(0,document.body.scrollHeight); " >
+                <div class="chat-sender">
+                <div><img src="img/ben.png"></div>
+                <div>{0} {1}</div>
+                <div>
+                    <div class="chat-left_triangle"></div>
+                    <span class=“message_content”>{2}</span>
+                </div>
+            </div>
+                '''.format(mes_username,
+                           datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S%z").strftime('%Y-%m-%d %H:%M:%S'),
+                           mes_content)
+                self.messageTextBrowser.setHtml(self.mes_html)
+        else:
+            try:  # html自动移至底部
+                self.mes_html += '''
+                <body onload="window.scrollTo(0,document.body.scrollHeight); " >
+                            <div class="chat-receiver">
+                            <div><img src="img/ben.png"></div>
+                            <div>{0} {1}</div>
+                            <div>
+                                <div class="chat-right_triangle"></div>
+                                <span class=“message_content”>{2}</span>
+                            </div>
+                        </div>
+                            '''.format(mes_username,
+                                       datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime(
+                                           '%Y-%m-%d %H:%M:%S'),
+                                       mes_content)
+                self.messageTextBrowser.setHtml(self.mes_html)
+            except ValueError:
+                self.mes_html += '''
+                <body onload="window.scrollTo(0,document.body.scrollHeight); " >
+                <div class="chat-receiver">
+                <div><img src="img/ben.png"></div>
+                <div>{0} {1}</div>
+                <div>
+                    <div class="chat-right_triangle"></div>
+                    <span class=“message_content”>{2}</span>
+                </div>
+            </div>
+                '''.format(mes_username,
+                           datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S%z").strftime('%Y-%m-%d %H:%M:%S'),
+                           mes_content)
+                self.messageTextBrowser.setHtml(self.mes_html)
+            # 添加消息后将光标滚到最底下
+            # self.messageTextBrowser.moveCursor(QTextCursor.End)
+
+    # 显示文件消息
+    def addFileMessage(self, src=""):
+        file_str = ""
 
     # 添加表情
     def addEmojy(self):
@@ -362,7 +528,7 @@ class ChatWindow(QMainWindow, u):
     # def openVoicePhone(self):
     #     self.voicePhone = VoicePhoneWindow(self.chatNumber, self.chatUsername, self.token)
 
-    # 选择文件
+    # 选择并发送文件
     def chooseFile(self):
         try:
             file_, filetype = QFileDialog.getOpenFileName(self, "选取文件", "C:/", "All Files (*);;Text Files (*.txt)")
