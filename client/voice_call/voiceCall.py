@@ -51,6 +51,6 @@ class Ui_Form(object):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
         self.label.setText(_translate("Form", "韩"))
-        self.label_2.setText(_translate("Form", "00:00"))
+        self.label_2.setText(_translate("Form", "00:00:00"))
         self.label_3.setText(_translate("Form", "挂断"))
 

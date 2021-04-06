@@ -35,14 +35,31 @@ class VoicePhoneWindow(QMainWindow, Ui_Form):
         ''')
         self.loginInfo = loginInfo
         self.timer = QTimer()  # 初始化定时器
-        self.timer.timeout.connect(self.time)
+        self.timer.timeout.connect(self.showTime)
+        self.pushButton.clicked.connect(self.stopVoicePhone)
+        self.time_text = 0
+        self.startVoicePhone()
 
-    def time(self):
-        self.label_2.setText('{} s'.format(time.time()))
+    # 改变时间显示
+    def showTime(self):
+        # 在标签上显示时间
+        self.time_text += 1
+        self.label_2.setText(str(self.transform_time(self.time_text)))
 
-    # 开始语音通话
+    # 转时分秒
+    def transform_time(self, seconds):
+        m, s = divmod(seconds, 60)
+        h, m = divmod(m, 60)
+        timestr = "%02d:%02d:%02d" % (h, m, s)
+        return timestr
+
+    # 开始通话
     def startVoicePhone(self):
-        self.timer.start(2 * 1000)
+        self.timer.start(1000)
+
+    # 结束通话
+    def stopVoicePhone(self):
+        self.timer.stop()
 
 
 if __name__ == '__main__':
