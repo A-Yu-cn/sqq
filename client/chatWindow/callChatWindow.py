@@ -562,7 +562,7 @@ class ChatWindow(QMainWindow, u):
             self.endRecord()
             # 可能出现timeoutError
             try:
-                record = base64.b64encode(global_data.record_queue.get()).decode()
+                record = global_data.record_queue.get()
                 self.sendMessage(record, type_=1)
                 NotificationWindow.success("提示", "语音成功发送")
             except Exception as e:
