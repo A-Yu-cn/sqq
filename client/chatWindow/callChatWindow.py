@@ -373,7 +373,6 @@ class ChatWindow(QMainWindow, u):
         self.addMessageContent(mes_username=mes_username, mes_time=mes_time, mes_content=mes_content, type=0)
 
     # 增加语音消息提示
-    # todo
     def addVoiceMessageContent(self, mes_username, mes_time, mes_content, type):
         # 他人发送
         if type == 0:
