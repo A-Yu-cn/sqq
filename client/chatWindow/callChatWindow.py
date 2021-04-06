@@ -6,10 +6,9 @@ import queue
 from urllib.parse import urlparse
 
 import requests
-from PyQt5.QtCore import QDate, QThread, pyqtSignal, Qt, QSize, QTimer, QDateTime, QUrl
+from PyQt5.QtCore import QDate, QThread, pyqtSignal, Qt, QSize, QTimer
 from PyQt5 import QtGui
 from PyQt5.QtGui import QTextCursor, QKeySequence, QIcon
-from PyQt5.QtWebEngineWidgets import QWebEngineView
 from qtpy import QtCore
 from chatWindow.chatWindow import Ui_Form
 from chatWindow.chatWindowNew import Ui_Form as u
@@ -351,7 +350,7 @@ class ChatWindow(QMainWindow, u):
             self.sendMessage(currentMessage)
 
     # 客户端发送消息
-    def sendMessage(self, mes, type_=0):
+    def sendMessage(self, mes, type_):
         content = mes
         # 界面加载消息
         mes_username = "我"
@@ -366,6 +365,7 @@ class ChatWindow(QMainWindow, u):
         elif type_ == 1:
             # 语音消息
             mes = "语音消息"
+            self.addVoiceMessageContent(mes_username=mes_username, mes_time=mes_time, mes_content=content, type=1)
         # 文件消息
         elif type_ == 2:
             mes = "文件消息"
@@ -384,17 +384,38 @@ class ChatWindow(QMainWindow, u):
         self.addMessageContent(mes_username=mes_username, mes_time=mes_time, mes_content=mes_content, type=0)
 
     # 增加语音消息提示
+    # todo
     def addVoiceMessageContent(self, mes_username, mes_time, mes_content, type):
         # 他人发送
         if type == 0:
-            mes_voice = ''''''
-
+            mes_voice = '''
+            <div class="chat-sender">
+                            <div><img src="img/ben.png"></div>
+                            <div>{0} {1}</div>
+                            <div class="text-content">
+                                <div class="chat-left_triangle"></div>
+                                <audio controls><source src=""/></audio>
+                            </div>
+                        </div>
+            '''.format(mes_username,
+                       datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime('%Y-%m-%d %H:%M:%S'),
+                       mes_content)
             self.mes_html += mes_voice
             self.messageTextBrowser.setHtml(self.mes_html)
         # 自己发送
         else:
-            mes_voice = ''''''
-
+            mes_voice = '''
+            <div class="chat-sender">
+                            <div><img src="img/ben.png"></div>
+                            <div>{0} {1}</div>
+                            <div class="text-content">
+                                <div class="chat-left_triangle"></div>
+                                <a href="{2}" download="file">点击下载文件</a>
+                            </div>
+                        </div>
+            '''.format(mes_username,
+                       datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime('%Y-%m-%d %H:%M:%S'),
+                       mes_content)
             self.mes_html += mes_voice
             self.messageTextBrowser.setHtml(self.mes_html)
 
@@ -404,20 +425,38 @@ class ChatWindow(QMainWindow, u):
         # 他人发送
         if type == 0:
             mes_file = '''
-            
-            '''
-
+            <div class="chat-sender">
+                            <div><img src="img/ben.png"></div>
+                            <div>{0} {1}</div>
+                            <div class="text-content">
+                                <div class="chat-left_triangle"></div>
+                                <a href="{2}" download="file">点击下载文件</a>
+                            </div>
+                        </div>
+            '''.format(mes_username,
+                       datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime('%Y-%m-%d %H:%M:%S'),
+                       mes_content)
             self.mes_html += mes_file
             self.messageTextBrowser.setHtml(self.mes_html)
         # 自己发送
         else:
-            mes_file = ''''''
-
+            mes_file = '''
+            <div class="chat-receiver">
+                            <div><img src="img/ben.png"></div>
+                            <div>{0} {1}</div>
+                            <div class="text-content">
+                                <div class="chat-right_triangle"></div>
+                                <a href="{2}" download="file">点击下载文件</a>
+                            </div>
+                        </div>
+            '''.format(mes_username,
+                       datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime('%Y-%m-%d %H:%M:%S'),
+                       mes_content)
             self.mes_html += mes_file
             self.messageTextBrowser.setHtml(self.mes_html)
 
-    # 增加消息框内容（文本消息）
-    # todo
+            # 增加消息框内容（文本消息）
+
     def addMessageContent(self, mes_username, mes_time, mes_content, type):
         # HTML加载消息
         # 收到消息
@@ -594,6 +633,7 @@ class ChatWindow(QMainWindow, u):
             else:
                 file_path = r.json().get("data")
             file_text = global_data.base_url + "/" + file_path
+            print(file_text)
             self.sendMessage(mes=file_text, type_=2)
         except:
             pass
