@@ -376,7 +376,7 @@ class ChatWindow(QMainWindow, u):
         # 自己发送
         else:
             mes_voice = '''
-                        
+
             <div class="message chat-receiver">
         <div class="avatar">{0}</div>
         <div class="content receiver-content">
