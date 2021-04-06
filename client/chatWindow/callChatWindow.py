@@ -1,6 +1,7 @@
 import base64
 import datetime
 import sys
+import os
 import json
 import queue
 from urllib.parse import urlparse
@@ -339,7 +340,7 @@ class ChatWindow(QMainWindow, u):
             self.sendMessage(currentMessage, 0)
 
     # 客户端发送消息
-    def sendMessage(self, mes, type_):
+    def sendMessage(self, mes, type_, filename=""):
         content = mes
         # 界面加载消息
         mes_username = "我"
@@ -358,7 +359,7 @@ class ChatWindow(QMainWindow, u):
         # 文件消息
         elif type_ == 2:
             mes = "文件消息"
-            self.addFileMessageContent(mes_username, mes_time, content, 1)
+            self.addFileMessageContent(mes_username, mes_time, content, 1, filename)
         self.clearMessage(1)
 
     # 客户端显示消息
@@ -398,10 +399,10 @@ class ChatWindow(QMainWindow, u):
 
     # 增加文件消息提示
     # todo
-    def addFileMessageContent(self, mes_username, mes_time, mes_content, type):
+    def addFileMessageContent(self, mes_username, mes_time, mes_content, type, filename):
         # 他人发送
         if type == 0:
-            mes_temp = '''<a href="''' + mes_content + '''" download="file">点击下载文件</a>'''
+            mes_temp = '''<a href="''' + mes_content + '''" download="file">''' + filename + '''</a>'''
             mes_file = self.mes_sender.format(mes_username[0], mes_username,
                                               datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime(
                                                   '%Y-%m-%d %H:%M:%S'),
@@ -410,7 +411,7 @@ class ChatWindow(QMainWindow, u):
             self.messageTextBrowser.setHtml(self.mes_html)
         # 自己发送
         else:
-            mes_temp = '''<a href="''' + mes_content + '''" download="file">点击下载文件</a>'''
+            mes_temp = '''<a href="''' + mes_content + '''" download="file">''' + filename + '''</a>'''
             mes_file = self.mes_receiver.format(mes_username[0], mes_username,
                                                 datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime(
                                                     '%Y-%m-%d %H:%M:%S'),
@@ -541,6 +542,7 @@ class ChatWindow(QMainWindow, u):
     def chooseFile(self):
         try:
             file_, filetype = QFileDialog.getOpenFileName(self, "选取文件", "C:/", "All Files (*);;Text Files (*.txt)")
+            filename = file_.split("/")[-1]
             # print(file_)
             # print(filetype)
             query_url = global_data.base_url + "/file/query"
@@ -555,7 +557,7 @@ class ChatWindow(QMainWindow, u):
                 headers = {"Authorization": self.token}
                 load_url = global_data.base_url + "/file/"
                 files = {
-                    'file': (file_, open(file_, 'rb'))
+                    'file': (filename, open(file_, 'rb'))
                 }
                 r_load = requests.post(url=load_url, headers=headers, files=files, proxies=global_data.proxies)
                 mes = r_load.json().get("mes")
@@ -565,7 +567,7 @@ class ChatWindow(QMainWindow, u):
                 file_path = r.json().get("data")
             file_text = global_data.base_url + "/" + file_path
             # print(file_text)
-            self.sendMessage(mes=file_text, type_=2)
+            self.sendMessage(mes=file_text, type_=2, filename=filename)
         except:
             pass
 
@@ -583,10 +585,11 @@ class ChatWindow(QMainWindow, u):
         unkonw_suffix = filttype.split(r'/')[-1]
         path, _ = QFileDialog.getSaveFileName(self, "Save File", old_path,
                                               "*." + unkonw_suffix + ";;" + "*." + suffix)
-        # print(old_path, suffix)
         if path != "":
             download.setPath(path)
             download.accept()
+            file_downloaded_path = '/'.join(path.split('/')[0:-1])
+            os.startfile(file_downloaded_path)
 
     def _downloadProgress(self, bytesReceived: "qint64", bytesTotal: "qint64"):
         # bytesReceived 当前下载值 ； bytesTotal 文件总大小值
