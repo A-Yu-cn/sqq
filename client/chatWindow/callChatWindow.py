@@ -347,7 +347,7 @@ class ChatWindow(QMainWindow, u):
         if currentMessageText == "":
             QMessageBox.warning(self, "提示", "请输入内容！", QMessageBox.Yes)
         else:
-            self.sendMessage(currentMessage)
+            self.sendMessage(currentMessage, 0)
 
     # 客户端发送消息
     def sendMessage(self, mes, type_):
