@@ -8,3 +8,4 @@ users/user.cfg
 dist
 build
 *.spec
+output.wav

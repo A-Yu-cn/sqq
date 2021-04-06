@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>310</width>
-    <height>492</height>
+    <width>351</width>
+    <height>570</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,10 +16,10 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>40</y>
-     <width>210</width>
-     <height>210</height>
+     <x>100</x>
+     <y>60</y>
+     <width>151</width>
+     <height>151</height>
     </rect>
    </property>
    <property name="font">
@@ -29,7 +29,7 @@
    </property>
    <property name="styleSheet">
     <string notr="true">border-color: lightyellow;background-color: #FFD700;
-border-radius:100%;
+border-radius:50%;
 color: black;
 </string>
    </property>
@@ -43,20 +43,62 @@ color: black;
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>100</x>
-     <y>330</y>
+     <x>120</x>
+     <y>350</y>
      <width>111</width>
      <height>111</height>
     </rect>
    </property>
+   <property name="cursor">
+    <cursorShape>PointingHandCursor</cursorShape>
+   </property>
    <property name="styleSheet">
-    <string notr="true">border-radius: 50px;
-border-style: outset;
-background-color: red;
-border-image: url(imgs/phone.png)</string>
+    <string notr="true"/>
    </property>
    <property name="text">
     <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>270</y>
+     <width>91</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>00:00</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>460</y>
+     <width>91</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>13</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>挂断</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
    </property>
   </widget>
  </widget>
