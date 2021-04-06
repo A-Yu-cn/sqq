@@ -42,14 +42,13 @@ class Recorder(Thread):
         wf.setsampwidth(p.get_sample_size(FORMAT))
         wf.setframerate(RATE)
         wf.writeframes(b''.join(frames))
+        wf.close()
         globalData.record_queue.put(self.toBase64(WAVE_OUTPUT_FILENAME))
-        # wf.close()
 
-    def toBase64(self, file):
-        with open(file, 'rb') as fileObj:
+    def toBase64(self, file_):
+        with open(file_, 'rb') as fileObj:
             audio_data = fileObj.read()
-            base64_data = base64.b64encode(audio_data)
-            print(base64_data)
+            base64_data = base64.b64encode(audio_data).decode()
             return base64_data
 
     def run(self) -> None:
