@@ -132,10 +132,8 @@ class VoiceServer(Thread):
                 if not data:
                     raise ConnectionError
                 to_id = voice_item_value[user_id]
-                logger.info('recv')
                 voice_client[to_id].sendall(data)
             except (ConnectionError, ConnectionResetError):
-                logger.error(f'{user_id} disconn')
                 try:
                     voice_client[to_id].close()
                     voice_client.pop(user_id)
