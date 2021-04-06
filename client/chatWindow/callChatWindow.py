@@ -129,6 +129,25 @@ class ChatWindow(QMainWindow, u):
             justify-content: flex-end;
         }
     </style>'''
+        self.mes_sender = '''
+        <div class="message chat-sender">
+        <div class="avatar">{0}</div>
+        <div class="content">
+        <div class="nickname">{1} {2}</div>
+        <div class="text-content sender">
+        '''
+        self.mes_receiver = '''
+        <div class="message chat-receiver">
+        <div class="avatar">{0}</div>
+        <div class="content receiver-content">
+        <div class="nickname receiver-name">{1} {2}</div>
+        <div class="text-content receiver">
+        '''
+        self.mes_end = '''
+        </div>
+        </div>
+        </div>
+        '''
         '''
         样式控制
         '''
@@ -178,7 +197,7 @@ class ChatWindow(QMainWindow, u):
         # 取消发送
         self.cancleButton.clicked.connect(self.cancleRecord)
         # 语音电话
-        # self.phoneButton.clicked.connect(self.voice_phone)
+        self.phoneButton.clicked.connect(self.openVoicePhone)
         # 富文本编辑
         self.richTextButton.clicked.connect(self.openRichTextEditor)
         # 电话和语音
@@ -358,138 +377,88 @@ class ChatWindow(QMainWindow, u):
     def addVoiceMessageContent(self, mes_username, mes_time, mes_content, type):
         # 他人发送
         if type == 0:
-            mes_voice = '''
-            <div class="message chat-sender">
-        <div class="avatar">{0}</div>
-        <div class="content">
-            <div class="nickname">{1} {2}</div>
-            <div class="text-content sender">
-            <audio controls="controls" autobuffer="autobuffer"><source src="data:audio/wav;base64,{3}" />语音消息 </audio>
-            </div>
-        </div>
-    </div>
-            '''.format(mes_username[0], mes_username,
-                       datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime('%Y-%m-%d %H:%M:%S'),
-                       mes_content)
+            mes_temp = '''<audio controls="controls" autobuffer="autobuffer">
+            <source src="data:audio/wav;base64,''' + mes_content + '''" />语音消息 </audio>'''
+            mes_voice = self.mes_sender.format(mes_username[0], mes_username,
+                                               datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime(
+                                                   '%Y-%m-%d %H:%M:%S')) + mes_temp + self.mes_end
             self.mes_html += mes_voice
             self.messageTextBrowser.setHtml(self.mes_html)
         # 自己发送
         else:
-            mes_voice = '''
-
-            <div class="message chat-receiver">
-        <div class="avatar">{0}</div>
-        <div class="content receiver-content">
-            <div class="nickname receiver-name">{1} {2}</div>
-            <div class="text-content receiver">
-            <audio controls="controls" autobuffer="autobuffer"><source src="data:audio/wav;base64,{3}" />语音消息 </audio>
-            </div>
-        </div>
-    </div>
-            '''.format(mes_username[0], mes_username,
-                       datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime('%Y-%m-%d %H:%M:%S'),
-                       mes_content)
+            mes_temp = '''<audio controls="controls" autobuffer="autobuffer">
+                        <source src="data:audio/wav;base64,''' + mes_content + '''" />语音消息 </audio>'''
+            mes_voice = self.mes_receiver.format(mes_username[0], mes_username,
+                                                 datetime.datetime.strptime(mes_time,
+                                                                            "%Y-%m-%dT%H:%M:%S.%f%z").strftime(
+                                                     '%Y-%m-%d %H:%M:%S')) + mes_temp + self.mes_end
             self.mes_html += mes_voice
             self.messageTextBrowser.setHtml(self.mes_html)
+            # 发送消息
+        global_data.message_sender_queue.put((self.chatNumber, mes_temp))
 
     # 增加文件消息提示
     # todo
     def addFileMessageContent(self, mes_username, mes_time, mes_content, type):
         # 他人发送
         if type == 0:
-            mes_file = '''
-        <div class="message chat-sender">
-        <div class="avatar">{0}</div>
-        <div class="content">
-            <div class="nickname">{1} {2}</div>
-            <div class="text-content sender"><a href="{3}" download="file">点击下载文件</a></div>
-        </div>
-        </div>
-            '''.format(mes_username[0], mes_username,
-                       datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime('%Y-%m-%d %H:%M:%S'),
-                       mes_content)
+            mes_temp = '''<a href="''' + mes_content + '''" download="file">点击下载文件</a>'''
+            mes_file = self.mes_sender.format(mes_username[0], mes_username,
+                                              datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime(
+                                                  '%Y-%m-%d %H:%M:%S'),
+                                              mes_content) + mes_temp + self.mes_end
             self.mes_html += mes_file
             self.messageTextBrowser.setHtml(self.mes_html)
         # 自己发送
         else:
-            mes_file = '''
-            <div class="message chat-receiver">
-        <div class="avatar">{0}</div>
-        <div class="content receiver-content">
-            <div class="nickname receiver-name">{1} {2}</div>
-            <div class="text-content sender"><a href="{3}" download="file">点击下载文件</a></div>
-        </div>
-    </div>
-            '''.format(mes_username[0], mes_username,
-                       datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime('%Y-%m-%d %H:%M:%S'),
-                       mes_content)
+            mes_temp = '''<a href="''' + mes_content + '''" download="file">点击下载文件</a>'''
+            mes_file = self.mes_receiver.format(mes_username[0], mes_username,
+                                                datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime(
+                                                    '%Y-%m-%d %H:%M:%S'),
+                                                mes_content) + mes_temp + self.mes_end
             self.mes_html += mes_file
             self.messageTextBrowser.setHtml(self.mes_html)
+        global_data.message_sender_queue.put((self.chatNumber, mes_temp))
 
-            # 增加消息框内容（文本消息）
-
+    # 增加消息框内容（文本消息）
     def addMessageContent(self, mes_username, mes_time, mes_content, type):
         # HTML加载消息
         # 收到消息
         if type == 0:
             try:  # html自动移至底部
-                self.mes_html += '''
-                            <div class="message chat-sender">
-        <div class="avatar">{0}</div>
-        <div class="content">
-            <div class="nickname">{1} {2}</div>
-            <div class="text-content sender">{3}</div>
-        </div>
-    </div>
-                            '''.format(mes_username[0], mes_username,
-                                       datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime(
-                                           '%Y-%m-%d %H:%M:%S'),
-                                       mes_content)
+                mes_text = self.mes_sender + '{3}' + self.mes_end
+                mes_text = mes_text.format(mes_username[0], mes_username,
+                                           datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime(
+                                               '%Y-%m-%d %H:%M:%S'),
+                                           mes_content)
+                self.mes_html += mes_text
                 self.messageTextBrowser.setHtml(self.mes_html)
             except ValueError:
-                self.mes_html += '''
-                <div class="message chat-sender">
-        <div class="avatar">{0}</div>
-        <div class="content">
-            <div class="nickname">{1} {2}</div>
-            <div class="text-content sender">{3}</div>
-        </div>
-    </div>
-                '''.format(mes_username[0], mes_username,
-                           datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S%z").strftime('%Y-%m-%d %H:%M:%S'),
-                           mes_content)
+                mes_text = self.mes_sender + '{3}' + self.mes_end
+                mes_text = mes_text.format(mes_username[0], mes_username,
+                                           datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S%z").strftime(
+                                               '%Y-%m-%d %H:%M:%S'),
+                                           mes_content)
+                self.mes_html += mes_text
                 self.messageTextBrowser.setHtml(self.mes_html)
         # 自己发送
         else:
             try:  # html自动移至底部
-                self.mes_html += '''
-                            <div class="message chat-receiver">
-        <div class="avatar">{0}</div>
-        <div class="content receiver-content">
-            <div class="nickname receiver-name">{1} {2}</div>
-            <div class="text-content receiver">{3}</div>
-        </div>
-        </div>
-                            '''.format(mes_username[0], mes_username,
-                                       datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime(
-                                           '%Y-%m-%d %H:%M:%S'),
-                                       mes_content)
+                mes_text = self.mes_receiver + '{3}' + self.mes_end
+                mes_text = mes_text.format(mes_username[0], mes_username,
+                                           datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime(
+                                               '%Y-%m-%d %H:%M:%S'),
+                                           mes_content)
+                self.mes_html += mes_text
                 self.messageTextBrowser.setHtml(self.mes_html)
             except ValueError:
-                self.mes_html += '''
-                <div class="message chat-receiver">
-        <div class="avatar">{0}</div>
-        <div class="content receiver-content">
-            <div class="nickname receiver-name">{1} {2}</div>
-            <div class="text-content receiver">{3}</div>
-        </div>
-        </div>
-                '''.format(mes_username[0], mes_username,
-                           datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S%z").strftime('%Y-%m-%d %H:%M:%S'),
-                           mes_content)
+                mes_text = self.mes_receiver + '{3}' + self.mes_end
+                mes_text = mes_text.format(mes_username[0], mes_username,
+                                           datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S%z").strftime(
+                                               '%Y-%m-%d %H:%M:%S'),
+                                           mes_content)
+                self.mes_html += mes_text
                 self.messageTextBrowser.setHtml(self.mes_html)
-            # 添加消息后将光标滚到最底下
-            # self.messageTextBrowser.moveCursor(QTextCursor.End)
 
     # 打开富文本编辑器
     def openRichTextEditor(self):
@@ -569,10 +538,6 @@ class ChatWindow(QMainWindow, u):
                 global_data.logger.error(e)
                 QMessageBox.warning(self, "警告", "语音消息发送失败！", QMessageBox.Yes)
 
-    # 语音电话
-    # def openVoicePhone(self):
-    #     self.voicePhone = VoicePhoneWindow(self.chatNumber, self.chatUsername, self.token)
-
     # 选择并发送文件
     def chooseFile(self):
         try:
@@ -633,6 +598,11 @@ class ChatWindow(QMainWindow, u):
 
     def _finished(self):
         print("下载完成")
+
+    # 语音电话
+    def openVoicePhone(self):
+        self.voicePhone = VoicePhoneWindow({})
+        self.voicePhone.show()
 
 
 if __name__ == '__main__':
