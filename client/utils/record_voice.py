@@ -3,8 +3,9 @@ import wave
 from globalFile import GlobalData
 from threading import Thread
 import base64
+import requests
 
-globalData = GlobalData()
+global_data = GlobalData()
 CHUNK = 1024
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
@@ -17,7 +18,7 @@ class Recorder(Thread):
 
     # 开始录音
     def start_record(self):
-        globalData.record_signal = True
+        global_data.record_signal = True
         p = pyaudio.PyAudio()  # 初始化
         stream = p.open(format=FORMAT,
                         channels=CHANNELS,
@@ -27,7 +28,7 @@ class Recorder(Thread):
         frames = []
 
         for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-            if globalData.record_signal is False:
+            if global_data.record_signal is False:
                 break
             data = stream.read(CHUNK)
             frames.append(data)  # 开始录音
@@ -43,13 +44,25 @@ class Recorder(Thread):
         wf.setframerate(RATE)
         wf.writeframes(b''.join(frames))
         wf.close()
-        globalData.record_queue.put(self.toBase64(WAVE_OUTPUT_FILENAME))
+        global_data.record_queue.put(self.getVoiceFileUrl())
 
     def toBase64(self, file_):
         with open(file_, 'rb') as fileObj:
             audio_data = fileObj.read()
             base64_data = base64.b64encode(audio_data).decode()
             return base64_data
+
+    def getVoiceFileUrl(self):
+        headers = {"Authorization": global_data.token}
+        load_url = global_data.base_url + "/file/"
+        files = {
+            'file': (WAVE_OUTPUT_FILENAME, open(WAVE_OUTPUT_FILENAME, 'rb'))
+        }
+        r_load = requests.post(url=load_url, headers=headers, files=files, proxies=global_data.proxies)
+        mes = r_load.json().get("mes")
+        file_path = r_load.json().get("data")
+        file_text = global_data.base_url + "/" + file_path
+        return file_text
 
     def run(self) -> None:
         self.start_record()

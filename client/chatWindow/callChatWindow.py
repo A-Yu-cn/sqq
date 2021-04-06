@@ -378,7 +378,7 @@ class ChatWindow(QMainWindow, u):
         # 他人发送
         if type == 0:
             mes_temp = '''<audio controls="controls" autobuffer="autobuffer">
-            <source src="data:audio/wav;base64,''' + mes_content + '''" />语音消息 </audio>'''
+            <source src="''' + mes_content + '''" />语音消息 </audio>'''
             mes_voice = self.mes_sender.format(mes_username[0], mes_username,
                                                datetime.datetime.strptime(mes_time, "%Y-%m-%dT%H:%M:%S.%f%z").strftime(
                                                    '%Y-%m-%d %H:%M:%S')) + mes_temp + self.mes_end
@@ -387,7 +387,7 @@ class ChatWindow(QMainWindow, u):
         # 自己发送
         else:
             mes_temp = '''<audio controls="controls" autobuffer="autobuffer">
-                        <source src="data:audio/wav;base64,''' + mes_content + '''" />语音消息 </audio>'''
+                        <source src="''' + mes_content + '''" />语音消息 </audio>'''
             mes_voice = self.mes_receiver.format(mes_username[0], mes_username,
                                                  datetime.datetime.strptime(mes_time,
                                                                             "%Y-%m-%dT%H:%M:%S.%f%z").strftime(
@@ -565,7 +565,7 @@ class ChatWindow(QMainWindow, u):
             else:
                 file_path = r.json().get("data")
             file_text = global_data.base_url + "/" + file_path
-            print(file_text)
+            # print(file_text)
             self.sendMessage(mes=file_text, type_=2)
         except:
             pass
