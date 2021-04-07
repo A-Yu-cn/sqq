@@ -46,10 +46,11 @@ class ChatWindow(QMainWindow, u):
         self.chatNumber = chatList[0]
         global_data.chat_user = self.chatNumber
         self.chatUsername = chatList[1]
+        global_data.chat_user_name = self.chatUsername
         # token
         self.token = token
         self.mes_html = '''
-                        <body onload="window.scrollTo(0,document.body.scrollHeight); " >
+        <body onload="window.scrollTo(0,document.body.scrollHeight); " >
         <style>
         p {
             font-family: 'SimSun';
@@ -490,6 +491,7 @@ class ChatWindow(QMainWindow, u):
     # 这里是关闭聊天窗口
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
         global_data.chat_user = 0
+        # global_data.chat_user_name = ""#这行删掉会影响语音通话显示用户名
         # 关闭消息接收线程
         self.receiver.terminate()
 

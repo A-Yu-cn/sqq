@@ -20,6 +20,7 @@ class GlobalData(object):
     recv_buff = 4096
     logger = logging.getLogger()
     chat_user = 0
+    chat_user_name = ""
     log_file = ''
     message_receive_queue = queue.Queue()
     toast_message_queue = queue.Queue()

@@ -1,6 +1,6 @@
 import sys
 import time
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from globalFile import GlobalData
 from voice_call.voiceCall import Ui_Form
 from PyQt5 import QtGui
@@ -45,6 +45,10 @@ class VoicePhoneWindow(QMainWindow, Ui_Form):
             background-color: lightgrey;
             }
         ''')
+        if global_data.mes_from_username:
+            self.label.setText(global_data.mes_from_username[0])
+        else:
+            self.label.setText(global_data.chat_user_name[0])
         self.timer = QTimer()  # 初始化定时器
         self.timer.timeout.connect(self.showTime)
         self.pushButton.clicked.connect(self.stopVoicePhone)
@@ -75,11 +79,14 @@ class VoicePhoneWindow(QMainWindow, Ui_Form):
 
     # 结束通话
     def stopVoicePhone(self, type_=1):
+        global_data.mes_from_id = 0
+        global_data.mes_from_username = ""
+        QMessageBox.warning(self, "警告", "通话已断开！", QMessageBox.Yes)
         try:
             self.timer.stop()
             global_data.voice_client.close()
         except Exception as e:
-            pass
+            global_data.logger.error(e)
         finally:
             self.destroy()
 
