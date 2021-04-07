@@ -27,9 +27,9 @@ class MessageReceiver(Thread):
         while True:
             if global_data.client is not None:
                 try:
-                    message = self.message
-                    message_type = message.get("type")
-                    message = message.get("data")
+                    message_recv = self.message
+                    message_type = message_recv.get("type")
+                    message = message_recv.get("data")
                     # 正常接收消息
                     if message_type == 0:
                         if str(message.get('from').get('id')) == str(global_data.chat_user) or str(
@@ -53,6 +53,16 @@ class MessageReceiver(Thread):
                     # 被拉进群聊
                     elif message_type == 3:
                         global_data.refresh_friend_list_single.put(3)
+                    # 语音通话请求
+                    elif message_type == 4:
+                        global_data.mes_from_id = int(message_recv.get('from').get('id'))
+                        global_data.mes_from_username = message_recv.get('from').get('nickname')
+                        global_data.refresh_friend_list_single.put(4)
+                    # 语音通话回复
+                    elif message_type == 5:
+                        res = int(message_recv.get("res"))
+                        if res == 0:  # 同意请求
+                            global_data.message_receive_queue.put(message_recv)
                 except (ConnectionError, ConnectionResetError):
                     global_data.client = None
                 except Exception as e:

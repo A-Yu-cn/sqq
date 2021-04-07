@@ -25,6 +25,7 @@ from richTextEditorWindow.richText import RichTextWindow
 global_data = GlobalData()
 
 
+# 接受消息
 class MessageReceiver(QThread):
     receive_signal = pyqtSignal(object)
 
@@ -198,7 +199,7 @@ class ChatWindow(QMainWindow, u):
         # 取消发送
         self.cancleButton.clicked.connect(self.cancleRecord)
         # 语音电话
-        self.phoneButton.clicked.connect(self.openVoicePhone)
+        self.phoneButton.clicked.connect(self.requestVoicePhone)
         # 富文本编辑
         self.richTextButton.clicked.connect(self.openRichTextEditor)
         # 电话和语音
@@ -349,7 +350,8 @@ class ChatWindow(QMainWindow, u):
         mes_time = datetime.datetime.now(tzinfo).isoformat()
         if type_ == 0:
             # 普通文字消息
-            global_data.message_sender_queue.put((self.chatNumber, content))
+            mes_send = {"type_": 0, "data": {"chatNumber": self.chatNumber, "content": content}}
+            global_data.message_sender_queue.put(mes_send)
             self.addMessageContent(mes_username=mes_username, mes_time=mes_time, mes_content=content, type=1)
         # 语音消息
         elif type_ == 1:
@@ -362,16 +364,26 @@ class ChatWindow(QMainWindow, u):
             self.addFileMessageContent(mes_username, mes_time, content, 1, filename)
         self.clearMessage(1)
 
-    # 客户端显示消息
+    # 客户端接收消息
     def messageShow(self, newMessage):
-        if str(newMessage.get('from').get('id')) != str(self.chatNumber) and str(
-                newMessage.get('to') != str(self.chatNumber)):
-            # 不显示别人的消息
-            return
-        mes_username = newMessage.get("from").get("nickname")
-        mes_content = newMessage.get("content")
-        mes_time = newMessage.get('time')
-        self.addMessageContent(mes_username=mes_username, mes_time=mes_time, mes_content=mes_content, type=0)
+        try:
+            if newMessage.get('type'):  # 语音通话回复消息
+                if newMessage.get('res') == 1:
+                    QMessageBox.warning(self, "警告", "对方拒绝了你的语音通话请求！", QMessageBox.Yes)
+                    return
+                else:  # 建立通话连接
+                    global_data.mes_from_id = newMessage.get("user")
+                    self.startVoicePhone()
+            elif str(newMessage.get('from').get('id')) != str(self.chatNumber) and str(
+                    newMessage.get('to') != str(self.chatNumber)):
+                # 不显示别人的消息
+                return
+            mes_username = newMessage.get("from").get("nickname")
+            mes_content = newMessage.get("content")
+            mes_time = newMessage.get('time')
+            self.addMessageContent(mes_username=mes_username, mes_time=mes_time, mes_content=mes_content, type=0)
+        except Exception as e:
+            global_data.logger.error(e)
 
     # 增加语音消息提示
     def addVoiceMessageContent(self, mes_username, mes_time, mes_content, type):
@@ -395,7 +407,8 @@ class ChatWindow(QMainWindow, u):
             self.mes_html += mes_voice
             self.messageTextBrowser.setHtml(self.mes_html)
             # 发送消息
-        global_data.message_sender_queue.put((self.chatNumber, mes_temp))
+        mes_send = {"type_": 0, "data": {"chatNumber": self.chatNumber, "content": mes_temp}}
+        global_data.message_sender_queue.put(mes_send)
 
     # 增加文件消息提示
     # todo
@@ -418,7 +431,8 @@ class ChatWindow(QMainWindow, u):
                                                 mes_content) + mes_temp + self.mes_end
             self.mes_html += mes_file
             self.messageTextBrowser.setHtml(self.mes_html)
-        global_data.message_sender_queue.put((self.chatNumber, mes_temp))
+        mes_send = {"type_": 0, "data": {"chatNumber": self.chatNumber, "content": mes_temp}}
+        global_data.message_sender_queue.put(mes_send)
 
     # 增加消息框内容（文本消息）
     def addMessageContent(self, mes_username, mes_time, mes_content, type):
@@ -601,9 +615,17 @@ class ChatWindow(QMainWindow, u):
     def _finished(self):
         print("下载完成")
 
-    # 语音电话
-    def openVoicePhone(self):
-        self.voicePhone = VoicePhoneWindow({})
+    # 发送语音电话请求
+    def requestVoicePhone(self):
+        mes_send = {"type_": 2, "to_id": self.chatNumber}
+        global_data.message_sender_queue.put(mes_send)
+        QMessageBox.information(self, "提示", "已向对方发送语音通话请求。", QMessageBox.Yes)
+        # self.voicePhone = VoicePhoneWindow()
+        # self.voicePhone.show()
+
+    # 开始语音通话
+    def startVoicePhone(self):
+        self.voicePhone = VoicePhoneWindow()
         self.voicePhone.show()
 
 

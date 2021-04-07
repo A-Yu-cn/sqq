@@ -1,11 +1,13 @@
 import queue
 import logging
+import pyaudio
 
 
 class GlobalData(object):
     __instance = None
     base_url = "https://sqq.12138.site:1234"
     client = None
+    voice_client = None
     proxies = {
         'http': None,
         'https': None
@@ -14,17 +16,24 @@ class GlobalData(object):
     token = ''
     message_sender_queue = queue.Queue()
     socket_address = ('sqq.12138.site', 12345)
+    voice_server_socket = ('sqq.12138.site', 23456)
     recv_buff = 4096
     logger = logging.getLogger()
     chat_user = 0
-    log_file = ''
+    log_file = 'sqq.log'
     message_receive_queue = queue.Queue()
     toast_message_queue = queue.Queue()
     db_file_path = "sqq.db"
     record_signal = False  # 语音录制信号
     record_queue = queue.Queue()  # 语音队列
     refresh_friend_list_single = queue.Queue()
-    notice_queue = queue.Queue()    # 消息提示队列
+    notice_queue = queue.Queue()  # 消息提示队列
+    mes_from_id = 0  # 语音通话用户请求id
+    mes_from_username = ""  # 语音通话用户请求用户名
+    voice_params = {"frames_per_buffer": 1024,
+                    "format": pyaudio.paInt16,
+                    "channels": 1,
+                    "rate": 10000}
 
     def __init__(self):
         if self.log_file:

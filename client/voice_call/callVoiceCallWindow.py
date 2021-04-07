@@ -5,13 +5,14 @@ from globalFile import GlobalData
 from voice_call.voiceCall import Ui_Form
 from PyQt5 import QtGui
 from PyQt5.QtCore import QTimer
+from utils.start_voice_server import start_voice
 
 global_data = GlobalData()
 
 
 class VoicePhoneWindow(QMainWindow, Ui_Form):
 
-    def __init__(self, loginInfo):
+    def __init__(self):
         super(VoicePhoneWindow, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("语音通话")
@@ -33,12 +34,11 @@ class VoicePhoneWindow(QMainWindow, Ui_Form):
             background-color: lightgrey;
             }
         ''')
-        self.loginInfo = loginInfo
         self.timer = QTimer()  # 初始化定时器
         self.timer.timeout.connect(self.showTime)
         self.pushButton.clicked.connect(self.stopVoicePhone)
         self.time_text = 0
-        self.startVoicePhone()
+        self.startVoicePhone()  # 打开界面即开始通话
 
     # 改变时间显示
     def showTime(self):
@@ -56,16 +56,18 @@ class VoicePhoneWindow(QMainWindow, Ui_Form):
     # 开始通话
     def startVoicePhone(self):
         self.timer.start(1000)
+        start_voice()
 
     # 结束通话
     def stopVoicePhone(self):
         self.timer.stop()
+        global_data.voice_client.close()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
-    myWin = VoicePhoneWindow({})
+    myWin = VoicePhoneWindow()
 
     myWin.show()
 

@@ -16,6 +16,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import Qt, pyqtSignal, QPropertyAnimation, QThread
 from globalFile import GlobalData
 from listWindow.callUserAndGroupWindow import AddWindow
+from voice_call.callVoiceCallWindow import VoicePhoneWindow
 
 global_data = GlobalData()
 
@@ -26,7 +27,10 @@ class RefreshList(QThread):
     def run(self):
         while True:
             s = global_data.refresh_friend_list_single.get()
-            self.refresh_single.emit(1)
+            if s == 4:  # 语音通话请求
+                self.refresh_single.emit(4)
+            else:
+                self.refresh_single.emit(1)
 
 
 # 内嵌自定义item对象
@@ -107,7 +111,10 @@ class ListWindow(QMainWindow, Ui_Form):
         self.refresh_thread.start()
 
     def refresh_list(self, type_):
-        self.loadList()
+        if type_ == 1:
+            self.loadList()
+        elif type_ == 4:  # 语音通话请求
+            self.voiceCallRequest()
 
     # 淡入效果
     def doShow(self):
@@ -409,6 +416,30 @@ class ListWindow(QMainWindow, Ui_Form):
             os._exit(0)
         else:
             return
+
+    # 收到语音请求给予回复
+    def voiceCallRequest(self):
+        reply = QMessageBox.question(self, '收到语音通话', "来电用户:{0}\n来电用户id:{1}".format(global_data.mes_from_username,
+                                                                                   global_data.mes_from_id),
+                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:  # 同意
+            mes_send = {"type_": 1, "response": 0}
+            global_data.message_sender_queue.put(mes_send)
+            # 打开语音通话界面
+            self.startVoicePhone()
+            global_data.logger.info(f"start phone with {global_data.mes_from_id}")
+        else:  # 拒绝
+            mes_send = {"type_": 1, "response": 1}
+            global_data.message_sender_queue.put(mes_send)
+            global_data.logger.info(f"rejected phone from {global_data.mes_from_id}")
+            global_data.mes_from_id = 0
+            global_data.mes_from_username = ""
+            return
+
+    # 开始语音通话
+    def startVoicePhone(self):
+        self.voicePhone = VoicePhoneWindow()
+        self.voicePhone.show()
 
 
 if __name__ == '__main__':
