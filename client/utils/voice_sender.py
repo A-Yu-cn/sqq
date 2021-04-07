@@ -16,8 +16,6 @@ class VoiceSender(Thread):
                 data = recording_stream.read(1024)
                 global_data.voice_client.sendall(data)
             except Exception as e:
-                global_data.voice_client = None
                 global_data.logger.info('sender:disconnect from voice server.')
-                print(e)
                 break
         # todo 提示断开连接

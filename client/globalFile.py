@@ -20,7 +20,7 @@ class GlobalData(object):
     recv_buff = 4096
     logger = logging.getLogger()
     chat_user = 0
-    log_file = 'sqq.log'
+    log_file = ''
     message_receive_queue = queue.Queue()
     toast_message_queue = queue.Queue()
     db_file_path = "sqq.db"
@@ -34,6 +34,7 @@ class GlobalData(object):
                     "format": pyaudio.paInt16,
                     "channels": 1,
                     "rate": 10000}
+    is_calling = False
 
     def __init__(self):
         if self.log_file:

@@ -4,10 +4,21 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 from globalFile import GlobalData
 from voice_call.voiceCall import Ui_Form
 from PyQt5 import QtGui
-from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import QTimer, QThread, pyqtSignal
 from utils.start_voice_server import start_voice
 
 global_data = GlobalData()
+
+
+class Listener(QThread):
+    signal = pyqtSignal(object)
+
+    def run(self) -> None:
+        while True:
+            time.sleep(0.5)
+            if global_data.is_calling:
+                continue
+            self.signal.emit(1)
 
 
 class VoicePhoneWindow(QMainWindow, Ui_Form):
@@ -38,6 +49,10 @@ class VoicePhoneWindow(QMainWindow, Ui_Form):
         self.timer.timeout.connect(self.showTime)
         self.pushButton.clicked.connect(self.stopVoicePhone)
         self.time_text = 0
+        global_data.is_calling = True
+        self.listener = Listener()
+        self.listener.signal.connect(self.stopVoicePhone)
+        self.listener.start()
         self.startVoicePhone()  # 打开界面即开始通话
 
     # 改变时间显示
@@ -59,9 +74,14 @@ class VoicePhoneWindow(QMainWindow, Ui_Form):
         start_voice()
 
     # 结束通话
-    def stopVoicePhone(self):
-        self.timer.stop()
-        global_data.voice_client.close()
+    def stopVoicePhone(self, type_=1):
+        try:
+            self.timer.stop()
+            global_data.voice_client.close()
+        except Exception as e:
+            pass
+        finally:
+            self.destroy()
 
 
 if __name__ == '__main__':
