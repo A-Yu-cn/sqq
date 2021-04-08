@@ -205,6 +205,10 @@ class ChatWindow(QMainWindow, u):
         self.richTextButton.clicked.connect(self.openRichTextEditor)
         # 电话和语音
         self.fileButton.clicked.connect(self.chooseFile)
+        # 群聊逻辑处理
+        if len(str(global_data.chat_user)) > 5:
+            self.phoneButton.hide()
+            self.phoneLabel.hide()
         # self.phoneButton.clicked.connect()
         # 启动接收线程
         self.receiver = MessageReceiver()
