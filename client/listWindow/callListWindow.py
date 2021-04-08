@@ -424,8 +424,6 @@ class ListWindow(QMainWindow, Ui_Form):
             mes_send = {"type_": 1, "response": 1}
             global_data.message_sender_queue.put(mes_send)
             global_data.logger.info(f"rejected phone from {global_data.mes_from_id}")
-            global_data.mes_from_id = 0
-            global_data.mes_from_username = ""
             return
         global_data.is_voice_notice = True
         VoiceNoticePLayer().start()
