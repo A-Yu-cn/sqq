@@ -36,6 +36,7 @@ class GlobalData(object):
                     "channels": 1,
                     "rate": 10000}
     is_calling = False
+    is_voice_notice = False
 
     def __init__(self):
         if self.log_file:

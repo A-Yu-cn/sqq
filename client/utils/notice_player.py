@@ -16,6 +16,8 @@ class NoticePlayer(Thread):
         self.global_data = GlobalData()
         with open('media/notice', 'r') as f:
             self.notice = base64.b64decode(f.read())
+        with open("media/voice_notice", 'r') as f:
+            self.voice_notice = base64.b64decode(f.read())
 
     def run(self):
         while True:
@@ -23,5 +25,10 @@ class NoticePlayer(Thread):
             play_stream = self.p.open(format=self.audio_format, channels=self.channels,
                                       rate=self.rate, output=True,
                                       frames_per_buffer=self.chunk_size)
-            play_stream.write(self.notice)
+            if notice == 1:
+                # 来消息了
+                play_stream.write(self.notice)
+            elif notice == 2:
+                # 来电话了
+                play_stream.write(self.voice_notice)
             play_stream.close()

@@ -17,6 +17,7 @@ from PyQt5.QtCore import Qt, pyqtSignal, QPropertyAnimation, QThread
 from globalFile import GlobalData
 from listWindow.callUserAndGroupWindow import AddWindow
 from voice_call.callVoiceCallWindow import VoicePhoneWindow
+from utils.voice_notice_player import VoiceNoticePLayer
 
 global_data = GlobalData()
 
@@ -419,9 +420,19 @@ class ListWindow(QMainWindow, Ui_Form):
 
     # 收到语音请求给予回复
     def voiceCallRequest(self):
+        # if global_data.mes_from_id != 0:
+        #     mes_send = {"type_": 1, "response": 1}
+        #     global_data.message_sender_queue.put(mes_send)
+        #     global_data.logger.info(f"rejected phone from {global_data.mes_from_id}")
+        #     global_data.mes_from_id = 0
+        #     global_data.mes_from_username = ""
+        #     return
+        global_data.is_voice_notice = True
+        VoiceNoticePLayer().start()
         reply = QMessageBox.question(self, '收到语音通话', "来电用户:{0}\n来电用户id:{1}".format(global_data.mes_from_username,
                                                                                    global_data.mes_from_id),
                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        global_data.is_voice_notice = False
         if reply == QtWidgets.QMessageBox.Yes:  # 同意
             mes_send = {"type_": 1, "response": 0}
             global_data.message_sender_queue.put(mes_send)
