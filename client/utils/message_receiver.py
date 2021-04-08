@@ -60,9 +60,7 @@ class MessageReceiver(Thread):
                         global_data.refresh_friend_list_single.put(4)
                     # 语音通话回复
                     elif message_type == 5:
-                        res = int(message_recv.get("res"))
-                        if res == 0:  # 同意请求
-                            global_data.message_receive_queue.put(message_recv)
+                        global_data.message_receive_queue.put(message_recv)
                 except (ConnectionError, ConnectionResetError):
                     global_data.client = None
                 except Exception as e:

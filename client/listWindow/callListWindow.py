@@ -420,13 +420,13 @@ class ListWindow(QMainWindow, Ui_Form):
 
     # 收到语音请求给予回复
     def voiceCallRequest(self):
-        # if global_data.mes_from_id != 0:
-        #     mes_send = {"type_": 1, "response": 1}
-        #     global_data.message_sender_queue.put(mes_send)
-        #     global_data.logger.info(f"rejected phone from {global_data.mes_from_id}")
-        #     global_data.mes_from_id = 0
-        #     global_data.mes_from_username = ""
-        #     return
+        if global_data.is_calling is True:
+            mes_send = {"type_": 1, "response": 1}
+            global_data.message_sender_queue.put(mes_send)
+            global_data.logger.info(f"rejected phone from {global_data.mes_from_id}")
+            global_data.mes_from_id = 0
+            global_data.mes_from_username = ""
+            return
         global_data.is_voice_notice = True
         VoiceNoticePLayer().start()
         reply = QMessageBox.question(self, '收到语音通话', "来电用户:{0}\n来电用户id:{1}".format(global_data.mes_from_username,
