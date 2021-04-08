@@ -6,6 +6,7 @@ from voice_call.voiceCall import Ui_Form
 from PyQt5 import QtGui
 from PyQt5.QtCore import QTimer, QThread, pyqtSignal
 from utils.start_voice_server import start_voice
+from utils.notice_sender import NotificationWindow
 
 global_data = GlobalData()
 
@@ -19,6 +20,7 @@ class Listener(QThread):
             if global_data.is_calling:
                 continue
             self.signal.emit(1)
+            break
 
 
 class VoicePhoneWindow(QMainWindow, Ui_Form):
@@ -78,17 +80,17 @@ class VoicePhoneWindow(QMainWindow, Ui_Form):
         start_voice()
 
     # 结束通话
-    def stopVoicePhone(self, type_=1):
+    def stopVoicePhone(self, type_=0):
         global_data.mes_from_id = 0
         global_data.mes_from_username = ""
-        QMessageBox.warning(self, "警告", "通话已断开！", QMessageBox.Yes)
         try:
             self.timer.stop()
             global_data.voice_client.close()
         except Exception as e:
             global_data.logger.error(e)
-        finally:
-            self.destroy()
+        self.destroy()
+        if type_ == 1:
+            NotificationWindow.info("提示", "通话已断开")
 
 
 if __name__ == '__main__':
