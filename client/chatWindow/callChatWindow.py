@@ -379,8 +379,8 @@ class ChatWindow(QMainWindow, u):
                 else:  # 建立通话连接
                     global_data.mes_from_id = newMessage.get("user")
                     self.startVoicePhone()
-            elif str(newMessage.get('from').get('id')) != str(self.chatNumber) and str(
-                    newMessage.get('to') != str(self.chatNumber)):
+            elif (str(newMessage.get('from').get('id')) != str(self.chatNumber)) and str(newMessage.get('to')) != str(
+                    self.chatNumber):
                 # 不显示别人的消息
                 return
             mes_username = newMessage.get("from").get("nickname")
