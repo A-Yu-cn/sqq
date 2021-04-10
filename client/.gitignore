@@ -1,0 +1,11 @@
+venv
+.vscode
+.idea
+__pycache__
+**/__pycache__
+loginWindow/user.cfg
+users/user.cfg
+dist
+build
+*.spec
+output.wav

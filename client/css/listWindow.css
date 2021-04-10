@@ -1,0 +1,88 @@
+QTreeView {
+    outline: 0;
+    background: #fff;
+}
+
+QTreeView::item {
+    color: #000;
+    min-height: 92px;
+}
+QTreeView::item:hover {
+    background: rgba(0,0,0,.04);
+}
+
+QTreeView::item::open:has-children{
+    background-color: #aaa;
+}
+
+QTreeView::item:selected{
+    background-color: #ddd;
+}
+
+QTreeView::item:selected:has-children{
+    background: #aaa;
+}
+
+/*QTreeView::branch:adjoins-item {*/
+/*    !*right*!*/
+/*    background: #aaa;*/
+/*}*/
+
+/*QTreeView::branch:!adjoins-item {*/
+/*    !* left*!*/
+/*    background: #aaa;*/
+/*}*/
+
+QTreeView:branch:!has-children:selected{
+    background-color: #ddd;
+}
+QTreeView::branch:has-siblings:!adjoins-item{
+    background-color: #fff;
+}
+
+
+
+QLineEdit{
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+QLineEdit:focus{
+    outline: 0;
+    border: 2px solid #80bdff;
+}
+
+QPushButton#addFriendPushButton, #startGroupPushButton{
+    color: #fff;
+    border:1px solid transparent;
+    background-color: #007bff;
+    border-radius: 3px;
+}
+QPushButton#closeButton{
+    position: relative;
+	margin: 3px;
+	width: 24px;
+	height: 20px;
+    background: white;
+    border-radius: 30px;
+    border: 2px groove gray;
+    border-style: outset;
+}
+QPushButton#closeButton:hover{
+	background: red;
+}
+
+QPushButton#hideButton{
+    position: relative;
+	margin: 3px;
+	width: 24px;
+	height: 20px;
+    background: white;
+    border-radius: 30px;
+    border: 2px groove gray;
+    border-style: outset;
+}
+QPushButton#hideButton:hover{
+	background: red;
+}
+
