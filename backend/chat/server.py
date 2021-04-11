@@ -310,17 +310,29 @@ class Server(Thread):
                 receiver.start()
                 logger.warning(f'User<{token.user.id}> connect from {addr}')
             except json.decoder.JSONDecodeError:
-                client.sendall(wrap_error_data('wrong data type'))
-                client.close()
+                try:
+                    client.sendall(wrap_error_data('wrong data type'))
+                    client.close()
+                except Exception as e:
+                    logger.warning(e)
             except Token.DoesNotExist:
-                client.sendall(wrap_error_data('wrong token'))
-                client.close()
+                try:
+                    client.sendall(wrap_error_data('wrong token'))
+                    client.close()
+                except Exception as e:
+                    logger.warning(e)
             except socket.timeout:
-                logger.warning(f'{addr} time out')
-                client.sendall(wrap_error_data('time out'))
-                client.close()
+                try:
+                    logger.warning(f'{addr} time out')
+                    client.sendall(wrap_error_data('time out'))
+                    client.close()
+                except Exception as e:
+                    logger.warning(e)
             except (ConnectionResetError, ConnectionAbortedError, ConnectionError):
-                client.close()
+                try:
+                    client.close()
+                except Exception as e:
+                    logger.warning(e)
             except Exception as e:
                 logger.warning(e)
 
