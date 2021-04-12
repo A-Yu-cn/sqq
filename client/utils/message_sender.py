@@ -37,6 +37,11 @@ class MessageSender(Thread):
             if global_data.client is not None:
                 try:
                     mes = global_data.message_sender_queue.get()
+                    # 阻塞获取消息完成之后连接可能断掉
+                    if global_data.client is None:
+                        global_data.message_sender_queue.put(mes)
+                        global_data.client = None
+                        continue
                     if mes['type_'] == 0:  # 普通消息
                         to = mes['data']['chatNumber']
                         content = mes['data']['content']
@@ -48,9 +53,5 @@ class MessageSender(Thread):
                     elif mes["type_"] == 2:  # 语音请求消息
                         to_id = mes['to_id']
                         global_data.client.sendall(self.__wrap_voice_request_message(to_id))
-                    # 阻塞获取消息完成之后连接可能断掉
-                    if global_data.client is None:
-                        global_data.client = None
-                        continue
                 except Exception:
                     global_data.client = None
