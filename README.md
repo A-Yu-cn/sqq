@@ -1,23 +1,45 @@
 # SQQ
 
 #### 介绍
-Simple QQ
+Simple QQ是一款即时通讯软件，为本小队2021年计算机网络课程设计作品
 
 #### 软件架构
 软件架构说明
 
+服务器: django
+客户端: pyqt
+消息通讯使用python socket编程
 
-#### 安装教程
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
 
 #### 使用说明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+客户端为win10专用
+
+**下载可执行程序**
+
+1. 下载发行版sqq.zip
+2. 解压
+3. 运行根目录SimpleQQ.exe即可
+
+**自己打包**
+
+1. clone本项目
+
+```
+git clone https://gitee.com/kaichan12138/sqq.git
+```
+
+2. 打包
+
+```
+cd client
+python3 -m venv venv
+venv/Scripts/activate.bat
+pip install -r requirements.txt
+python3 build.py
+```
+
+3. 打包完成后，进入dist文件夹运行SimpleQQ.exe即可
 
 #### 参与贡献
 
@@ -25,13 +47,3 @@ Simple QQ
 2.  新建 Feat_xxx 分支
 3.  提交代码
 4.  新建 Pull Request
-
-
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
