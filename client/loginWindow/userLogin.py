@@ -123,7 +123,7 @@ class Ui_widget(object):
         self.passwordLineEdit.setPlaceholderText(_translate("widget", "密码"))
         self.usernameLineEdit.setPlaceholderText(_translate("widget", "账号/邮箱"))
         self.imageLabel.setText(_translate("widget", "TextLabel"))
-        self.label_4.setText(_translate("widget", "Let`s Chat"))
+        self.label_4.setText(_translate("widget", "SimpleQQ"))
         self.registerButton.setText(_translate("widget", "注册用户"))
         self.forgetPasswordButton.setText(_translate("widget", "忘记密码"))
         self.checkBox.setText(_translate("widget", "记住账号"))
