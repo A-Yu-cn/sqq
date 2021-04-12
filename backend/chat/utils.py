@@ -1,5 +1,7 @@
 from django.http import JsonResponse
 from hashlib import sha256
+
+from .JWTUtils import JWT
 from .models import *
 import random
 from django.utils import timezone
@@ -35,15 +37,16 @@ def get_user_id():
 
 def generate_token(user: User) -> Token:
     """生成token, 有效期30天"""
+    token_content = JWT.get_jwt_string(user.id)
     try:
         token = Token.objects.get(user=user)
         if (timezone.now() - token.createTime).days >= 30:
-            token.content = sha256((str(user.id) + str(random.randint(10000, 99999))).encode()).hexdigest()
+            token.content = token_content
             token.createTime = timezone.now()
             token.save()
     except Token.DoesNotExist:
         token = Token(user=user,
-                      content=sha256((str(user.id) + str(random.randint(10000, 99999))).encode()).hexdigest(),
+                      content=token_content,
                       createTime=timezone.now())
         token.save()
     return token
@@ -60,6 +63,8 @@ def token_verify(func):
     def wrap(request, *args, **kwargs):
         try:
             token = Token.objects.get(content=request.headers.get("Authorization"))
+            if not JWT.verify_jwt_string(token):
+                return wrap_response('jwt认证失败')
             if (timezone.now() - token.createTime).days >= 30:
                 return wrap_response("token已过期")
         except Token.DoesNotExist:
